@@ -8,12 +8,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div style="padding:20px">
-      <h2>Login</h2>
-      <button (click)="login()">Login</button>
-    </div>
-  `
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
 

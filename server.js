@@ -47,7 +47,7 @@ app.post('/purchase', async (req, res) => {
 
   await Purchase.create({ userId, bookId });
 
-  res.send('Purchase saved');
+   res.json({ message: 'Purchase saved' });
 });
 
 // 🔍 CHECK ACCESS
@@ -64,4 +64,4 @@ app.get('/check/:userId/:bookId', async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on 5000"));
+app.listen(5000, () => console.log("Server running on 5000 , mongodb connected"));

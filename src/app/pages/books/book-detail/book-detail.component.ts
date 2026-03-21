@@ -58,18 +58,45 @@ export class BookDetailComponent {
   window.open('https://razorpay.me/@surajsandeepambrale', '_blank');
 
   // Payment ke baad save (simple approach)
-  setTimeout(() => {
-    const user = this.auth.getUser();
+  // setTimeout(() => {
+  //   const user = this.auth.getUser();
 
-    this.http.post('http://localhost:5000/purchase', {
-      userId: user._id,
-      bookId: this.book.id
-    }).subscribe(() => {
-      alert('Payment Done!');
+  //   this.http.post('http://localhost:5000/purchase', {
+  //     userId: user._id,
+  //     bookId: this.book.id
+  //   }).subscribe(() => {
+  //     alert('Payment Done!');
+  //     this.router.navigate(['/read', this.book.id]);
+  //   });
+
+  // }, 5000);
+}
+
+verifyPayment() {
+  const user = this.auth.getUser();
+
+   console.log("USER 👉", user); // 🔥 DEBUG
+
+  // ❗ SAFETY CHECK
+  if (!user || !user._id) {
+    alert('User not found, please login again');
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  this.http.post('http://localhost:5000/purchase', {
+    userId: user._id,
+    bookId: this.book.id
+  }).subscribe({
+    next: (res) => {
+      alert('Payment Verified ✅');
       this.router.navigate(['/read', this.book.id]);
-    });
-
-  }, 5000);
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Something went wrong');
+    }
+  });
 }
 }
 
