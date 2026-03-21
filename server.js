@@ -164,6 +164,30 @@ app.get('/check/:userId/:bookId', async (req, res) => {
   }
 });
 
+const path = require('path');
+
+// 🔐 SECURE BOOK ACCESS API
+app.get('/book/:userId/:bookId', async (req, res) => {
+  try {
+    const { userId, bookId } = req.params;
+
+    // 🔍 CHECK PURCHASE
+    const purchase = await Purchase.findOne({ userId, bookId });
+
+    if (!purchase) {
+      return res.status(403).send("Access Denied ❌");
+    }
+
+    // 📂 PDF PATH
+    const filePath = path.join(__dirname, 'books', `${bookId}.pdf`);
+
+    res.sendFile(filePath);
+
+  } catch (err) {
+    res.status(500).send("Error loading book");
+  }
+});
+
 
 
 // ================= START SERVER =================

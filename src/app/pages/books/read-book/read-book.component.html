@@ -1,11 +1,15 @@
 <div *ngIf="allowed; else noAccess">
 
-  <h2>📖 Book Reading Page</h2>
+  <h2>📖 Book Reading</h2>
 
-  <p>Book ID: {{ bookId }}</p>
+  <!-- 🔥 SECURE PDF VIEW -->
+  <iframe 
+    [src]="pdfUrl"
+    width="100%" 
+    height="600px">
+  </iframe>
 
-  <!-- 👉 Yaha actual PDF / content dikhayega -->
-  <p>Yaha tum apna book content ya PDF viewer add kar sakte ho</p>
+  <br><br>
 
   <button (click)="logout()">Logout</button>
 
