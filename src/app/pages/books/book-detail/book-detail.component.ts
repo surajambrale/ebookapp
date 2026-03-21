@@ -48,58 +48,65 @@ export class BookDetailComponent {
     this.book = this.books.find(b => b.id == id);
   }
 
- buyBook() {
-  if (!this.auth.isLoggedIn()) {
-    this.router.navigate(['/login']);
-    return;
-  }
+  // 🔥 FINAL PAYMENT FLOW
+  buyBook() {
 
-  // Razorpay link open
-  window.open('https://razorpay.me/@surajsandeepambrale', '_blank');
-
-  // Payment ke baad save (simple approach)
-  // setTimeout(() => {
-  //   const user = this.auth.getUser();
-
-  //   this.http.post('http://localhost:5000/purchase', {
-  //     userId: user._id,
-  //     bookId: this.book.id
-  //   }).subscribe(() => {
-  //     alert('Payment Done!');
-  //     this.router.navigate(['/read', this.book.id]);
-  //   });
-
-  // }, 5000);
-}
-
-verifyPayment() {
-  const user = this.auth.getUser();
-
-   console.log("USER 👉", user); // 🔥 DEBUG
-
-  // ❗ SAFETY CHECK
-  if (!user || !user._id) {
-    alert('User not found, please login again');
-    this.router.navigate(['/login']);
-    return;
-  }
-
-  this.http.post('http://localhost:5000/purchase', {
-    userId: user._id,
-    bookId: this.book.id
-  }).subscribe({
-    next: (res) => {
-      alert('Payment Verified ✅');
-      this.router.navigate(['/read', this.book.id]);
-    },
-    error: (err) => {
-      console.error(err);
-      alert('Something went wrong');
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
     }
-  });
+
+    const user = this.auth.getUser();
+
+    // 1️⃣ Create order from backend
+    this.http.post('http://localhost:5000/create-order', {
+      amount: this.book.price
+    }).subscribe((order: any) => {
+
+      const options: any = {
+        key: "rzp_test_xxxxxxxx", // 🔴 CHANGE THIS
+        amount: order.amount,
+        currency: "INR",
+        name: "SS Builds",
+        description: this.book.title,
+        order_id: order.id,
+
+        handler: (response: any) => {
+
+          // 2️⃣ VERIFY PAYMENT FROM BACKEND
+          this.http.post('http://localhost:5000/verify-payment', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            userId: user._id,
+            bookId: this.book.id.toString()
+          }).subscribe(() => {
+
+            alert('Payment Successful 🎉');
+
+            // 🔥 AUTO REDIRECT
+            this.router.navigate(['/read', this.book.id]);
+
+          }, () => {
+            alert('Payment verification failed ❌');
+          });
+        },
+
+        prefill: {
+          name: user.name,
+          contact: user.phone
+        },
+
+        theme: {
+          color: "#3399cc"
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+
+    }, () => {
+      alert('Order creation failed ❌');
+    });
+  }
 }
-}
-
-
-
-
