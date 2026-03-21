@@ -64,7 +64,7 @@ export class BookDetailComponent {
     }).subscribe((order: any) => {
 
       const options: any = {
-        key: "rzp_test_xxxxxxxx", // 🔴 CHANGE THIS
+        key: "rzp_test_STqAGoxV34Jsne", // 🔴 CHANGE THIS
         amount: order.amount,
         currency: "INR",
         name: "SS Builds",
