@@ -16,12 +16,17 @@
 
       <h2 class="price">₹{{ book.price }}</h2>
 
-      <div class="actions">
-        <button class="buy" (click)="buyBook()">Buy Now</button>
-      
-        <button class="sample">Download Sample</button>
-      </div>
-    </div>
+     <div class="actions">
+
+  <button class="buy" *ngIf="hasAccess" (click)="readBook()">
+    Read Book
+  </button>
+
+  <button class="buy" *ngIf="!hasAccess" (click)="buyBook()">
+    Buy Now
+  </button>
+
+</div>
 
   </div>
 

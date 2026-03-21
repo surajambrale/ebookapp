@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 export class BookDetailComponent {
 
   book: any;
+  hasAccess: boolean = false;
 
   books = [
     {
@@ -23,7 +24,7 @@ export class BookDetailComponent {
       price: 449,
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg",
-      description: "Romantic emotional story..."
+      description: "Fat loss complete guide..."
     },
     {
       id: 2,
@@ -46,9 +47,19 @@ export class BookDetailComponent {
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
     this.book = this.books.find(b => b.id == id);
+
+    const user = this.auth.getUser();
+
+    // 🔐 CHECK PURCHASE
+    if (user && user._id) {
+      this.http.get(`http://localhost:5000/check/${user._id}/${this.book.id}`)
+        .subscribe((res: any) => {
+          this.hasAccess = res.access;
+        });
+    }
   }
 
-  // 🔥 FINAL PAYMENT FLOW
+  // 💳 PAYMENT
   buyBook() {
 
     if (!this.auth.isLoggedIn()) {
@@ -58,13 +69,12 @@ export class BookDetailComponent {
 
     const user = this.auth.getUser();
 
-    // 1️⃣ Create order from backend
     this.http.post('http://localhost:5000/create-order', {
       amount: this.book.price
     }).subscribe((order: any) => {
 
       const options: any = {
-        key: "rzp_test_STqAGoxV34Jsne", // 🔴 CHANGE THIS
+        key: "rzp_test_STqAGoxV34Jsne",
         amount: order.amount,
         currency: "INR",
         name: "SS Builds",
@@ -73,7 +83,6 @@ export class BookDetailComponent {
 
         handler: (response: any) => {
 
-          // 2️⃣ VERIFY PAYMENT FROM BACKEND
           this.http.post('http://localhost:5000/verify-payment', {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
@@ -84,29 +93,20 @@ export class BookDetailComponent {
 
             alert('Payment Successful 🎉');
 
-            // 🔥 AUTO REDIRECT
+            this.hasAccess = true; // 🔥 update UI instantly
             this.router.navigate(['/read', this.book.id]);
 
-          }, () => {
-            alert('Payment verification failed ❌');
           });
-        },
-
-        prefill: {
-          name: user.name,
-          contact: user.phone
-        },
-
-        theme: {
-          color: "#3399cc"
         }
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-
-    }, () => {
-      alert('Order creation failed ❌');
     });
+  }
+
+  // 📖 READ BOOK
+  readBook() {
+    this.router.navigate(['/read', this.book.id]);
   }
 }

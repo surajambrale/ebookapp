@@ -1,9 +1,16 @@
-<div style="padding:20px">
-
-  <button (click)="logout()">Logout</button>
+<div *ngIf="allowed; else noAccess">
 
   <h2>📖 Book Reading Page</h2>
 
-  <p>Yaha book ka content / PDF show hoga</p>
+  <p>Book ID: {{ bookId }}</p>
+
+  <!-- 👉 Yaha actual PDF / content dikhayega -->
+  <p>Yaha tum apna book content ya PDF viewer add kar sakte ho</p>
+
+  <button (click)="logout()">Logout</button>
 
 </div>
+
+<ng-template #noAccess>
+  <h3>Checking access...</h3>
+</ng-template>
