@@ -1,12 +1,16 @@
-h2 {
-  margin-bottom: 10px;
+.reader {
+  position: relative;
 }
 
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #ff4d4d;
-  border: none;
-  color: white;
-  cursor: pointer;
+/* 🔥 WATERMARK STYLE */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 40px;
+  color: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
 }
