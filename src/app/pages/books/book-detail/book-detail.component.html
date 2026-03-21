@@ -16,23 +16,27 @@
 
       <h2 class="price">₹{{ book.price }}</h2>
 
-     <div class="actions">
+      <!-- 🔥 BUTTONS -->
+      <div class="actions">
 
-  <button class="buy" *ngIf="hasAccess" (click)="readBook()">
-    Read Book
-  </button>
+        <button class="buy" *ngIf="hasAccess" (click)="readBook()">
+          Read Book
+        </button>
 
-  <button class="buy" *ngIf="!hasAccess" (click)="buyBook()">
-    Buy Now
-  </button>
+        <button class="buy" *ngIf="!hasAccess" (click)="buyBook()">
+          Buy Now
+        </button>
 
-</div>
+      </div>
 
-  </div>
+      <!-- 🔥 MOVE DESCRIPTION HERE -->
+      <div class="description">
+        <h3>Book Overview</h3>
+        <p>{{ book.description }}</p>
+      </div>
 
-  <div class="description">
-    <h3>Book Overview</h3>
-    <p>{{ book.description }}</p>
+    </div>
+
   </div>
 
 </div>

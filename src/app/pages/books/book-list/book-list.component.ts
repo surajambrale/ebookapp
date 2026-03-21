@@ -17,27 +17,27 @@ export class BookListComponent {
     {
       id: 1,
       title: "Complete Fat Loss Guide",
-      author: "Maya Alden",
-      price: 449,
+      author: "Suraj Ambrale -Nutritionist | Fitness Trainer",
+      price: 399,
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg"
     },
-    {
-      id: 2,
-      title: "Law Maker",
-      author: "Susie Tate",
-      price: 299,
-      reviews: 6505,
-      image: "assets/images/fatloss-book.jpeg"
-    },
-    {
-      id: 2,
-      title: "Law Maker",
-      author: "Susie Tate",
-      price: 299,
-      reviews: 6505,
-      image: "assets/images/fatloss-book.jpeg"
-    }
+    // {
+    //   id: 2,
+    //   title: "Law Maker",
+    //   author: "Susie Tate",
+    //   price: 299,
+    //   reviews: 6505,
+    //   image: "assets/images/fatloss-book.jpeg"
+    // },
+    // {
+    //   id: 2,
+    //   title: "Law Maker",
+    //   author: "Susie Tate",
+    //   price: 299,
+    //   reviews: 6505,
+    //   image: "assets/images/fatloss-book.jpeg"
+    // }
   ];
 
   openBook(id: number) {

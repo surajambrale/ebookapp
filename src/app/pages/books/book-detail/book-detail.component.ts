@@ -20,21 +20,21 @@ export class BookDetailComponent {
     {
       id: 1,
       title: "Complete Fat Loss Guide",
-      author: "Maya Alden",
-      price: 449,
+      author: "Suraj Ambrale -Nutritionist | Fitness Trainer",
+      price: 399,
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg",
-      description: "Fat loss complete guide..."
+      description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
     },
-    {
-      id: 2,
-      title: "Law Maker",
-      author: "Susie Tate",
-      price: 299,
-      reviews: 6505,
-      image: "assets/images/fatloss-book.jpeg",
-      description: "Legal drama and romance..."
-    }
+    // {
+    //   id: 2,
+    //   title: "Law Maker",
+    //   author: "Susie Tate",
+    //   price: 299,
+    //   reviews: 6505,
+    //   image: "assets/images/fatloss-book.jpeg",
+    //   description: "Legal drama and romance..."
+    // }
   ];
 
   constructor(

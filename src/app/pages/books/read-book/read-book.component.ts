@@ -54,9 +54,10 @@ export class ReadBookComponent {
           this.allowed = true;
 
           // 🔥 SECURE BACKEND PDF URL
-          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-            `http://localhost:5000/book/${this.user._id}/${this.bookId}`
-          );
+          // this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          //   `http://localhost:5000/book/${this.user._id}/${this.bookId}`
+          // );
+          this.pdfUrl = `http://localhost:5000/book/${this.user._id}/${this.bookId}`;
 
         } else {
           alert('Access Denied ❌');
