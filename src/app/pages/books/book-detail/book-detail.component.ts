@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-book-detail',
@@ -15,26 +16,18 @@ export class BookDetailComponent {
 
   book: any;
   hasAccess: boolean = false;
+  apiUrl = environment.apiUrl;
 
   books = [
     {
       id: 1,
       title: "Complete Fat Loss Guide",
-      author: "Suraj Ambrale -Nutritionist | Fitness Trainer",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 399,
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg",
-      description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
-    },
-    // {
-    //   id: 2,
-    //   title: "Law Maker",
-    //   author: "Susie Tate",
-    //   price: 299,
-    //   reviews: 6505,
-    //   image: "assets/images/fatloss-book.jpeg",
-    //   description: "Legal drama and romance..."
-    // }
+      description: "Welcome to the Complete Fitness & Nutrition program..."
+    }
   ];
 
   constructor(
@@ -52,7 +45,7 @@ export class BookDetailComponent {
 
     // 🔐 CHECK PURCHASE
     if (user && user._id) {
-      this.http.get(`http://localhost:5000/check/${user._id}/${this.book.id}`)
+      this.http.get(`${this.apiUrl}/check/${user._id}/${this.book.id}`)
         .subscribe((res: any) => {
           this.hasAccess = res.access;
         });
@@ -69,7 +62,7 @@ export class BookDetailComponent {
 
     const user = this.auth.getUser();
 
-    this.http.post('http://localhost:5000/create-order', {
+    this.http.post(`${this.apiUrl}/create-order`, {
       amount: this.book.price
     }).subscribe((order: any) => {
 
@@ -83,7 +76,7 @@ export class BookDetailComponent {
 
         handler: (response: any) => {
 
-          this.http.post('http://localhost:5000/verify-payment', {
+          this.http.post(`${this.apiUrl}/verify-payment`, {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
@@ -93,7 +86,7 @@ export class BookDetailComponent {
 
             alert('Payment Successful 🎉');
 
-            this.hasAccess = true; // 🔥 update UI instantly
+            this.hasAccess = true;
             this.router.navigate(['/read', this.book.id]);
 
           });
