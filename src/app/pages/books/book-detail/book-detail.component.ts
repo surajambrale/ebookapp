@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-book-detail',
@@ -38,7 +39,8 @@ export class BookDetailComponent {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -46,13 +48,29 @@ export class BookDetailComponent {
     this.book = this.books.find(b => b.id == id);
   }
 
-  buyBook() {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-    } else {
-      alert('Payment Page (Razorpay next)');
-    }
+ buyBook() {
+  if (!this.auth.isLoggedIn()) {
+    this.router.navigate(['/login']);
+    return;
   }
+
+  // Razorpay link open
+  window.open('https://razorpay.me/@surajsandeepambrale', '_blank');
+
+  // Payment ke baad save (simple approach)
+  setTimeout(() => {
+    const user = this.auth.getUser();
+
+    this.http.post('http://localhost:5000/purchase', {
+      userId: user._id,
+      bookId: this.book.id
+    }).subscribe(() => {
+      alert('Payment Done!');
+      this.router.navigate(['/read', this.book.id]);
+    });
+
+  }, 5000);
+}
 }
 
 

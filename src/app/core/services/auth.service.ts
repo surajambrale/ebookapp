@@ -1,17 +1,32 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  login() {
-    localStorage.setItem('user', 'true');
-  }
+ constructor(private http: HttpClient) {} // ✅ ADD THIS
 
-  logout() {
-    localStorage.removeItem('user');
-  }
+ login(data: any) {
+  return this.http.post('http://localhost:5000/auth', data);
+}
 
-  isLoggedIn() {
-    return !!localStorage.getItem('user');
-  }
+saveUser(user: any) {
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+getUser() {
+  return JSON.parse(localStorage.getItem('user') || '{}');
+}
+
+saveToken(token: string) {
+  localStorage.setItem('token', token);
+}
+
+isLoggedIn() {
+  return !!localStorage.getItem('token');
+}
+
+logout() {
+  localStorage.clear();
+}
 }

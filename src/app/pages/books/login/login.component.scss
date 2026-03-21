@@ -1,12 +1,21 @@
 .login {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
 
   button {
     background: #ff9900;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 10px;
     color: white;
+    border-radius: 6px;
     cursor: pointer;
   }
 }

@@ -1,4 +1,11 @@
 <div class="login">
-  <h2>Login</h2>
-  <button (click)="login()">Login</button>
+
+  <h2>Login / Register</h2>
+
+  <input type="text" [(ngModel)]="name" placeholder="Enter Name" />
+
+  <input type="text" [(ngModel)]="phone" placeholder="Enter Phone Number" />
+
+  <button (click)="login()">Continue</button>
+
 </div>
