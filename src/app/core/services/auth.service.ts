@@ -1,32 +1,38 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
- constructor(private http: HttpClient) {} // ✅ ADD THIS
+  API = 'http://localhost:5000';
 
- login(data: any) {
-  return this.http.post('http://localhost:5000/auth', data);
-}
+  constructor(private http: HttpClient) {}
 
-saveUser(user: any) {
-  localStorage.setItem('user', JSON.stringify(user));
-}
+  register(data: any) {
+    return this.http.post(`${this.API}/register`, data);
+  }
 
-getUser() {
-  return JSON.parse(localStorage.getItem('user') || '{}');
-}
+  login(data: any) {
+    return this.http.post(`${this.API}/login`, data);
+  }
 
-saveToken(token: string) {
-  localStorage.setItem('token', token);
-}
+  saveUser(user: any) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
 
-isLoggedIn() {
-  return !!localStorage.getItem('token');
-}
+  getUser() {
+    return JSON.parse(localStorage.getItem('user') || '{}');
+  }
 
-logout() {
-  localStorage.clear();
-}
+  saveToken(token: string) {
+    localStorage.setItem('token', token);
+  }
+
+  isLoggedIn() {
+    return !!localStorage.getItem('token');
+  }
+
+  logout() {
+    localStorage.clear();
+  }
 }

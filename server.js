@@ -9,10 +9,10 @@ app.use(express.json());
 
 const SECRET = "secret123";
 
-// 🔗 MongoDB connect
-mongoose.connect('mongodb+srv://surajambrale9003:surajebook@cluster.3a07dkd.mongodb.net/?appName=Cluster');
+// MongoDB
+mongoose.connect('mongodb+srv://surajambrale9003:surajebook@cluster.3a07dkd.mongodb.net/bookApp');
 
-// 📦 SCHEMAS
+// SCHEMA
 const userSchema = new mongoose.Schema({
   name: String,
   phone: { type: String, unique: true }
@@ -26,14 +26,29 @@ const purchaseSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Purchase = mongoose.model('Purchase', purchaseSchema);
 
-// 🔐 AUTH (Register + Login)
-app.post('/auth', async (req, res) => {
+// ✅ REGISTER
+app.post('/register', async (req, res) => {
   const { name, phone } = req.body;
 
-  let user = await User.findOne({ phone });
+  const existing = await User.findOne({ phone });
+
+  if (existing) {
+    return res.status(400).json({ message: 'User already exists' });
+  }
+
+  const user = await User.create({ name, phone });
+
+  res.json({ message: 'Registered successfully' });
+});
+
+// ✅ LOGIN
+app.post('/login', async (req, res) => {
+  const { phone } = req.body;
+
+  const user = await User.findOne({ phone });
 
   if (!user) {
-    user = await User.create({ name, phone });
+    return res.status(404).json({ message: 'User not found' });
   }
 
   const token = jwt.sign({ id: user._id }, SECRET);
@@ -41,27 +56,23 @@ app.post('/auth', async (req, res) => {
   res.json({ token, user });
 });
 
-// 💳 SAVE PURCHASE
+// ✅ SAVE PURCHASE
 app.post('/purchase', async (req, res) => {
   const { userId, bookId } = req.body;
 
   await Purchase.create({ userId, bookId });
 
-   res.json({ message: 'Purchase saved' });
+  res.json({ message: 'Purchase saved' });
 });
 
-// 🔍 CHECK ACCESS
+// ✅ CHECK ACCESS
 app.get('/check/:userId/:bookId', async (req, res) => {
   const purchase = await Purchase.findOne({
     userId: req.params.userId,
     bookId: req.params.bookId
   });
 
-  if (purchase) {
-    res.json({ access: true });
-  } else {
-    res.json({ access: false });
-  }
+  res.json({ access: !!purchase });
 });
 
-app.listen(5000, () => console.log("Server running on 5000 , mongodb connected"));
+app.listen(5000, () => console.log("Server running 🔥"));
