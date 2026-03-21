@@ -1,0 +1,61 @@
+.book-list {
+  padding: 20px;
+
+  .title {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .book-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .book-card {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background: #f8f8f8;
+    }
+
+    .image {
+      img {
+        width: 80px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+    }
+
+    .info {
+      flex: 1;
+
+      h3 {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .author {
+        font-size: 13px;
+        color: #555;
+      }
+
+      .rating {
+        font-size: 13px;
+        color: #ff9900;
+      }
+
+      .price {
+        font-weight: bold;
+        margin-top: 4px;
+        color: green;
+      }
+    }
+  }
+}

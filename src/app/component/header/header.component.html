@@ -1,0 +1,20 @@
+<header class="navbar" [class.scrolled]="isScrolled()">
+    <div class="logo">e-books</div>
+
+    <nav class="nav-links">
+
+        <a href="#home">Home</a>
+        
+    </nav>
+
+    <div class="hamburger" (click)="toggleSidebar()">
+       &#9776;
+    </div>
+
+</header>
+
+<app-sidebar
+  *ngIf="isMobile()"
+  [isOpen]="isSidebarOpen()"
+  [closeSidebar]="closeSidebar"
+/>

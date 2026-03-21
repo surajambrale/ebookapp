@@ -1,0 +1,26 @@
+<div class="book-list">
+
+  <h2 class="title">New Releases in Store</h2>
+
+  <div class="book-grid">
+    <div class="book-card" *ngFor="let book of books" (click)="openBook(book.id)">
+      
+      <div class="image">
+        <img [src]="book.image" alt="book" />
+      </div>
+
+      <div class="info">
+        <h3>{{ book.title }}</h3>
+        <p class="author">{{ book.author }}</p>
+
+        <div class="rating">
+          ⭐⭐⭐⭐☆ <span>{{ book.reviews }}</span>
+        </div>
+
+        <p class="price">₹{{ book.price }}</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>

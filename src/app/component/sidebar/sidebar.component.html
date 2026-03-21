@@ -1,0 +1,9 @@
+<div class="sidebar-backdrop" *ngIf="isOpen" (click)="closeSidebar()"></div>
+
+<div class="sidebar" [class.open]="isOpen">
+    <div class="close-btn" (click)="closeSidebar()">X</div>
+    <nav class="sidebar-links">
+        <a href="#home" (click)="closeSidebar()">Home</a>
+
+    </nav>
+</div>

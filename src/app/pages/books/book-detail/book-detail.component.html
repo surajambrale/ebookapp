@@ -1,0 +1,32 @@
+<div class="book-detail" *ngIf="book">
+
+  <div class="top-section">
+
+    <div class="image">
+      <img [src]="book.image" />
+    </div>
+
+    <div class="details">
+      <h1>{{ book.title }}</h1>
+      <p class="author">{{ book.author }}</p>
+
+      <div class="rating">
+        ⭐⭐⭐⭐☆ ({{ book.reviews }})
+      </div>
+
+      <h2 class="price">₹{{ book.price }}</h2>
+
+      <div class="actions">
+        <button class="buy" (click)="buyBook()">Buy Now</button>
+        <button class="sample">Download Sample</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="description">
+    <h3>Book Overview</h3>
+    <p>{{ book.description }}</p>
+  </div>
+
+</div>
