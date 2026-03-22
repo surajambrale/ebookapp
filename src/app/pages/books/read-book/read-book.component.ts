@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { environment } from '../../../../environments/environment';
 
@@ -18,9 +17,8 @@ export class ReadBookComponent implements OnDestroy {
 
   bookId: any;
   allowed = false;
-  pdfUrl!: SafeResourceUrl;
+  pdfUrl: string = '';   // ✅ STRING रखना है (IMPORTANT)
   user: any;
-  apiUrl = environment.apiUrl;
 
   private keyListener: any;
 
@@ -28,13 +26,12 @@ export class ReadBookComponent implements OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private auth: AuthService,
-    private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
 
-    // 🔐 Disable shortcuts (save/print/view source)
+    // 🔐 Disable shortcuts
     this.keyListener = (e: KeyboardEvent) => {
       if (e.ctrlKey && ['s', 'p', 'u'].includes(e.key.toLowerCase())) {
         e.preventDefault();
@@ -54,22 +51,17 @@ export class ReadBookComponent implements OnDestroy {
     this.bookId = this.route.snapshot.params['id'];
 
     // 🔐 CHECK ACCESS
-    this.http.get(`${this.apiUrl}/check/${this.user._id}/${this.bookId}`)
+    this.http.get(`${environment.apiUrl}/check/${this.user._id}/${this.bookId}`)
       .subscribe({
         next: (res: any) => {
 
           if (res.access) {
             this.allowed = true;
 
-            // 🔥 SECURE PDF URL (Render backend)
-            // const url = `${this.apiUrl}/book/${this.user._id}/${this.bookId}`;
+            // 🔥 DIRECT URL (NO SANITIZER)
+            this.pdfUrl = `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`;
 
-            // 👉 ng2-pdf-viewer ke liye direct URL best hai
-            // this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-             // 🔥 SECURE PDF URL (bypass + safe)
-            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.apiUrl}/books/${this.user._id}/${this.bookId}`
-            );
+            console.log("PDF URL 👉", this.pdfUrl); // debug
 
           } else {
             alert('Access Denied ❌');
@@ -84,13 +76,11 @@ export class ReadBookComponent implements OnDestroy {
       });
   }
 
-  // 🔓 LOGOUT
   logout() {
     this.auth.logout();
     this.router.navigate(['/']);
   }
 
-  // 🧹 CLEANUP (IMPORTANT)
   ngOnDestroy() {
     document.removeEventListener('keydown', this.keyListener);
   }
