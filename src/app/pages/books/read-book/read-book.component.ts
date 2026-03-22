@@ -62,10 +62,14 @@ export class ReadBookComponent implements OnDestroy {
             this.allowed = true;
 
             // 🔥 SECURE PDF URL (Render backend)
-            const url = `${this.apiUrl}/book/${this.user._id}/${this.bookId}`;
+            // const url = `${this.apiUrl}/book/${this.user._id}/${this.bookId}`;
 
             // 👉 ng2-pdf-viewer ke liye direct URL best hai
             // this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+             // 🔥 SECURE PDF URL (bypass + safe)
+            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.apiUrl}/book/${this.user._id}/${this.bookId}`
+            );
 
           } else {
             alert('Access Denied ❌');

@@ -181,6 +181,12 @@ app.get('/book/:userId/:bookId', async (req, res) => {
     // 📂 PDF PATH
     const filePath = path.join(__dirname, 'books', `${bookId}.pdf`);
 
+
+    //new added - 11am sunday
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="book.pdf"');
+    //new added - 11am sunday
+    
     res.sendFile(filePath);
 
   } catch (err) {
