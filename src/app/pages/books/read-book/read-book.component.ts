@@ -68,7 +68,7 @@ export class ReadBookComponent implements OnDestroy {
             // this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
              // 🔥 SECURE PDF URL (bypass + safe)
             this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.apiUrl}/book/${this.user._id}/${this.bookId}`
+              `${this.apiUrl}/books/${this.user._id}/${this.bookId}`
             );
 
           } else {
