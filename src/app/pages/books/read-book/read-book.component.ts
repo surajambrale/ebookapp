@@ -65,7 +65,7 @@ export class ReadBookComponent implements OnDestroy {
             const url = `${this.apiUrl}/book/${this.user._id}/${this.bookId}`;
 
             // 👉 ng2-pdf-viewer ke liye direct URL best hai
-            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+            // this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
 
           } else {
             alert('Access Denied ❌');
