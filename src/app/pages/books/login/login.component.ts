@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [ CommonModule ,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -21,11 +21,18 @@ export class LoginComponent {
     this.isRegisterMode = !this.isRegisterMode;
   }
 
+  // 🔥 CLEAN PHONE (IMPORTANT)
+  cleanPhone(phone: string) {
+    return phone.replace(/\D/g, '');
+  }
+
   submit() {
 
+    const cleanPhone = this.cleanPhone(this.phone);
+
     if (this.isRegisterMode) {
-      // REGISTER
-      this.auth.register({ name: this.name, phone: this.phone })
+
+      this.auth.register({ name: this.name, phone: cleanPhone })
         .subscribe({
           next: () => {
             alert('Registered! Now login');
@@ -35,8 +42,8 @@ export class LoginComponent {
         });
 
     } else {
-      // LOGIN
-      this.auth.login({ phone: this.phone })
+
+      this.auth.login({ phone: cleanPhone })
         .subscribe({
           next: (res: any) => {
             this.auth.saveToken(res.token);

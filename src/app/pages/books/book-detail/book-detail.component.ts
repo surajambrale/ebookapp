@@ -16,6 +16,7 @@ export class BookDetailComponent {
 
   book: any;
   hasAccess: boolean = false;
+  loading: boolean = false; // 🔥 UX improvement
   apiUrl = environment.apiUrl;
 
   books = [
@@ -41,13 +42,24 @@ export class BookDetailComponent {
     const id = this.route.snapshot.params['id'];
     this.book = this.books.find(b => b.id == id);
 
+    if (!this.book) {
+      alert('Book not found ❌');
+      this.router.navigate(['/']);
+      return;
+    }
+
     const user = this.auth.getUser();
 
     // 🔐 CHECK PURCHASE
     if (user && user._id) {
       this.http.get(`${this.apiUrl}/check/${user._id}/${this.book.id}`)
-        .subscribe((res: any) => {
-          this.hasAccess = res.access;
+        .subscribe({
+          next: (res: any) => {
+            this.hasAccess = res.access;
+          },
+          error: () => {
+            console.log('Access check failed');
+          }
         });
     }
   }
@@ -62,44 +74,89 @@ export class BookDetailComponent {
 
     const user = this.auth.getUser();
 
+    if (!user || !user._id) {
+      alert('Please login again ❌');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.loading = true;
+
+    // 🧾 CREATE ORDER
     this.http.post(`${this.apiUrl}/create-order`, {
       amount: this.book.price
-    }).subscribe((order: any) => {
+    }).subscribe({
+      next: (order: any) => {
 
-      const options: any = {
-        key: "rzp_test_STqAGoxV34Jsne",
-        amount: order.amount,
-        currency: "INR",
-        name: "SS Builds",
-        description: this.book.title,
-        order_id: order.id,
+        const options: any = {
+          key: "rzp_test_STqAGoxV34Jsne",
+          amount: order.amount,
+          currency: "INR",
+          name: "SS Builds",
+          description: this.book.title,
+          order_id: order.id,
 
-        handler: (response: any) => {
+          handler: (response: any) => {
 
-          this.http.post(`${this.apiUrl}/verify-payment`, {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            userId: user._id,
-            bookId: this.book.id.toString()
-          }).subscribe(() => {
+            // 🔐 VERIFY PAYMENT
+            this.http.post(`${this.apiUrl}/verify-payment`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              userId: user._id,
+              bookId: this.book.id.toString()
+            }).subscribe({
+              next: () => {
+                alert('Payment Successful 🎉');
 
-            alert('Payment Successful 🎉');
+                this.hasAccess = true;
+                this.loading = false;
 
-            this.hasAccess = true;
-            this.router.navigate(['/read', this.book.id]);
+                this.router.navigate(['/read', this.book.id]);
+              },
+              error: () => {
+                this.loading = false;
+                alert('Payment verification failed ❌');
+              }
+            });
+          },
 
-          });
-        }
-      };
+          modal: {
+            ondismiss: () => {
+              this.loading = false;
+              console.log('Payment popup closed');
+            }
+          },
 
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
+          prefill: {
+            name: user.name,
+            contact: user.phone
+          },
+
+          theme: {
+            color: "#3399cc"
+          }
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+
+      },
+      error: () => {
+        this.loading = false;
+        alert('Order creation failed ❌');
+      }
     });
   }
 
   // 📖 READ BOOK
   readBook() {
+
+    if (!this.hasAccess) {
+      alert('Please purchase the book first ❌');
+      return;
+    }
+
     this.router.navigate(['/read', this.book.id]);
   }
 }
