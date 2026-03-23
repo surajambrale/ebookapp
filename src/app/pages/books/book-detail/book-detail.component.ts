@@ -48,8 +48,8 @@ export class BookDetailComponent {
       return;
     }
 
-    const user = this.auth.getUser();
-
+          const user = this.auth.getUser();
+        
     // 🔐 CHECK PURCHASE
     if (user && user._id) {
       this.http.get(`${this.apiUrl}/check/${user._id}/${this.book.id}`)
@@ -63,7 +63,7 @@ export class BookDetailComponent {
         });
     }
   }
-
+  isLoading = false;
   // 💳 PAYMENT
   buyBook() {
 
@@ -107,6 +107,8 @@ export class BookDetailComponent {
               bookId: this.book.id.toString()
             }).subscribe({
               next: () => {
+                this.isLoading = false;
+                
                 alert('Payment Successful 🎉');
 
                 this.hasAccess = true;
@@ -116,6 +118,8 @@ export class BookDetailComponent {
               },
               error: () => {
                 this.loading = false;
+                this.isLoading = false;
+                
                 alert('Payment verification failed ❌');
               }
             });
@@ -124,6 +128,7 @@ export class BookDetailComponent {
           modal: {
             ondismiss: () => {
               this.loading = false;
+              
               console.log('Payment popup closed');
             }
           },
@@ -144,6 +149,7 @@ export class BookDetailComponent {
       },
       error: () => {
         this.loading = false;
+        (window as any).appLoader = false;
         alert('Order creation failed ❌');
       }
     });

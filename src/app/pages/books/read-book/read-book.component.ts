@@ -28,6 +28,7 @@ export class ReadBookComponent implements OnDestroy {
     private auth: AuthService,
     private http: HttpClient
   ) {}
+isLoading = true;
 
   ngOnInit() {
 
@@ -62,7 +63,7 @@ export class ReadBookComponent implements OnDestroy {
             this.pdfUrl = `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`;
 
             console.log("PDF URL 👉", this.pdfUrl); // debug
-
+            this.isLoading = false; // 🔥 STOP LOADER
           } else {
             alert('Access Denied ❌');
             this.router.navigate(['/']);

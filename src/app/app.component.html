@@ -1,6 +1,12 @@
 <app-header></app-header>
 
 <app-sidebar [isOpen]="sidebarOpen()" [closeSidebar]="closeSidebar"></app-sidebar>
+<app-loader [show]="isLoading"></app-loader>
+<div class="loader" *ngIf="isLoading">
+  <div class="logo-loader">
+    <img src="assets/images/ssbuildslogo.png" alt="logo">
+  </div>
+</div>
 
 <router-outlet></router-outlet>
 

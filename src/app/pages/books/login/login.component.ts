@@ -26,20 +26,26 @@ export class LoginComponent {
   cleanPhone(phone: string) {
     return phone.replace(/\D/g, '');
   }
-
+  isLoading = false;
   submit() {
 
     const cleanPhone = this.cleanPhone(this.phone);
-
+    this.isLoading = true; // 🔥 START LOADER
+    (window as any).appLoader = true; // 🔥 START
     if (this.isRegisterMode) {
 
       this.auth.register({ name: this.name, phone: cleanPhone })
         .subscribe({
           next: () => {
+            // this.isLoading = false;
+            (window as any).appLoader = false;
             alert('Registered! Now login');
             this.isRegisterMode = false;
           },
-          error: () => alert('User already exists')
+          error: () => {
+           (window as any).appLoader = false;
+          alert('User already exists');
+        }
         });
 
     } else {
@@ -47,11 +53,15 @@ export class LoginComponent {
       this.auth.login({ phone: cleanPhone })
         .subscribe({
           next: (res: any) => {
+            (window as any).appLoader = false;
             this.auth.saveToken(res.token);
             this.auth.saveUser(res.user);
             this.router.navigate(['/']);
           },
-          error: () => alert('User not found, please register')
+          error: () => {
+          (window as any).appLoader = false;
+          alert('User not found');
+        }
         });
     }
   }
