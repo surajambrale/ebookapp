@@ -7,7 +7,8 @@ import { CommonModule } from '@angular/common';
 @Component({
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 
