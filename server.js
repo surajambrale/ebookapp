@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:4200',
-    'https://ebookapp-gold.vercel.app/' ,
+    'https://ebookapp-gold.vercel.app' ,
      'https://ebookapp.onrender.com'// 🔴 CHANGE THIS
   ],
   credentials: true
