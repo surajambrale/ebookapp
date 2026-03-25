@@ -1,0 +1,47 @@
+.admin {
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+
+.login-box {
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #00c6ff;
+    color: white;
+  }
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
+
+  input {
+    display: block;
+    margin-bottom: 5px;
+    padding: 5px;
+    width: 100%;
+  }
+
+  button {
+    margin-right: 5px;
+  }
+}

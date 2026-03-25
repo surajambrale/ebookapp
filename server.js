@@ -4,23 +4,74 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const path = require('path');
 
 const app = express();
-app.use(cors());
+
+// 🔐 CORS (IMPORTANT 🔥)
+app.use(cors({
+  origin: [
+    'http://localhost:4200',
+    'https://ebookapp-gold.vercel.app/' ,
+     'https://ebookapp.onrender.com'// 🔴 CHANGE THIS
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 const SECRET = "secret123";
+const ADMIN_PASSWORD = "admin123";
 
-// 🔗 MongoDB
+
+// ================= ADMIN =================
+
+// 🔐 LOGIN
+app.post('/admin-login', (req, res) => {
+  const { password } = req.body;
+
+  if (password === ADMIN_PASSWORD) {
+    const token = jwt.sign({ role: 'admin' }, SECRET, { expiresIn: '1h' }); // 🔥 expiry add
+    return res.json({ token });
+  }
+
+  res.status(401).json({ message: "Invalid password" });
+});
+
+// 🔐 VERIFY TOKEN
+const verifyAdmin = (req, res, next) => {
+
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ message: "No token" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+// 🔐 VERIFY API
+app.get('/admin-verify', verifyAdmin, (req, res) => {
+  res.json({ success: true });
+});
+
+
+// ================= DB =================
+
 mongoose.connect('mongodb+srv://surajambrale9003:surajebook@cluster.3a07dkd.mongodb.net/bookApp')
   .then(() => console.log("MongoDB Connected ✅"))
   .catch(err => console.log(err));
 
-// 🔐 Razorpay config
-const razorpay = new Razorpay({
-  key_id: "rzp_test_STqAGoxV34Jsne",       // 🔴 CHANGE THIS
-  key_secret: "bfoAQJK911f9COnmbCndvYk5"       // 🔴 CHANGE THIS
-});
 
 // 📦 SCHEMA
 const userSchema = new mongoose.Schema({
@@ -39,10 +90,71 @@ const User = mongoose.model('User', userSchema);
 const Purchase = mongoose.model('Purchase', purchaseSchema);
 
 
+// ================= ADMIN DATA =================
+
+// 👤 USERS
+app.get('/admin/users', verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Error loading users" });
+  }
+});
+
+// 💳 PURCHASES (WITH USER NAME)
+app.get('/admin/purchases', verifyAdmin, async (req, res) => {
+  try {
+
+    const purchases = await Purchase.find();
+
+    const users = await User.find();
+
+    const result = purchases.map(p => {
+
+      const user = users.find(u => u._id.toString() === p.userId);
+
+      return {
+        _id: p._id,
+        bookId: p.bookId,
+        paymentId: p.paymentId,
+
+        userName: user ? user.name : "Unknown",
+        userPhone: user ? user.phone : "N/A"
+      };
+    });
+
+    res.json(result);
+
+  } catch (err) {
+    res.status(500).json({ message: 'Error loading purchases' });
+  }
+});
+
+// ❌ DELETE USER
+app.delete('/admin/user/:id', verifyAdmin, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "User deleted" });
+  } catch {
+    res.status(500).json({ message: "Delete error" });
+  }
+});
+
+// ❌ DELETE PURCHASE
+app.delete('/admin/purchase/:id', verifyAdmin, async (req, res) => {
+  try {
+    await Purchase.findByIdAndDelete(req.params.id);
+    res.json({ message: "Purchase deleted" });
+  } catch {
+    res.status(500).json({ message: "Delete error" });
+  }
+});
+
 
 // ================= AUTH =================
 
-// ✅ REGISTER
+// REGISTER
 app.post('/register', async (req, res) => {
   try {
     const { name, phone } = req.body;
@@ -53,17 +165,16 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ name, phone });
+    await User.create({ name, phone });
 
     res.json({ message: 'Registered successfully' });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-
-// ✅ LOGIN
+// LOGIN
 app.post('/login', async (req, res) => {
   try {
     const { phone } = req.body;
@@ -78,36 +189,37 @@ app.post('/login', async (req, res) => {
 
     res.json({ token, user });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 
+// ================= PAYMENT =================
 
-// ================= RAZORPAY =================
+const razorpay = new Razorpay({
+  key_id: "rzp_test_STqAGoxV34Jsne",
+  key_secret: "bfoAQJK911f9COnmbCndvYk5"
+});
 
-// 🧾 CREATE ORDER
+// CREATE ORDER
 app.post('/create-order', async (req, res) => {
   try {
     const { amount } = req.body;
 
-    const options = {
-      amount: amount * 100, // convert to paise
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
       currency: "INR"
-    };
-
-    const order = await razorpay.orders.create(options);
+    });
 
     res.json(order);
 
-  } catch (err) {
-    res.status(500).json({ message: 'Order creation failed' });
+  } catch {
+    res.status(500).json({ message: 'Order failed' });
   }
 });
 
-
-// ✅ VERIFY PAYMENT (REAL SECURITY)
+// VERIFY PAYMENT
 app.post('/verify-payment', async (req, res) => {
   try {
     const {
@@ -118,11 +230,10 @@ app.post('/verify-payment', async (req, res) => {
       bookId
     } = req.body;
 
-    // 🔐 SIGNATURE VERIFY
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", "bfoAQJK911f9COnmbCndvYk5") // 🔴 SAME SECRET
+      .createHmac("sha256", "bfoAQJK911f9COnmbCndvYk5")
       .update(body.toString())
       .digest("hex");
 
@@ -130,7 +241,6 @@ app.post('/verify-payment', async (req, res) => {
       return res.status(400).json({ message: 'Invalid payment ❌' });
     }
 
-    // ✅ SAVE PURCHASE
     await Purchase.create({
       userId,
       bookId,
@@ -140,65 +250,46 @@ app.post('/verify-payment', async (req, res) => {
 
     res.json({ success: true });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Verification failed' });
   }
 });
 
 
+// ================= BOOK =================
 
-// ================= ACCESS =================
-
-// 🔍 CHECK ACCESS
 app.get('/check/:userId/:bookId', async (req, res) => {
+  const purchase = await Purchase.findOne({
+    userId: req.params.userId,
+    bookId: req.params.bookId
+  });
+
+  res.json({ access: !!purchase });
+});
+
+app.get('/book/:userId/:bookId', async (req, res) => {
   try {
     const purchase = await Purchase.findOne({
       userId: req.params.userId,
       bookId: req.params.bookId
     });
 
-    res.json({ access: !!purchase });
+    if (!purchase) return res.status(403).send("Access Denied ❌");
 
-  } catch (err) {
-    res.status(500).json({ message: 'Error checking access' });
-  }
-});
+    const filePath = path.join(__dirname, 'books', `${req.params.bookId}.pdf`);
 
-const path = require('path');
-
-// 🔐 SECURE BOOK ACCESS API
-app.get('/book/:userId/:bookId', async (req, res) => {
-  try {
-    const { userId, bookId } = req.params;
-
-    // 🔍 CHECK PURCHASE
-    const purchase = await Purchase.findOne({ userId, bookId });
-
-    if (!purchase) {
-      return res.status(403).send("Access Denied ❌");
-    }
-
-    // 📂 PDF PATH
-    const filePath = path.join(__dirname, 'books', `${bookId}.pdf`);
-
-
-    //new added - 11am sunday
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename="book.pdf"');
-    //new added - 11am sunday
-    
+    res.setHeader('Content-Disposition', 'inline');
+
     res.sendFile(filePath);
 
-  } catch (err) {
+  } catch {
     res.status(500).send("Error loading book");
   }
 });
 
 
+// ================= START =================
 
-// ================= START SERVER =================
-
-// app.listen(5000, () => console.log("🚀 Server running on 5000"));
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => console.log("Server running 🚀"));
