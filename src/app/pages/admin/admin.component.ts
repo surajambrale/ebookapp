@@ -13,9 +13,8 @@ import { environment } from '../../../environments/environment';
 export class AdminComponent {
 
   password = '';
-  isLoggedIn = false; // 🔥 default false
+  isLoggedIn = false;
   token = '';
-  
 
   users: any[] = [];
   purchases: any[] = [];
@@ -24,53 +23,20 @@ export class AdminComponent {
 
   constructor(private http: HttpClient) {}
 
-  // 🔐 CHECK LOGIN ON LOAD
-  ngOnInit() {
-
-    const savedToken = localStorage.getItem('adminToken');
-
-    // 🔴 NO TOKEN → FORCE LOGIN SCREEN
-    if (!savedToken) {
-      this.isLoggedIn = false;
-      return;
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: savedToken
-    });
-
-    // 🔐 VERIFY TOKEN FROM BACKEND
-    this.http.get(`${this.api}/admin-verify`, { headers })
-      .subscribe({
-        next: () => {
-          this.token = savedToken;
-          this.isLoggedIn = true;
-          this.loadData();
-        },
-        error: () => {
-          this.logout(); // ❌ invalid token
-        }
-      });
-  }
-
   // 🔐 LOGIN
   login() {
-    
+
     const cleanPassword = this.password.trim();
 
     this.http.post(`${this.api}/admin-login`, { password: cleanPassword })
       .subscribe({
         next: (res: any) => {
           this.token = res.token;
-
-          localStorage.setItem('adminToken', this.token);
-
           this.isLoggedIn = true;
           this.loadData();
         },
         error: () => alert('Wrong password ❌')
       });
-      
   }
 
   // 📊 LOAD DATA
@@ -115,10 +81,10 @@ export class AdminComponent {
       });
   }
 
-  // 🔓 LOGOUT
+  // 🔓 LOGOUT (🔥 FORCE PASSWORD AGAIN)
   logout() {
-    localStorage.removeItem('adminToken');
     this.isLoggedIn = false;
+    this.token = '';
     this.password = '';
     this.users = [];
     this.purchases = [];

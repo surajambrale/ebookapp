@@ -108,21 +108,26 @@ app.get('/admin/purchases', verifyAdmin, async (req, res) => {
 
     const purchases = await Purchase.find();
 
-    const users = await User.find();
+    const result = await Promise.all(
+      purchases.map(async (p) => {
 
-    const result = purchases.map(p => {
+        let user = null;
 
-      const user = users.find(u => u._id.toString() === p.userId);
+        // 🔥 FIX: ObjectId conversion
+        if (mongoose.Types.ObjectId.isValid(p.userId)) {
+          user = await User.findById(p.userId);
+        }
 
-      return {
-        _id: p._id,
-        bookId: p.bookId,
-        paymentId: p.paymentId,
+        return {
+          _id: p._id,
+          bookId: p.bookId,
+          paymentId: p.paymentId,
 
-        userName: user ? user.name : "Unknown",
-        userPhone: user ? user.phone : "N/A"
-      };
-    });
+          userName: user ? user.name : "Unknown",
+          userPhone: user ? user.phone : "N/A"
+        };
+      })
+    );
 
     res.json(result);
 

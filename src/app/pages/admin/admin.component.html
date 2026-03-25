@@ -10,10 +10,14 @@
   <!-- 📊 DASHBOARD -->
   <div *ngIf="isLoggedIn">
 
+    <button (click)="logout()" style="margin-bottom: 20px; background: red; color: white;">
+      Logout
+    </button>
+
     <h2>Users</h2>
     <div *ngFor="let user of users" class="card">
-      <input [(ngModel)]="user.name">
-      <input [(ngModel)]="user.phone">
+      <p><b>Name:</b> {{user.name}}</p>
+      <p><b>Phone:</b> {{user.phone}}</p>
 
       <button (click)="deleteUser(user._id)">Delete</button>
     </div>
