@@ -23,9 +23,10 @@
           Read Book
         </button>
 
-        <button class="buy" *ngIf="!hasAccess" (click)="buyBook()">
-          Buy Now
-        </button>
+        <button (click)="buyBook()" [disabled]="isLoading">
+  <span *ngIf="!isLoading">Buy Now</span>
+  <span *ngIf="isLoading" class="btn-loader"></span>
+</button>
 
       </div>
 

@@ -16,7 +16,8 @@ export class BookDetailComponent {
 
   book: any;
   hasAccess: boolean = false;
-  loading: boolean = false; // 🔥 UX improvement
+
+  isLoading: boolean = false; // 🔥 single loader use
   apiUrl = environment.apiUrl;
 
   books = [
@@ -39,6 +40,7 @@ export class BookDetailComponent {
   ) {}
 
   ngOnInit() {
+
     const id = this.route.snapshot.params['id'];
     this.book = this.books.find(b => b.id == id);
 
@@ -48,26 +50,29 @@ export class BookDetailComponent {
       return;
     }
 
-          const user = this.auth.getUser();
-        
-    // 🔐 CHECK PURCHASE
+    const user = this.auth.getUser();
+
+    // 🔐 CHECK ACCESS
     if (user && user._id) {
       this.http.get(`${this.apiUrl}/check/${user._id}/${this.book.id}`)
         .subscribe({
           next: (res: any) => {
             this.hasAccess = res.access;
           },
-          error: () => {
-            console.log('Access check failed');
-          }
+          error: () => console.log('Access check failed')
         });
     }
   }
-  isLoading = false;
-  // 💳 PAYMENT
+
+  // 💳 BUY BOOK
   buyBook() {
 
+    // 🔴 NOT LOGGED IN → LOGIN PAGE
     if (!this.auth.isLoggedIn()) {
+
+      // 🔥 redirect after login
+      localStorage.setItem('redirectAfterLogin', `/book/${this.book.id}`);
+
       this.router.navigate(['/login']);
       return;
     }
@@ -80,16 +85,17 @@ export class BookDetailComponent {
       return;
     }
 
-    this.loading = true;
+    this.isLoading = true;
 
     // 🧾 CREATE ORDER
     this.http.post(`${this.apiUrl}/create-order`, {
       amount: this.book.price
     }).subscribe({
+
       next: (order: any) => {
 
         const options: any = {
-          key: "rzp_test_STqAGoxV34Jsne",
+          key: "rzp_test_STqAGoxV34Jsne", // 🔴 LIVE me change karna
           amount: order.amount,
           currency: "INR",
           name: "SS Builds",
@@ -106,20 +112,20 @@ export class BookDetailComponent {
               userId: user._id,
               bookId: this.book.id.toString()
             }).subscribe({
+
               next: () => {
+
                 this.isLoading = false;
-                
+
                 alert('Payment Successful 🎉');
 
                 this.hasAccess = true;
-                this.loading = false;
 
                 this.router.navigate(['/read', this.book.id]);
               },
+
               error: () => {
-                this.loading = false;
                 this.isLoading = false;
-                
                 alert('Payment verification failed ❌');
               }
             });
@@ -127,9 +133,8 @@ export class BookDetailComponent {
 
           modal: {
             ondismiss: () => {
-              this.loading = false;
-              
-              console.log('Payment popup closed');
+              this.isLoading = false;
+              console.log('Payment closed');
             }
           },
 
@@ -139,17 +144,17 @@ export class BookDetailComponent {
           },
 
           theme: {
-            color: "#3399cc"
+            color: "#0f172a"
           }
         };
 
         const rzp = new (window as any).Razorpay(options);
+        this.isLoading = false;
         rzp.open();
-
       },
+
       error: () => {
-        this.loading = false;
-        (window as any).appLoader = false;
+        this.isLoading = false;
         alert('Order creation failed ❌');
       }
     });

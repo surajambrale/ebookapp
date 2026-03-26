@@ -15,6 +15,7 @@ export class LoginComponent {
   name = '';
   phone = '';
   isRegisterMode = true;
+  isLoading = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -22,30 +23,35 @@ export class LoginComponent {
     this.isRegisterMode = !this.isRegisterMode;
   }
 
-  // 🔥 CLEAN PHONE (IMPORTANT)
   cleanPhone(phone: string) {
     return phone.replace(/\D/g, '');
   }
-  isLoading = false;
+
   submit() {
 
     const cleanPhone = this.cleanPhone(this.phone);
-    this.isLoading = true; // 🔥 START LOADER
-    (window as any).appLoader = true; // 🔥 START
+
+    // 🔴 VALIDATION
+    if (!cleanPhone || (this.isRegisterMode && !this.name)) {
+      alert('Please fill all fields ❌');
+      return;
+    }
+
+    this.isLoading = true;
+
     if (this.isRegisterMode) {
 
       this.auth.register({ name: this.name, phone: cleanPhone })
         .subscribe({
           next: () => {
-            // this.isLoading = false;
-            (window as any).appLoader = false;
+            this.isLoading = false;
             alert('Registered! Now login');
             this.isRegisterMode = false;
           },
           error: () => {
-           (window as any).appLoader = false;
-          alert('User already exists');
-        }
+            this.isLoading = false;
+            alert('User already exists ❌');
+          }
         });
 
     } else {
@@ -53,15 +59,23 @@ export class LoginComponent {
       this.auth.login({ phone: cleanPhone })
         .subscribe({
           next: (res: any) => {
-            (window as any).appLoader = false;
+            this.isLoading = false;
             this.auth.saveToken(res.token);
             this.auth.saveUser(res.user);
-            this.router.navigate(['/']);
+
+            // 🔥 redirect after login
+            const redirect = localStorage.getItem('redirectAfterLogin');
+            if (redirect) {
+              localStorage.removeItem('redirectAfterLogin');
+              this.router.navigate([redirect]);
+            } else {
+              this.router.navigate(['/']);
+            }
           },
           error: () => {
-          (window as any).appLoader = false;
-          alert('User not found');
-        }
+            this.isLoading = false;
+            alert('User not found ❌');
+          }
         });
     }
   }
