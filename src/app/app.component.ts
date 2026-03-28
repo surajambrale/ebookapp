@@ -27,8 +27,14 @@ openSidebar = () => {
     this.sidebarOpen.set(true);
   };
 
-  ngDoCheck() {
-  this.isLoading = (window as any).appLoader || false;
+//   ngDoCheck() {
+//   this.isLoading = (window as any).appLoader || false;
+// }
+
+ngOnInit() {
+  setInterval(() => {
+    this.isLoading = (window as any).appLoader || false;
+  }, 100);
 }
 
 }
