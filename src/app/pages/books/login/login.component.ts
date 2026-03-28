@@ -23,11 +23,12 @@ export class LoginComponent {
     this.isRegisterMode = !this.isRegisterMode;
   }
 
+  // 🔥 CLEAN PHONE
   cleanPhone(phone: string) {
     return phone.replace(/\D/g, '');
   }
 
-// 🔥 VALIDATE PHONE
+  // 🔥 VALIDATE PHONE
   isValidPhone(phone: string) {
     return /^[0-9]{10}$/.test(phone);
   }
@@ -37,8 +38,13 @@ export class LoginComponent {
     const cleanPhone = this.cleanPhone(this.phone);
 
     // 🔴 VALIDATION
-    if (!cleanPhone || (this.isRegisterMode && !this.name)) {
-      alert('Enter valid 10 digit phone number ');
+    if (!this.isValidPhone(cleanPhone)) {
+      alert('Enter valid 10 digit phone number ❌');
+      return;
+    }
+
+    if (this.isRegisterMode && !this.name.trim()) {
+      alert('Name required ❌');
       return;
     }
 
@@ -46,11 +52,11 @@ export class LoginComponent {
 
     if (this.isRegisterMode) {
 
-      this.auth.register({ name: this.name, phone: cleanPhone })
+      this.auth.register({ name: this.name.trim(), phone: cleanPhone })
         .subscribe({
           next: () => {
             this.isLoading = false;
-            alert('Registered! Now login');
+            alert('Registered successfully ✅ Please login');
             this.isRegisterMode = false;
           },
           error: () => {
@@ -67,15 +73,7 @@ export class LoginComponent {
             this.isLoading = false;
             this.auth.saveToken(res.token);
             this.auth.saveUser(res.user);
-
-            // 🔥 redirect after login
-            const redirect = localStorage.getItem('redirectAfterLogin');
-            if (redirect) {
-              localStorage.removeItem('redirectAfterLogin');
-              this.router.navigate([redirect]);
-            } else {
-              this.router.navigate(['/']);
-            }
+            this.router.navigate(['/']);
           },
           error: () => {
             this.isLoading = false;
