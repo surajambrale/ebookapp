@@ -215,10 +215,19 @@ app.post('/login', async (req, res) => {
 
 // ================= PAYMENT =================
 
+//test key
+// const razorpay = new Razorpay({
+//   key_id: "rzp_test_STqAGoxV34Jsne",
+//   key_secret: "bfoAQJK911f9COnmbCndvYk5"
+// });
+//test key
+
+//live key
 const razorpay = new Razorpay({
-  key_id: "rzp_test_STqAGoxV34Jsne",
-  key_secret: "bfoAQJK911f9COnmbCndvYk5"
+  key_id: "rzp_live_SWeBwjvwGx2bSP",
+  key_secret: "B1sb1uMvujMNwnGJ5aSlHx5Z"
 });
+//live key
 
 // CREATE ORDER
 app.post('/create-order', async (req, res) => {
@@ -251,7 +260,8 @@ app.post('/verify-payment', async (req, res) => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", "bfoAQJK911f9COnmbCndvYk5")
+      // .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //testing key. "secret key".
+      .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //live key. "secret key" add karna hai ider.
       .update(body.toString())
       .digest("hex");
 
