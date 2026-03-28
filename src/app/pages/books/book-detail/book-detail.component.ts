@@ -25,10 +25,10 @@ export class BookDetailComponent {
       id: 1,
       title: "Complete Fat Loss Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 399,
+      price: 199,
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg",
-      description: "Welcome to the Complete Fitness & Nutrition program..."
+      description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
     }
   ];
 

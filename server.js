@@ -164,6 +164,15 @@ app.post('/register', async (req, res) => {
   try {
     const { name, phone } = req.body;
 
+     // 🔴 VALIDATE PHONE
+    if (!/^[0-9]{10}$/.test(phone)) {
+      return res.status(400).json({ message: 'Invalid phone number' });
+    }
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Name required' });
+    }
+
     const existing = await User.findOne({ phone });
 
     if (existing) {
@@ -183,6 +192,10 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { phone } = req.body;
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+      return res.status(400).json({ message: 'Invalid phone' });
+    }
 
     const user = await User.findOne({ phone });
 

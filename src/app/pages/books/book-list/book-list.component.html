@@ -17,7 +17,12 @@
           ⭐⭐⭐⭐☆ <span>{{ book.reviews }}</span>
         </div>
 
-        <p class="price">₹{{ book.price }}</p>
+        <!-- <p class="price">₹{{ book.price }}</p> -->
+         <p class="price">
+  ₹{{ book.price }}
+  <span class="original-price">₹{{ book.originalPrice }}</span>
+  <!-- <span class="discount">60% OFF</span> -->
+</p>
       </div>
 
     </div>

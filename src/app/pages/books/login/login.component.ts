@@ -27,13 +27,18 @@ export class LoginComponent {
     return phone.replace(/\D/g, '');
   }
 
+// 🔥 VALIDATE PHONE
+  isValidPhone(phone: string) {
+    return /^[0-9]{10}$/.test(phone);
+  }
+
   submit() {
 
     const cleanPhone = this.cleanPhone(this.phone);
 
     // 🔴 VALIDATION
     if (!cleanPhone || (this.isRegisterMode && !this.name)) {
-      alert('Please fill all fields ❌');
+      alert('Enter valid 10 digit phone number ');
       return;
     }
 

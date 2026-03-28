@@ -15,13 +15,15 @@ export class BookListComponent {
 
   books = [
     {
-      id: 1,
-      title: "Complete Fat Loss Guide",
-      author: "Suraj Ambrale -Nutritionist | Fitness Trainer",
-      price: 399,
-      reviews: 19,
-      image: "assets/images/fatloss-book.jpeg"
-    },
+    id: 1,
+    title: "Complete Fat Loss Guide",
+    author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+    price: 199,              // 🔥 offer price
+    originalPrice: 499,      // 🔥 cut price
+    reviews: 19,
+    image: "assets/images/fatloss-book.jpeg",
+    description: "Welcome to the Complete Fitness & Nutrition program..."
+  },
     // {
     //   id: 2,
     //   title: "Law Maker",

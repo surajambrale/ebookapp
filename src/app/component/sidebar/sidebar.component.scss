@@ -77,7 +77,7 @@
       // 🔥 hover effect
       &:hover {
         color: #fff;
-        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        background: linear-gradient(135deg, #fe0d05, #d9a5a3);
         transform: translateX(-5px);
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       }
@@ -93,7 +93,7 @@
         width: 3px;
         height: 0;
 
-        background: #00c6ff;
+        background: #fcfcfc;
 
         transition: 0.3s;
       }

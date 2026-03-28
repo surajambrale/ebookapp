@@ -51,11 +51,34 @@
         color: #ff9900;
       }
 
+      // .price {
+      //   font-weight: bold;
+      //   margin-top: 4px;
+      //   color: green;
+      // }
+
+//       .discount {
+//   font-size: 12px;
+//   color: #dc2626;
+//   font-weight: 600;
+// }
+
       .price {
-        font-weight: bold;
-        margin-top: 4px;
-        color: green;
-      }
+  font-size: 18px;
+  font-weight: 600;
+  color: #16a34a; // 🔥 green offer price
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .original-price {
+    font-size: 14px;
+    color: #888;
+
+    text-decoration: line-through; // 🔥 cut effect
+  }
+}
     }
   }
 }
