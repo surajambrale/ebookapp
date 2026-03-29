@@ -21,7 +21,8 @@ app.use(cors({
 app.use(express.json());
 
 const SECRET = "secret123";
-const ADMIN_PASSWORD = "admin123";
+// const ADMIN_PASSWORD = "admin123";
+const ADMIN_PASSWORD = "shreeswamisamarth";
 
 
 // ================= ADMIN =================
