@@ -295,6 +295,15 @@ app.get('/check/:userId/:bookId', async (req, res) => {
   res.json({ access: !!purchase });
 });
 
+//uptime robot
+
+// 🔥 KEEP ALIVE API (for Uptime Robot)
+app.get('/ping', (req, res) => {
+  res.status(200).send("Server alive 🚀");
+});
+
+//uptime robot
+
 app.get('/book/:userId/:bookId', async (req, res) => {
   try {
     const purchase = await Purchase.findOne({
