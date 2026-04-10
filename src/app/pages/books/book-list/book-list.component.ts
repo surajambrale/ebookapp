@@ -18,7 +18,7 @@ export class BookListComponent {
     id: 1,
     title: "Complete Fat Loss Guide",
     author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-    price: 199,              // 🔥 offer price
+    price: 1,              // 🔥 offer price
     originalPrice: 499,      // 🔥 cut price
     reviews: 19,
     image: "assets/images/fatloss-book.jpeg",
