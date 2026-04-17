@@ -38,9 +38,18 @@ export class BookDetailComponent {
       reviews: 19,
       image: "assets/images/1500-cal-diet.jpg",
       description: "Healthy Diet Plan for Regular People Who Want to Stay Fit. Struggling to stay fit because of a busy lifestyle, irregular meals, or confusion about what to eat? This ebook is designed especially for you. This is not a complicated or extreme diet plan. It’s a simple, practical, and realistic guide that helps you stay fit using everyday foods. Whether you are a working professional, student, or someone who just wants to feel better and look healthier—this plan is easy to follow and sustainable. Inside this ebook, you will discover: A clear understanding of what a healthy diet actually means. Simple explanation of Low GI & Low GL foods. A ready-to-follow 1500 calorie diet plan using Indian foods. Benefits like fat loss, stable energy, and better digestion. Easy tips for long-term results without stress. This ebook focuses on consistency, not perfection. No fancy foods, no strict rules—just real results with real food. If you follow this plan regularly, you will feel lighter, more energetic, and more in control of your health.  "
+    },
+     {
+      id: 3,
+      title: "Habits That Change Your Life",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      reviews: 19,
+      image: "assets/images/habits.jpg",
+      description: "Habits That Change Your Life is a practical and easy-to-follow guide designed to help you improve your daily routine and transform your life step by step. This ebook focuses on simple habits that anyone can follow-no complicated systems, no unrealistic advice. From building a powerful morning routine to improving your physical health, mental strength, productivity, and discipline, this book covers everything you need to become a better version of yourself. Written by Suraj Ambrale, Certified Nutritionist and Fitness Coach, this guide is based on real-life experience and practical strategies that actually work. Whether your goal is to stay fit, become more productive, or develop a strong mindset, this ebook gives you clear direction. If you are someone who wants to improve your life but doesn’t know where to start, this book will help you take the first step—and stay consistent. This is not just a book, it’s a daily action plan for a better life.  "
     }
   ];
-
+  
   constructor(
     private route: ActivatedRoute,
     private router: Router,
