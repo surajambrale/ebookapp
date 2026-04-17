@@ -29,6 +29,15 @@ export class BookDetailComponent {
       reviews: 19,
       image: "assets/images/fatloss-book.jpeg",
       description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
+    },
+    {
+      id: 2,
+      title: "1500-Calorie Diet Plan",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      reviews: 19,
+      image: "assets/images/1500-cal-diet.jpg",
+      description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term resulHealthy Diet Plan for Regular People Who Want to Stay Fit. Struggling to stay fit because of a busy lifestyle, irregular meals, or confusion about what to eat? This ebook is designed especially for you. This is not a complicated or extreme diet plan. It’s a simple, practical, and realistic guide that helps you stay fit using everyday foods. Whether you are a working professional, student, or someone who just wants to feel better and look healthier—this plan is easy to follow and sustainable. Inside this ebook, you will discover: A clear understanding of what a healthy diet actually means. Simple explanation of Low GI & Low GL foods. A ready-to-follow 1500 calorie diet plan using Indian foods. Benefits like fat loss, stable energy, and better digestion. Easy tips for long-term results without stress. This ebook focuses on consistency, not perfection. No fancy foods, no strict rules—just real results with real food. If you follow this plan regularly, you will feel lighter, more energetic, and more in control of your health.  "
     }
   ];
 

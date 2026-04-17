@@ -24,14 +24,16 @@ export class BookListComponent {
     image: "assets/images/fatloss-book.jpeg",
     description: "Welcome to the Complete Fitness & Nutrition program..."
   },
-    // {
-    //   id: 2,
-    //   title: "Law Maker",
-    //   author: "Susie Tate",
-    //   price: 299,
-    //   reviews: 6505,
-    //   image: "assets/images/fatloss-book.jpeg"
-    // },
+    {
+      id: 2,
+      title: "1500-Calorie Diet Plan",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      originalPrice: 499,
+      reviews: 6505,
+      image: "assets/images/1500-cal-diet.jpg",
+      description: "Healthy Diet Plan for Regular People Who Want to Stay Fit"
+    }
     // {
     //   id: 2,
     //   title: "Law Maker",
