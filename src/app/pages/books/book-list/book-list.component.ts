@@ -39,10 +39,30 @@ export class BookListComponent {
       title: "Habits That Change Your Life",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 1,
-      originalPrice: 499,
+      originalPrice: 499, 
       reviews: 6505,
       image: "assets/images/habits.jpg",
       description: "Small habits. Big changes. Build discipline, grow daily, and transform your life."
+    },
+    {
+      id: 4,
+      title: "Begginer Guide",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      originalPrice: 499, 
+      reviews: 6505,
+      image: "assets/images/beginner-guide.jpg",
+      description: "Complete beginner Guide..."
+    },
+    {
+      id: 5,
+      title: "Diabetes Control",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      originalPrice: 499, 
+      reviews: 6505,
+      image: "assets/images/diabetes-control.jpg",
+      description: "Control your diabetes..."
     }
    
   ];

@@ -47,6 +47,24 @@ export class BookDetailComponent {
       reviews: 19,
       image: "assets/images/habits.jpg",
       description: "Habits That Change Your Life is a practical and easy-to-follow guide designed to help you improve your daily routine and transform your life step by step. This ebook focuses on simple habits that anyone can follow-no complicated systems, no unrealistic advice. From building a powerful morning routine to improving your physical health, mental strength, productivity, and discipline, this book covers everything you need to become a better version of yourself. Written by Suraj Ambrale, Certified Nutritionist and Fitness Coach, this guide is based on real-life experience and practical strategies that actually work. Whether your goal is to stay fit, become more productive, or develop a strong mindset, this ebook gives you clear direction. If you are someone who wants to improve your life but doesn’t know where to start, this book will help you take the first step—and stay consistent. This is not just a book, it’s a daily action plan for a better life.  "
+    },
+    {
+      id: 4,
+      title: "Beginner Guide",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      reviews: 19,
+      image: "assets/images/beginner-guide.jpg",
+      description: "Complete beginner guide. follow and transform yourself. basic to advance. "
+    },
+    {
+      id: 5,
+      title: "Diabeted Control",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      reviews: 19,
+      image: "assets/images/habits.jpg",
+      description: "A Complete Guide to Manage Blood Sugar Naturally is a practical and easy-to-follow guide designed for anyone struggling with diabetes or pre-diabetes. In today’s fast-paced lifestyle, managing blood sugar can feel confusing and overwhelming. This ebook simplifies everything by giving you clear, real-life solutions that actually work. Instead of complicated medical terms, it focuses on simple habits, daily routines, and smart lifestyle changes that you can start immediately. Inside this guide, you will learn: What to do after being diagnosed with diabetes. How to manage your blood sugar naturally without extreme dieting. The right foods to eat and what to avoid. A beginner-friendly workout plan for both men and women. A complete daily routine to stay consistent. How sleep, stress, and lifestyle impact your condition. This ebook is not about quick fixes. It’s about building a sustainable lifestyle that helps you take control of your health for the long term. Whether you are just starting your journey or trying to improve your current routine, this guide will act like a personal coach, helping you make better choices every day.Take control of your habits, and you can take control of your diabetes.  "
     }
   ];
   
