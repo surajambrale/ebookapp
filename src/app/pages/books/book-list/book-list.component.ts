@@ -63,6 +63,16 @@ export class BookListComponent {
       reviews: 6505,
       image: "assets/images/diabetes-control.jpg",
       description: "Control your diabetes..."
+    },
+    {
+      id: 6,
+      title: "PCOD / PCOS Guide",
+      author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
+      price: 1,
+      originalPrice: 499, 
+      reviews: 6505,
+      image: "assets/images/pcod.jpg",
+      description: "A Complete Guide for Women to Balance Hormones Naturally."
     }
    
   ];
