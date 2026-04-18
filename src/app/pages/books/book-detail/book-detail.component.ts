@@ -72,7 +72,7 @@ export class BookDetailComponent {
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 1,
       reviews: 19,
-      image: "assets/images/diabetes-control.jpg",
+      image: "assets/images/pcod.jpg",
       description: "A Complete Guide for Women to Balance Hormones Naturally is a simple, practical, and beginner-friendly guide designed to help women take control of their hormonal health. In today’s fast-paced lifestyle, PCOD/PCOS has become very common—but the right knowledge and habits can completely change the game. This ebook breaks down everything in an easy-to-understand way, from understanding the condition to managing it through diet, workouts, and daily routines. If you’re struggling with irregular periods, weight gain, acne, or low energy—this guide will show you exactly what to do. "
     }
   ];
