@@ -25,8 +25,8 @@ export class BookDetailComponent {
       id: 1,
       title: "Complete Fat Loss Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      reviews: 19,
+      price: 49,
+      reviews: 24,
       image: "assets/images/fatloss-book.jpeg",
       description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
     },
@@ -34,7 +34,7 @@ export class BookDetailComponent {
       id: 2,
       title: "1500-Calorie Diet Plan",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
+      price: 49,
       reviews: 19,
       image: "assets/images/1500-cal-diet.jpg",
       description: "Healthy Diet Plan for Regular People Who Want to Stay Fit. Struggling to stay fit because of a busy lifestyle, irregular meals, or confusion about what to eat? This ebook is designed especially for you. This is not a complicated or extreme diet plan. It’s a simple, practical, and realistic guide that helps you stay fit using everyday foods. Whether you are a working professional, student, or someone who just wants to feel better and look healthier—this plan is easy to follow and sustainable. Inside this ebook, you will discover: A clear understanding of what a healthy diet actually means. Simple explanation of Low GI & Low GL foods. A ready-to-follow 1500 calorie diet plan using Indian foods. Benefits like fat loss, stable energy, and better digestion. Easy tips for long-term results without stress. This ebook focuses on consistency, not perfection. No fancy foods, no strict rules—just real results with real food. If you follow this plan regularly, you will feel lighter, more energetic, and more in control of your health.  "
@@ -43,8 +43,8 @@ export class BookDetailComponent {
       id: 3,
       title: "Habits That Change Your Life",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      reviews: 19,
+      price: 49,
+      reviews: 30,
       image: "assets/images/habits.jpg",
       description: "Habits That Change Your Life is a practical and easy-to-follow guide designed to help you improve your daily routine and transform your life step by step. This ebook focuses on simple habits that anyone can follow-no complicated systems, no unrealistic advice. From building a powerful morning routine to improving your physical health, mental strength, productivity, and discipline, this book covers everything you need to become a better version of yourself. Written by Suraj Ambrale, Certified Nutritionist and Fitness Coach, this guide is based on real-life experience and practical strategies that actually work. Whether your goal is to stay fit, become more productive, or develop a strong mindset, this ebook gives you clear direction. If you are someone who wants to improve your life but doesn’t know where to start, this book will help you take the first step—and stay consistent. This is not just a book, it’s a daily action plan for a better life.  "
     },
@@ -52,8 +52,8 @@ export class BookDetailComponent {
       id: 4,
       title: "Beginner Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      reviews: 19,
+      price: 49,
+      reviews: 21,
       image: "assets/images/beginner-guide.jpg",
       description: "Complete beginner guide. follow and transform yourself. basic to advance. "
     },
@@ -61,8 +61,8 @@ export class BookDetailComponent {
       id: 5,
       title: "Diabeted Control",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      reviews: 19,
+      price: 49,
+      reviews: 34,
       image: "assets/images/diabetes-control.jpg",
       description: "A Complete Guide to Manage Blood Sugar Naturally is a practical and easy-to-follow guide designed for anyone struggling with diabetes or pre-diabetes. In today’s fast-paced lifestyle, managing blood sugar can feel confusing and overwhelming. This ebook simplifies everything by giving you clear, real-life solutions that actually work. Instead of complicated medical terms, it focuses on simple habits, daily routines, and smart lifestyle changes that you can start immediately. Inside this guide, you will learn: What to do after being diagnosed with diabetes. How to manage your blood sugar naturally without extreme dieting. The right foods to eat and what to avoid. A beginner-friendly workout plan for both men and women. A complete daily routine to stay consistent. How sleep, stress, and lifestyle impact your condition. This ebook is not about quick fixes. It’s about building a sustainable lifestyle that helps you take control of your health for the long term. Whether you are just starting your journey or trying to improve your current routine, this guide will act like a personal coach, helping you make better choices every day.Take control of your habits, and you can take control of your diabetes.  "
     },
@@ -70,10 +70,19 @@ export class BookDetailComponent {
       id: 6,
       title: "PCOD / PCOS Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      reviews: 19,
+      price: 49,
+      reviews: 35,
       image: "assets/images/pcod.jpg",
       description: "A Complete Guide for Women to Balance Hormones Naturally is a simple, practical, and beginner-friendly guide designed to help women take control of their hormonal health. In today’s fast-paced lifestyle, PCOD/PCOS has become very common—but the right knowledge and habits can completely change the game. This ebook breaks down everything in an easy-to-understand way, from understanding the condition to managing it through diet, workouts, and daily routines. If you’re struggling with irregular periods, weight gain, acne, or low energy—this guide will show you exactly what to do. "
+    },
+    {
+      id: 7,
+      title: "Admin Testing",
+      author: "Admin Testing",
+      price: 1,
+      reviews: 19,
+      image: "assets/images/admin-testing-book.jpg",
+      description: "Admin Testing Book, don't buy this book."
     }
   ];
   

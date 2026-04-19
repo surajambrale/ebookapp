@@ -18,9 +18,9 @@ export class BookListComponent {
     id: 1,
     title: "Complete Fat Loss Guide",
     author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-    price: 1,              // 🔥 offer price
-    originalPrice: 499,      // 🔥 cut price
-    reviews: 19,
+    price: 49,              // 🔥 offer price
+    originalPrice: 399,      // 🔥 cut price
+    reviews: 24,
     image: "assets/images/fatloss-book.jpeg",
     description: "Welcome to the Complete Fitness & Nutrition program..."
   },
@@ -28,9 +28,9 @@ export class BookListComponent {
       id: 2,
       title: "1500-Calorie Diet Plan",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      originalPrice: 499,
-      reviews: 6505,
+      price: 49,
+      originalPrice: 299,
+      reviews: 19,
       image: "assets/images/1500-cal-diet.jpg",
       description: "Healthy Diet Plan for Regular People Who Want to Stay Fit"
     },
@@ -38,9 +38,9 @@ export class BookListComponent {
       id: 3,
       title: "Habits That Change Your Life",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      originalPrice: 499, 
-      reviews: 6505,
+      price: 49,
+      originalPrice: 199, 
+      reviews: 30,
       image: "assets/images/habits.jpg",
       description: "Small habits. Big changes. Build discipline, grow daily, and transform your life."
     },
@@ -48,9 +48,9 @@ export class BookListComponent {
       id: 4,
       title: "Begginer Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
-      originalPrice: 499, 
-      reviews: 6505,
+      price: 49,
+      originalPrice: 399, 
+      reviews: 21,
       image: "assets/images/beginner-guide.jpg",
       description: "Complete beginner Guide..."
     },
@@ -58,9 +58,9 @@ export class BookListComponent {
       id: 5,
       title: "Diabetes Control",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
+      price: 49,
       originalPrice: 499, 
-      reviews: 6505,
+      reviews: 34,
       image: "assets/images/diabetes-control.jpg",
       description: "Control your diabetes..."
     },
@@ -68,10 +68,20 @@ export class BookListComponent {
       id: 6,
       title: "PCOD / PCOS Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 1,
+      price: 49,
       originalPrice: 499, 
-      reviews: 6505,
+      reviews: 35,
       image: "assets/images/pcod.jpg",
+      description: "A Complete Guide for Women to Balance Hormones Naturally."
+    },
+     {
+      id: 7,
+      title: "Admin Testing Book",
+      author: "Admin",
+      price: 1,
+      originalPrice: 0, 
+      reviews: 0,
+      image: "assets/images/admin-testing-book.jpg",
       description: "A Complete Guide for Women to Balance Hormones Naturally."
     }
    

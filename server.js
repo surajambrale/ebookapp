@@ -22,7 +22,7 @@ app.use(express.json());
 
 const SECRET = "secret123";
 // const ADMIN_PASSWORD = "admin123";
-const ADMIN_PASSWORD = "shreeswamisamarth";
+const ADMIN_PASSWORD = "swami-sai-(],1403()/,";
 
 
 // ================= ADMIN =================
