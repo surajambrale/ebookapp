@@ -125,7 +125,7 @@ export class AdminComponent {
   }
 
   getBookName(id: string) {
-    if (id == '1') return 'Fat Loss Guide';
-    return 'Unknown Book';
-  }
+  const book = this.books.find(b => b.id.toString() === id.toString());
+  return book ? book.name : 'Unknown';
+}
 }
