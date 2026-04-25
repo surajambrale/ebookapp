@@ -14,6 +14,28 @@
       Logout
     </button>
 
+    <!-- 🔥 CENTRAL ACCESS CONTROL -->
+    <div class="card" style="margin-bottom: 20px;">
+      <h3>Grant Book Access</h3>
+
+      <select [(ngModel)]="selectedUser">
+        <option value="">Select User</option>
+        <option *ngFor="let u of users" [value]="u._id">
+          {{ u.name }} ({{ u.phone }})
+        </option>
+      </select>
+
+      <select [(ngModel)]="selectedBook">
+        <option value="">Select Book</option>
+        <option *ngFor="let b of books" [value]="b.id">
+          {{ b.name }}
+        </option>
+      </select>
+
+      <button (click)="grantAccess()">Give Access</button>
+    </div>
+<!-- 🔥 CENTRAL ACCESS CONTROL -->
+
     <h2>Users</h2>
     <div *ngFor="let user of users" class="card">
       <p><b>Name:</b> {{user.name}}</p>

@@ -326,6 +326,51 @@ app.get('/book/:userId/:bookId', async (req, res) => {
   }
 });
 
+// 📚 BOOK LIST
+const books = [
+  { id: "1", name: "Complete Fat Loss Guide" },
+  { id: "2", name: "1500-Calories Diet Plan" },
+  { id: "3", name: "Habits That Change Your Life" },
+  { id: "4", name: "Beginner Guide" },
+  { id: "5", name: "Diabetes Control" },
+  { id: "6", name: "PCOD / PCOS Guide" }
+];
+
+// 📚 GET BOOKS
+app.get('/admin/books', verifyAdmin, (req, res) => {
+  res.json(books);
+});
+
+//grant access api for admin panel
+app.post('/admin/grant-access', verifyAdmin, async (req, res) => {
+  try {
+    const { userId, bookId } = req.body;
+
+    if (!userId || !bookId) {
+      return res.status(400).json({ message: "Missing data" });
+    }
+
+    const exists = await Purchase.findOne({ userId, bookId });
+
+    if (exists) {
+      return res.status(400).json({ message: "Already has access" });
+    }
+
+    await Purchase.create({
+      userId,
+      bookId,
+      paymentId: "admin_manual",
+      orderId: "admin_manual"
+    });
+
+    res.json({ message: "Access granted ✅" });
+
+  } catch {
+    res.status(500).json({ message: "Error ❌" });
+  }
+});
+//grant access api for admin panel
+
 
 // ================= START =================
 

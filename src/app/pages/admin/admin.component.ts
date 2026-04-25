@@ -18,6 +18,9 @@ export class AdminComponent {
 
   users: any[] = [];
   purchases: any[] = [];
+  books: any[] = [];
+  selectedUser = '';
+  selectedBook = '';
 
   api = environment.apiUrl;
 
@@ -51,7 +54,38 @@ export class AdminComponent {
 
     this.http.get(`${this.api}/admin/purchases`, { headers })
       .subscribe((res: any) => this.purchases = res);
+
+      this.http.get(`${this.api}/admin/books`, { headers })
+      .subscribe((res: any) => this.books = res);
   }
+
+   // 🔥 CENTRAL ACCESS CONTROL
+  grantAccess() {
+
+    if (!this.selectedUser || !this.selectedBook) {
+      alert('Select user & book ❌');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: this.token
+    });
+
+    this.http.post(`${this.api}/admin/grant-access`, {
+      userId: this.selectedUser,
+      bookId: this.selectedBook
+    }, { headers }).subscribe({
+      next: () => {
+        alert('Access granted ✅');
+        this.loadData();
+      },
+      error: (err) => {
+        alert(err.error.message || 'Error ❌');
+      }
+    });
+  }
+
+  // 🔥 CENTRAL ACCESS CONTROL
 
   // ❌ DELETE USER
   deleteUser(id: string) {
