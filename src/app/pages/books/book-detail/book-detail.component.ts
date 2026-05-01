@@ -59,7 +59,7 @@ export class BookDetailComponent {
     },
     {
       id: 5,
-      title: "Diabeted Control",
+      title: "Diabetes Control",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       reviews: 34,
