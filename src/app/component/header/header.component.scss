@@ -55,4 +55,44 @@
       }
     }
   }
-  
+
+  //logo code
+//   .logo {
+//   display: flex;
+//   align-items: center;
+//   gap: 10px;
+//   font-size: 22px;
+//   font-weight: bold;
+// }
+
+/* Circle logo */
+// .logo img {
+//   width: 40px;
+//   height: 40px;
+//   border-radius: 50%;   
+//   object-fit: cover;    
+//   border: 2px solid #f5f8f6; 
+// }
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: bold;
+
+  /* Circle logo */
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+
+    padding: 2px; /* border thickness */
+    background: linear-gradient(45deg, #ffd700, #ffffff);
+
+    /* image ko andar properly show karne ke liye */
+    box-sizing: border-box;
+  }
+}
+
