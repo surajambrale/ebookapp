@@ -30,6 +30,37 @@
 
       </div>
 
+      <!-- book preview code start -->
+
+      <!-- 🔥 BOOK PREVIEW -->
+<div class="preview-section" *ngIf="book.previewImages?.length">
+
+  <h3>Preview Pages</h3>
+
+  <div class="slider">
+    <button class="nav-btn left" (click)="prevImage()">‹</button>
+
+    <div class="image-frame">
+    <img [src]="book.previewImages[currentImageIndex]" class="preview-img"
+     (touchstart)="onTouchStart($event)"
+     (touchend)="onTouchEnd($event)"   
+    />
+    </div>
+    
+    <button class="nav-btn right" (click)="nextImage()">›</button>
+  </div>
+
+  <div class="dots">
+    <span *ngFor="let img of book.previewImages; let i = index"
+          [class.active]="i === currentImageIndex"
+          (click)="goToImage(i)">
+    </span>
+  </div>
+
+</div>
+
+  <!-- book preview code end -->
+
       <!-- 🔥 MOVE DESCRIPTION HERE -->
       <div class="description">
         <h3>Book Overview</h3>

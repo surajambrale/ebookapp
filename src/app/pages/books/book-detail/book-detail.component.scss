@@ -163,3 +163,131 @@
     box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
   }
 }
+
+//book preview scss start
+
+.preview-section {
+  margin-top: 20px;
+}
+
+.slider {
+  position: relative;
+  text-align: center;
+}
+
+.preview-section {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.slider {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 🔥 IMAGE FRAME */
+.preview-img {
+  width: 240px; /* 👈 size chota kiya */
+  height: auto;
+  border-radius: 15px;
+
+  /* 🔥 premium frame */
+  border: 3px solid #f1f1f1;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+  transition: transform 0.3s ease;
+}
+
+/* 🔥 hover effect */
+.preview-img:hover {
+  transform: scale(1.05);
+}
+
+/* 🔥 navigation buttons */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  opacity: 0.8;
+  border-radius: 50%;
+}
+
+.left {
+  left: 10px;
+}
+
+.right {
+  right: 10px;
+}
+
+/* 🔥 dots */
+.dots span {
+  width: 8px;
+  height: 8px;
+  margin: 5px;
+  background: #bbb;
+  border-radius: 50%;
+}
+
+.dots span.active {
+  background: #000;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  border-radius: 5px;
+}
+
+.left { left: 0; }
+.right { right: 0; }
+
+.dots {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.dots span {
+  width: 10px;
+  height: 10px;
+  margin: 5px;
+  display: inline-block;
+  background: gray;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.dots span.active {
+  background: black;
+}
+
+.preview-img {
+  touch-action: pan-y; // 🔥 smooth swipe
+  user-select: none;
+}
+
+.image-frame {
+  padding: 10px;
+  border-radius: 20px;
+
+  /* 🔥 gradient frame */
+  background: linear-gradient(135deg, #e0e7ff, #f8fafc);
+
+  display: inline-block;
+}
+//book preview scss end
+
