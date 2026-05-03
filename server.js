@@ -284,13 +284,7 @@ app.post('/verify-payment', async (req, res) => {
       orderId: razorpay_order_id
     });
 
-    res.json({ success: true });
-
-  } catch {
-    res.status(500).json({ message: 'Verification failed' });
-  }
-
-  //notification bot code start
+      //notification bot code start
 
   await sendTelegram(`
 📚 New Book Purchase 🚀
@@ -301,6 +295,14 @@ app.post('/verify-payment', async (req, res) => {
 `);
 
   //notification bot code end
+
+    res.json({ success: true });
+
+  } catch {
+    res.status(500).json({ message: 'Verification failed' });
+  }
+
+
 });
 
 
@@ -394,8 +396,8 @@ app.post('/admin/grant-access', verifyAdmin, async (req, res) => {
 
 async function sendTelegram(msg) {
   try {
-    await axios.post(`https://api.telegram.org/bot${'8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo'}/sendMessage`, {
-      chat_id: 8784405642,
+    await axios.post(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      chat_id: CHAT_ID,
       text: msg
     });
   } catch (err) {
