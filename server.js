@@ -24,6 +24,13 @@ const SECRET = "secret123";
 // const ADMIN_PASSWORD = "admin123";
 const ADMIN_PASSWORD = "swami-sai-(],1403()/,";
 
+// notification bot code start
+const axios = require('axios');
+
+const TELEGRAM_TOKEN = '8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo';
+const CHAT_ID = '8784405642';
+
+// notification bot code end
 
 // ================= ADMIN =================
 
@@ -282,6 +289,18 @@ app.post('/verify-payment', async (req, res) => {
   } catch {
     res.status(500).json({ message: 'Verification failed' });
   }
+
+  //notification bot code start
+
+  await sendTelegram(`
+📚 New Book Purchase 🚀
+
+👤 User: ${userId}
+📖 Book: ${bookId}
+💳 Payment: ${razorpay_payment_id}
+`);
+
+  //notification bot code end
 });
 
 
@@ -369,7 +388,24 @@ app.post('/admin/grant-access', verifyAdmin, async (req, res) => {
     res.status(500).json({ message: "Error ❌" });
   }
 });
-//grant access api for admin panel
+//grant access api for admin panel end
+
+// notification bot code start
+
+async function sendTelegram(msg) {
+  try {
+    await axios.post(`https://api.telegram.org/bot${'8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo'}/sendMessage`, {
+      chat_id: 8784405642,
+      text: msg
+    });
+  } catch (err) {
+    console.log("Telegram error");
+  }
+}
+
+
+// notification bot code end
+
 
 
 // ================= START =================
