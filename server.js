@@ -26,7 +26,6 @@ const SECRET = "secret123";
 const ADMIN_PASSWORD = "swami-sai-(],1403()/,";
 
 // notification bot code start
-const axios = require('axios');
 
 const TELEGRAM_TOKEN = '8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo';
 const CHAT_ID = '8784405642';
