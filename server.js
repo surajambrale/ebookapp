@@ -9,6 +9,10 @@ const axios = require('axios');
 
 const app = express();
 
+// gmail code start
+const nodemailer = require('nodemailer');
+//gmail code end
+
 // 🔐 CORS (IMPORTANT 🔥)
 app.use(cors({
   origin: [
@@ -31,6 +35,40 @@ const TELEGRAM_TOKEN = '8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo';
 const CHAT_ID = '8784405642';
 
 // notification bot code end
+
+// gmail code start
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'ssbuilds.ebooks@gmail.com', // tera email
+    pass: 'qozw ctpd jgtf itdd' // 🔥 app password
+  }
+});
+//gmail code end
+
+//gmail send function start
+
+async function sendEmail({ userName, paymentId, bookId }) {
+  try {
+    await transporter.sendMail({
+      from: 'ssbuilds.ebooks@gmail.com',
+      to: 'ssbuilds.ebooks@gmail.com', // tu khud ko bhej raha hai
+      subject: '📚 New Book Purchase 🚀',
+      html: `
+        <h2>New Purchase Alert</h2>
+        <p><b>User:</b> ${userName}</p>
+        <p><b>Book ID:</b> ${bookId}</p>
+        <p><b>Payment ID:</b> ${paymentId}</p>
+      `
+    });
+
+    console.log("Email sent ✅");
+  } catch (err) {
+    console.log("Email error ❌", err);
+  }
+}
+
+//gmail send function end
 
 // ================= ADMIN =================
 
@@ -267,6 +305,7 @@ app.post('/verify-payment', async (req, res) => {
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
+
     const expectedSignature = crypto
       // .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //testing key. "secret key".
       .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //live key. "secret key" add karna hai ider.
@@ -283,6 +322,19 @@ app.post('/verify-payment', async (req, res) => {
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id
     });
+
+     //gmail send code start
+
+    // user name nikal
+let user = await User.findById(userId);
+
+// 🔥 EMAIL SEND
+await sendEmail({
+  userName: user ? user.name : "Unknown",
+  paymentId: razorpay_payment_id,
+  bookId: bookId
+});
+    //gmail send code end
 
       //notification bot code start
 
