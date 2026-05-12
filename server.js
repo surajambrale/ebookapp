@@ -341,8 +341,8 @@ await sendEmail({
   await sendTelegram(`
 📚 New Book Purchase 🚀
 
-👤 Name: ${userName}
-👤 User: ${userId}
+👤 User: ${user ? user.name : "Unknown"}
+📱 Phone: ${user ? user.phone : "N/A"}
 📖 Book: ${bookId}
 💳 Payment: ${razorpay_payment_id}
 `);
