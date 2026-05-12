@@ -28,7 +28,7 @@ export class BookDetailComponent {
       id: 1,
       title: "Complete Fat Loss Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 24,
       image: "assets/images/fatloss-book.jpeg",
        previewImages: [
@@ -42,7 +42,7 @@ export class BookDetailComponent {
       id: 2,
       title: "1500-Calorie Diet Plan",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 19,
       image: "assets/images/1500-cal-diet.jpg",
       previewImages: [
@@ -56,7 +56,7 @@ export class BookDetailComponent {
       id: 3,
       title: "Habits That Change Your Life",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 30,
       image: "assets/images/habits.jpg",
       previewImages: [
@@ -69,7 +69,7 @@ export class BookDetailComponent {
       id: 4,
       title: "Beginner Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 21,
       image: "assets/images/beginner-guide.jpg",
       previewImages: [
@@ -83,7 +83,7 @@ export class BookDetailComponent {
       id: 5,
       title: "Diabetes Control",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 34,
       image: "assets/images/diabetes-control.jpg",
       previewImages: [
@@ -96,7 +96,7 @@ export class BookDetailComponent {
       id: 6,
       title: "PCOD / PCOS Guide",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-      price: 49,
+      price: 99,
       reviews: 35,
       image: "assets/images/pcod.jpg",
       previewImages: [
