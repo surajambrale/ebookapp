@@ -41,7 +41,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'ssbuilds.ebooks@gmail.com', // tera email
-    pass: 'qozw ctpd jgtf itdd' // 🔥 app password
+    pass: 'qozwctpdjgtfitdd' // 🔥 app password
   }
 });
 //gmail code end
