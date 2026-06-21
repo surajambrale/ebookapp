@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -25,14 +27,15 @@ app.use(cors({
 
 app.use(express.json());
 
-const SECRET = "secret123";
+const SECRET = process.env.JWT_SECRET;
 // const ADMIN_PASSWORD = "admin123";
-const ADMIN_PASSWORD = "swami-sai-(],1403()/,";
+// const ADMIN_PASSWORD = "swami-sai-(],1403()/,";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 // notification bot code start
 
-const TELEGRAM_TOKEN = '8607378258:AAGC66Fr5HOcCsF6G5k9dhH2lGNRqy_8NUo';
-const CHAT_ID = '8784405642';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 // notification bot code end
 
@@ -40,8 +43,8 @@ const CHAT_ID = '8784405642';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'ssbuilds.ebooks@gmail.com', // tera email
-    pass: 'qozwctpdjgtfitdd' // 🔥 app password
+    user: process.env.EMAIL_USER, // tera email
+    pass: process.env.EMAIL_PASS // 🔥 app password
   }
 });
 //gmail code end
@@ -114,7 +117,7 @@ app.get('/admin-verify', verifyAdmin, (req, res) => {
 
 // ================= DB =================
 
-mongoose.connect('mongodb+srv://surajambrale9003:surajebook@cluster.3a07dkd.mongodb.net/bookApp')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
   .catch(err => console.log(err));
 
@@ -308,7 +311,7 @@ app.post('/verify-payment', async (req, res) => {
 
     const expectedSignature = crypto
       // .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //testing key. "secret key".
-      .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //live key. "secret key" add karna hai ider.
+      .createHmac("sha256", process.env.RAZORPAY_SECRET)  //live key. "secret key" add karna hai ider.
       .update(body.toString())
       .digest("hex");
 
