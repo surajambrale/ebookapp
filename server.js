@@ -16,11 +16,20 @@ const nodemailer = require('nodemailer');
 //gmail code end
 
 // 🔐 CORS (IMPORTANT 🔥)
+// app.use(cors({
+//   origin: [
+//     'http://localhost:4200',
+//     'https://ebookapp-gold.vercel.app' ,
+//      'https://ebookapp.onrender.com'
+//   ],
+//   credentials: true
+// }));
+
 app.use(cors({
   origin: [
-    'http://localhost:4200',
-    'https://ebookapp-gold.vercel.app' ,
-     'https://ebookapp.onrender.com'// 🔴 CHANGE THIS
+    process.env.LOCAL_HOST_URL,
+    process.env.FRONTEND_URL,
+    process.env.RENDER_URL
   ],
   credentials: true
 }));
@@ -272,10 +281,16 @@ app.post('/login', async (req, res) => {
 //test key
 
 //live key
+// const razorpay = new Razorpay({
+//   key_id: "rzp_live_SWeBwjvwGx2bSP",
+//   key_secret: "B1sb1uMvujMNwnGJ5aSlHx5Z"
+// });
+
 const razorpay = new Razorpay({
-  key_id: "rzp_live_SWeBwjvwGx2bSP",
-  key_secret: "B1sb1uMvujMNwnGJ5aSlHx5Z"
+  key_id: process.env.RAZORPAY_KEY_ID ,
+  key_secret: process.env.RAZORPAY_SECRET
 });
+
 //live key
 
 // CREATE ORDER
