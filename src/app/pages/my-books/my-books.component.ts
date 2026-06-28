@@ -17,42 +17,55 @@ export class MyBooksComponent implements OnInit {
 
   user: any;
 
- ngOnInit(): void {
+  ngOnInit(): void {
 
-  const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
 
-  if (storedUser) {
+    // 🔥 CHECK LOGIN
+    if (storedUser) {
 
-    this.user = JSON.parse(storedUser);
+      this.user = JSON.parse(storedUser);
 
-    this.loadBooks();
+      console.log("Logged User:", this.user);
+
+      this.loadBooks();
+
+    } else {
+
+      console.log("No user found");
+
+    }
 
   }
 
-}
-
+  // 🔥 LOAD PURCHASED BOOKS
   loadBooks() {
 
-    this.http.get<any[]>(`https://ebookapp.onrender.com/my-books/${this.user._id}`)
-      .subscribe({
+    this.http.get<any[]>(
+      `https://ebookapp.onrender.com/my-books/${this.user._id}`
+    )
+    .subscribe({
 
-        next: (res) => {
+      next: (res) => {
 
-          this.purchasedBooks = res;
+        console.log("Purchased Books:", res);
 
-        },
+        this.purchasedBooks = res;
 
-        error: (err) => {
+      },
 
-          console.log(err);
+      error: (err) => {
 
-        }
+        console.log("Books Error:", err);
 
-      });
+      }
+
+    });
 
   }
 
-  readBook(bookId: string) {
+  // 🔥 OPEN BOOK PDF
+  readBook(bookId: number) {
 
     window.open(
       `https://ebookapp.onrender.com/book/${this.user._id}/${bookId}`,

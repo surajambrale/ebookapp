@@ -336,7 +336,8 @@ app.post('/verify-payment', async (req, res) => {
 
     await Purchase.create({
       userId,
-      bookId,
+      // bookId,
+      bookId: Number(bookId),
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id
     });
@@ -489,15 +490,26 @@ app.get('/my-books/:userId', async (req, res) => {
       userId: req.params.userId
     });
 
-    const bookIds = purchases.map(p => p.bookId);
+    console.log("Purchases:", purchases);
 
-    const userBooks = books.filter(book =>
-      bookIds.includes(book.id.toString())
+    // 🔥 CONVERT TO NUMBER
+    const purchasedIds = purchases.map(
+      p => Number(p.bookId)
     );
+
+    console.log("Purchased IDs:", purchasedIds);
+
+    const userBooks = books.filter(
+      book => purchasedIds.includes(book.id)
+    );
+
+    console.log("User Books:", userBooks);
 
     res.json(userBooks);
 
   } catch (err) {
+
+    console.log(err);
 
     res.status(500).json({
       message: 'Error loading books'
