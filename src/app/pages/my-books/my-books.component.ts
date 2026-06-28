@@ -65,7 +65,7 @@ export class MyBooksComponent implements OnInit {
   }
 
   // 🔥 OPEN BOOK PDF
-  readBook(bookId: number) {
+  readBook(bookId: any) {
 
     window.open(
       `https://ebookapp.onrender.com/book/${this.user._id}/${bookId}`,

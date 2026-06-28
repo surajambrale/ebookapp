@@ -336,8 +336,8 @@ app.post('/verify-payment', async (req, res) => {
 
     await Purchase.create({
       userId,
-      // bookId,
-      bookId: Number(bookId),
+      bookId,
+      // bookId: Number(bookId),
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id
     });
@@ -492,15 +492,15 @@ app.get('/my-books/:userId', async (req, res) => {
 
     console.log("Purchases:", purchases);
 
-    // 🔥 CONVERT TO NUMBER
+    // 🔥 STRING + NUMBER BOTH HANDLE
     const purchasedIds = purchases.map(
-      p => Number(p.bookId)
+      p => p.bookId.toString()
     );
 
     console.log("Purchased IDs:", purchasedIds);
 
     const userBooks = books.filter(
-      book => purchasedIds.includes(book.id)
+      book => purchasedIds.includes(book.id.toString())
     );
 
     console.log("User Books:", userBooks);
