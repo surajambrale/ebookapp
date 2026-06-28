@@ -1,49 +1,71 @@
 <div class="explore-page">
 
-  <h1>🔍 Explore Books</h1>
+  <h2 class="title">
+    Explore Books
+  </h2>
 
-  <input
-    type="text"
-    placeholder="Search ebooks..."
-    [(ngModel)]="searchText"
-    class="search-box"
-  />
+  <!-- SEARCH BAR -->
 
-  <div class="categories">
+  <div class="search-box">
 
-    <div class="category-card" *ngFor="let category of categories">
-
-      <div class="icon">
-        {{ category.icon }}
-      </div>
-
-      <p>{{ category.name }}</p>
-
-    </div>
+    <input
+      type="text"
+      placeholder="Search books..."
+      [(ngModel)]="searchText"
+      (input)="searchBooks()"
+    />
 
   </div>
 
-  <div class="books-grid">
+  <!-- BOOKS -->
+
+  <div
+    class="book-grid"
+    *ngIf="filteredBooks.length > 0"
+  >
 
     <div
       class="book-card"
-      *ngFor="let book of books"
+      *ngFor="let book of filteredBooks"
       (click)="openBook(book.id)"
     >
 
       <img [src]="book.image" />
 
-      <div class="info">
+      <div class="book-info">
 
         <h3>{{ book.title }}</h3>
 
-        <p>{{ book.author }}</p>
-
-        <span>₹{{ book.price }}</span>
+        <p>
+          Premium Fitness Ebook
+        </p>
 
       </div>
 
     </div>
+
+  </div>
+
+  <!-- NO BOOK -->
+
+  <div
+    class="not-found"
+    *ngIf="showNotFound"
+  >
+
+    <h2>
+      😔 Sorry
+    </h2>
+
+    <p>
+      This book is currently not available.
+      <br>
+      Future me hum aapke liye laayenge 🚀
+    </p>
+
+    <button (click)="sendRequest()">
+      Request on WhatsApp
+    </button>
 
   </div>
 
