@@ -7,11 +7,13 @@
     *ngFor="let book of purchasedBooks"
   >
 
-    <img [src]="book.image" />
+    <!-- <img [src]="book.image" /> -->
+
+   <img [src]="book.image" />
 
     <div class="book-info">
 
-      <h3>{{ book.title }}</h3>
+      <h3>{{ book.name  }}</h3>
 
       <p>{{ book.author }}</p>
 

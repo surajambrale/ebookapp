@@ -420,13 +420,53 @@ app.get('/book/:userId/:bookId', async (req, res) => {
 });
 
 // 📚 BOOK LIST
+// const books = [
+//   { id: "1", name: "Complete Fat Loss Guide" },
+//   { id: "2", name: "1500-Calories Diet Plan" },
+//   { id: "3", name: "Habits That Change Your Life" },
+//   { id: "4", name: "Beginner Guide" },
+//   { id: "5", name: "Diabetes Control" },
+//   { id: "6", name: "PCOD / PCOS Guide" }
+// ];
+
 const books = [
-  { id: "1", name: "Complete Fat Loss Guide" },
-  { id: "2", name: "1500-Calories Diet Plan" },
-  { id: "3", name: "Habits That Change Your Life" },
-  { id: "4", name: "Beginner Guide" },
-  { id: "5", name: "Diabetes Control" },
-  { id: "6", name: "PCOD / PCOS Guide" }
+
+  {
+    id: "1",
+    name: "Complete Fat Loss Guide",
+    image: "assets/images/fatloss-book.jpeg"
+  },
+
+  {
+    id: "2",
+    name: "1500-Calories Diet Plan",
+    image: "assets/images/1500-cal-diet.jpg"
+  },
+
+  {
+    id: "3",
+    name: "Habits That Change Your Life",
+    image: "assets/images/habits.jpg"
+  },
+
+  {
+    id: "4",
+    name: "Beginner Guide",
+    image: "assets/images/beginner-guide.jpg"
+  },
+
+  {
+    id: "5",
+    name: "Diabetes Control",
+    image: "assets/images/diabetes-control.jpg"
+  },
+
+  {
+    id: "6",
+    name: "PCOD / PCOS Guide",
+    image: "assets/images/pcod.jpg"
+  }
+
 ];
 
 // 📚 GET BOOKS
