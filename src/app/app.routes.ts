@@ -36,7 +36,7 @@ export const routes: Routes = [
   },
   {
   path: 'my-books',
-  component: BookListComponent
+  component: MyBooksComponent
 },
 
 {
