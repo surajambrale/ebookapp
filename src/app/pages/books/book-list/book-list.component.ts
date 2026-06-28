@@ -16,7 +16,7 @@ export class BookListComponent {
 
   books = [
     {
-    id: "1",
+    id: 1,
     title: "Complete Fat Loss Guide",
     category: "Fat Loss",
     author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -27,7 +27,7 @@ export class BookListComponent {
     description: "Welcome to the Complete Fitness & Nutrition program..."
   },
     {
-      id: "2",
+      id: 2,
       title: "1500-Calorie Diet Plan",
       category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -38,7 +38,7 @@ export class BookListComponent {
       description: "Healthy Diet Plan for Regular People Who Want to Stay Fit"
     },
      {
-      id: "3",
+      id: 3,
       title: "Habits That Change Your Life",
       category: "Workout",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -49,7 +49,7 @@ export class BookListComponent {
       description: "Small habits. Big changes. Build discipline, grow daily, and transform your life."
     },
     {
-      id: "4",
+      id: 4,
       title: "Begginer Guide",
       category: "Workout",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -60,7 +60,7 @@ export class BookListComponent {
       description: "Complete beginner Guide..."
     },
     {
-      id: "5",
+      id: 5,
       title: "Diabetes Control",
       category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -71,7 +71,7 @@ export class BookListComponent {
       description: "Control your diabetes..."
     },
     {
-      id: "6",
+      id: 6,
       title: "PCOD / PCOS Guide",
       category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -82,7 +82,7 @@ export class BookListComponent {
       description: "A Complete Guide for Women to Balance Hormones Naturally."
     },
      {
-      id: "7",
+      id: 7,
       title: "Admin Testing Book",
       category: "Muscle Gain",
       author: "Admin",
