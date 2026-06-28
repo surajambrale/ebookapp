@@ -1,0 +1,38 @@
+<div class="profile-page">
+
+  <div class="profile-card">
+
+    <div class="profile-image">
+      👤
+    </div>
+
+    <h2>{{ user?.name || 'Guest User' }}</h2>
+
+    <p>{{ user?.phone || 'No Number' }}</p>
+
+  </div>
+
+  <div class="profile-options">
+
+    <div class="option">
+      📚 My Purchases
+    </div>
+
+    <div class="option">
+      💳 Payments
+    </div>
+
+    <div class="option">
+      📞 Contact Support
+    </div>
+
+    <div
+      class="option logout"
+      (click)="logout()"
+    >
+      🚪 Logout
+    </div>
+
+  </div>
+
+</div>

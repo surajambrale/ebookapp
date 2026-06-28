@@ -479,7 +479,33 @@ async function sendTelegram(msg) {
 
 // notification bot code end
 
+// ================= MY BOOKS =================
 
+app.get('/my-books/:userId', async (req, res) => {
+
+  try {
+
+    const purchases = await Purchase.find({
+      userId: req.params.userId
+    });
+
+    const bookIds = purchases.map(p => p.bookId);
+
+    const userBooks = books.filter(book =>
+      bookIds.includes(book.id.toString())
+    );
+
+    res.json(userBooks);
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: 'Error loading books'
+    });
+
+  }
+
+});
 
 // ================= START =================
 

@@ -1,0 +1,37 @@
+<div class="my-books-page">
+
+  <h1>📚 My Purchased Books</h1>
+
+  <div
+    class="book-box"
+    *ngFor="let book of purchasedBooks"
+  >
+
+    <img [src]="book.image" />
+
+    <div class="book-info">
+
+      <h3>{{ book.title }}</h3>
+
+      <p>{{ book.author }}</p>
+
+      <button
+        (click)="readBook(book.id)"
+      >
+        Read Now
+      </button>
+
+    </div>
+
+  </div>
+
+  <div
+    class="empty"
+    *ngIf="purchasedBooks.length === 0"
+  >
+
+    No Purchased Books Found 📚
+
+  </div>
+
+</div>

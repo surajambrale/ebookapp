@@ -292,3 +292,408 @@
 }
 
 //Ai bot scss start
+
+
+// category code start
+/* 🔥 MAIN CONTAINER */
+
+.main-container {
+  background: #000;
+  min-height: 100vh;
+  padding: 16px;
+  padding-bottom: 100px;
+  color: white;
+}
+
+
+
+/* =========================================
+🔥 CATEGORY SECTION
+========================================= */
+
+.category-section {
+  margin-top: 20px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 16px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  span {
+    color: gold;
+    font-size: 0.9rem;
+  }
+}
+
+
+
+/* 🔥 HORIZONTAL SCROLL */
+
+.category-list {
+  display: flex;
+  gap: 14px;
+
+  overflow-x: auto;
+
+  padding-bottom: 10px;
+
+  scrollbar-width: none;
+}
+
+.category-list::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+/* 🔥 CARD */
+
+.category-card {
+
+  min-width: 95px;
+
+  background: linear-gradient(135deg, #161616, #202020);
+
+  border-radius: 18px;
+
+  padding: 14px 10px;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  border: 1px solid #2a2a2a;
+
+  flex-shrink: 0;
+
+  &:hover {
+
+    transform: translateY(-5px);
+
+    border-color: gold;
+
+    background: linear-gradient(135deg, #262626, #313131);
+
+  }
+
+}
+
+.category-icon {
+
+  width: 65px;
+  height: 65px;
+
+  border-radius: 50%;
+
+  background: #1a1a1a;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: auto;
+
+  font-size: 1.8rem;
+
+  margin-bottom: 10px;
+
+  border: 1px solid #333;
+}
+
+.category-card p {
+  font-size: 0.85rem;
+  color: #eee;
+}
+
+
+
+/* =========================================
+🔥 BOOKS
+========================================= */
+
+.book-list {
+  margin-top: 30px;
+}
+
+.title {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
+
+
+/* 🔥 GRID */
+
+.book-grid {
+  display: grid;
+  gap: 18px;
+}
+
+
+
+/* 🔥 BOOK CARD */
+
+.book-card {
+
+  display: flex;
+
+  gap: 14px;
+
+  background: linear-gradient(135deg, #161616, #1f1f1f);
+
+  border-radius: 18px;
+
+  padding: 12px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  border: 1px solid #2a2a2a;
+
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+
+  &:hover {
+
+    transform: translateY(-4px);
+
+    border-color: gold;
+
+    background: linear-gradient(135deg, #222, #2d2d2d);
+
+  }
+
+}
+
+
+/* 🔥 IMAGE */
+
+.image img {
+
+  width: 95px;
+  height: 135px;
+
+  object-fit: cover;
+
+  border-radius: 14px;
+}
+
+
+
+/* 🔥 INFO */
+
+.info {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info h3 {
+
+  font-size: 1rem;
+
+  margin-bottom: 6px;
+
+  color: #fdfcfc;
+
+  font-weight: 600;
+}
+
+.author {
+
+  color: #cfcfcf;
+
+  font-size: 0.82rem;
+
+  margin-bottom: 10px;
+}
+
+
+
+/* 🔥 RATING */
+
+.rating {
+  color: gold;
+  font-size: 0.85rem;
+
+  span {
+    color: #999;
+  }
+}
+
+
+
+/* 🔥 PRICE */
+
+.price {
+
+  margin-top: 10px;
+
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  color: #00ff88;
+}
+
+.original-price {
+
+  text-decoration: line-through;
+
+  color: gray;
+
+  margin-left: 10px;
+
+  font-size: 0.9rem;
+}
+
+
+
+/* =========================================
+🔥 BOTTOM NAVBAR
+========================================= */
+
+.bottom-navbar {
+
+  position: fixed;
+
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+
+  background: rgba(0,0,0,0.95);
+
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 12px 0;
+
+  border-top: 1px solid #222;
+
+  z-index: 999;
+}
+
+
+
+/* 🔥 NAV ITEM */
+
+.nav-item {
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+
+  color: #888;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  span {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 0.75rem;
+  }
+
+  &:hover {
+    color: gold;
+  }
+}
+
+
+
+/* 🔥 ACTIVE */
+
+.active {
+  color: gold;
+}
+
+
+
+/* =========================================
+🔥 WHATSAPP BUTTON
+========================================= */
+
+.whatsapp-float {
+
+  position: fixed;
+
+  right: 20px;
+  bottom: 90px;
+
+  z-index: 999;
+}
+
+.whatsapp-float img {
+
+  width: 55px;
+  height: 55px;
+}
+
+
+
+/* =========================================
+🔥 AI BOT ICON
+========================================= */
+
+.fitness-bot-icon {
+
+  position: fixed;
+
+  right: 20px;
+  bottom: 160px;
+
+  width: 58px;
+  height: 58px;
+
+  border-radius: 50%;
+
+  background: gold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.6rem;
+
+  cursor: pointer;
+
+  z-index: 999;
+}
+// category code end
+
+/* 🔥 FIX WHITE HOVER ISSUE */
+
+.book-card,
+.book-card * {
+
+  text-decoration: none;
+
+  color: inherit;
+}
+
+.book-card:hover h3,
+.book-card:hover p,
+.book-card:hover span {
+
+  color: rgb(12, 12, 12);
+}

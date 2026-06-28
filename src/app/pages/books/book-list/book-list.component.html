@@ -1,9 +1,53 @@
+<!-- 🔥 CATEGORY SECTION -->
+<div class="category-section">
+
+  <div class="category-header">
+    <h2>Categories</h2>
+  </div>
+
+  <div class="category-list">
+    
+    <div class="category-card" (click)="showAllBooks()">
+
+  <div class="category-icon">
+    📚
+  </div>
+
+  <p>View All</p>
+
+</div>
+
+    <div class="category-card" (click)="filterCategory('Fat Loss')">
+      <div class="category-icon">🔥</div>
+      <p>Fat Loss</p>
+    </div>
+
+    <div class="category-card" (click)="filterCategory('Diet')">
+      <div class="category-icon">🥗</div>
+      <p>Diet Plans</p>
+    </div>
+
+    <div class="category-card" (click)="filterCategory('Workout')">
+      <div class="category-icon">🏋️</div>
+      <p>Workouts</p>
+    </div>
+
+    <div class="category-card" (click)="filterCategory('Muscle Gain')">
+      <div class="category-icon">💪</div>
+      <p>Muscle Gain</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- category section end -->
+
 <div class="book-list">
 
   <h2 class="title">New Releases in Store</h2>
 
   <div class="book-grid">
-    <div class="book-card" *ngFor="let book of books" (click)="openBook(book.id)">
+    <div class="book-card" *ngFor="let book of filteredBooks" (click)="openBook(book.id)">
       
       <div class="image">
         <img [src]="book.image" alt="book" />
@@ -80,6 +124,34 @@
 </div>
 
 <!-- Ai bot end -->
+
+<!-- navbar start -->
+<!-- 🔥 BOTTOM NAVBAR -->
+<div class="bottom-navbar">
+
+  <div class="nav-item active" (click)="goHome()">
+    <span>🏠</span>
+    <p>Home</p>
+  </div>
+
+  <div class="nav-item" (click)="goExplore()">
+    <span>🔍</span>
+    <p>Explore</p>
+  </div>
+
+  <div class="nav-item" (click)="goMyBooks()">
+    <span>📚</span>
+    <p>My Books</p>
+  </div>
+
+  <div class="nav-item" (click)="goProfile()">
+    <span>👤</span>
+    <p>Profile</p>
+  </div>
+
+</div>
+
+<!-- navbar end -->
 
 <!-- WhatsApp Floating Button -->
 <a 

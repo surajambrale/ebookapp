@@ -4,6 +4,9 @@ import { BookDetailComponent } from './pages/books/book-detail/book-detail.compo
 import { BookListComponent } from './pages/books/book-list/book-list.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { AdminGuard } from './core/guards/admin.guard';
+import { ExploreComponent } from './pages/explore/explore.component';
+import { MyBooksComponent } from './pages/my-books/my-books.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 
 
@@ -30,5 +33,32 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminComponent,
     canActivate: [AdminGuard]
+  },
+  {
+  path: 'my-books',
+  component: BookListComponent
+},
+
+{
+    path: '',
+    component: BookListComponent
+  },
+
+  {
+    path: 'explore',
+    component: ExploreComponent
+  },
+
+  {
+    path: 'my-books',
+    component: MyBooksComponent
+  },
+
+  {
+    path: 'profile',
+    component: ProfileComponent
   }
+
+
+
 ];

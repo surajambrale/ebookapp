@@ -1,0 +1,50 @@
+<div class="explore-page">
+
+  <h1>🔍 Explore Books</h1>
+
+  <input
+    type="text"
+    placeholder="Search ebooks..."
+    [(ngModel)]="searchText"
+    class="search-box"
+  />
+
+  <div class="categories">
+
+    <div class="category-card" *ngFor="let category of categories">
+
+      <div class="icon">
+        {{ category.icon }}
+      </div>
+
+      <p>{{ category.name }}</p>
+
+    </div>
+
+  </div>
+
+  <div class="books-grid">
+
+    <div
+      class="book-card"
+      *ngFor="let book of books"
+      (click)="openBook(book.id)"
+    >
+
+      <img [src]="book.image" />
+
+      <div class="info">
+
+        <h3>{{ book.title }}</h3>
+
+        <p>{{ book.author }}</p>
+
+        <span>₹{{ book.price }}</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

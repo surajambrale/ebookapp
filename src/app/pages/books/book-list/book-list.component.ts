@@ -18,6 +18,7 @@ export class BookListComponent {
     {
     id: 1,
     title: "Complete Fat Loss Guide",
+    category: "Fat Loss",
     author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
     price: 49,              // 🔥 offer price
     originalPrice: 399,      // 🔥 cut price
@@ -28,6 +29,7 @@ export class BookListComponent {
     {
       id: 2,
       title: "1500-Calorie Diet Plan",
+      category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       originalPrice: 299,
@@ -38,6 +40,7 @@ export class BookListComponent {
      {
       id: 3,
       title: "Habits That Change Your Life",
+      category: "Workout",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       originalPrice: 199, 
@@ -48,6 +51,7 @@ export class BookListComponent {
     {
       id: 4,
       title: "Begginer Guide",
+      category: "Workout",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       originalPrice: 399, 
@@ -58,6 +62,7 @@ export class BookListComponent {
     {
       id: 5,
       title: "Diabetes Control",
+      category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       originalPrice: 499, 
@@ -68,6 +73,7 @@ export class BookListComponent {
     {
       id: 6,
       title: "PCOD / PCOS Guide",
+      category: "Diet",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
       price: 49,
       originalPrice: 499, 
@@ -78,6 +84,7 @@ export class BookListComponent {
      {
       id: 7,
       title: "Admin Testing Book",
+      category: "Muscle Gain",
       author: "Admin",
       price: 1,
       originalPrice: 0, 
@@ -88,8 +95,44 @@ export class BookListComponent {
    
   ];
 
+  // openBook(id: number) {
+  //   this.router.navigate(['/book', id]);
+  // }
+
+
+ // 🔥 FILTERED BOOKS
+  filteredBooks: any[] = [];
+
+
+
+  // 🔥 ON INIT
+  ngOnInit() {
+    this.filteredBooks = this.books;
+  }
+
+
+
+  // 🔥 OPEN BOOK
   openBook(id: number) {
     this.router.navigate(['/book', id]);
+  }
+
+
+
+  // 🔥 CATEGORY FILTER
+  filterCategory(category: string) {
+
+    this.filteredBooks = this.books.filter(
+      (book: any) => book.category === category
+    );
+
+  }
+
+
+
+  // 🔥 SHOW ALL BOOKS
+  showAllBooks() {
+    this.filteredBooks = this.books;
   }
 
 
@@ -249,8 +292,24 @@ export class BookListComponent {
 
   }
 
-
-
 //Ai bot end
+
+// 🔥 BOTTOM NAVIGATION
+
+goHome() {
+  this.router.navigate(['/']);
+}
+
+goExplore() {
+  this.router.navigate(['/explore']);
+}
+
+goMyBooks() {
+  this.router.navigate(['/my-books']);
+}
+
+goProfile() {
+  this.router.navigate(['/profile']);
+}
 }
 
