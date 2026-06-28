@@ -1,37 +1,88 @@
 <div class="profile-page">
 
-  <div class="profile-card">
+  <!-- LOGGED IN -->
 
-    <div class="profile-image">
-      👤
+  <div *ngIf="isLoggedIn">
+
+    <div class="profile-card">
+
+      <div class="profile-image">
+        👤
+      </div>
+
+      <h2>{{ user?.name }}</h2>
+
+      <p>{{ user?.phone }}</p>
+
     </div>
 
-    <h2>{{ user?.name || 'Guest User' }}</h2>
+    <div class="profile-options">
 
-    <p>{{ user?.phone || 'No Number' }}</p>
+      <!-- MY PURCHASE -->
+
+      <div class="option">
+
+        📚 My Purchases
+
+        <span>
+          {{ purchases.length }} Books
+        </span>
+
+      </div>
+
+      <!-- PAYMENT -->
+
+      <div class="option">
+
+        💳 Total Payment
+
+        <span>
+          ₹{{ totalSpent }}
+        </span>
+
+      </div>
+
+      <!-- SUPPORT -->
+
+      <div class="option">
+
+        📞 Contact Support
+
+        <span>
+          9372336433
+        </span>
+
+      </div>
+
+      <!-- LOGOUT -->
+
+      <div
+        class="option logout"
+        (click)="logout()"
+      >
+
+        🚪 Logout
+
+      </div>
+
+    </div>
 
   </div>
 
-  <div class="profile-options">
+  <!-- LOGGED OUT -->
 
-    <div class="option">
-      📚 My Purchases
-    </div>
+  <div
+    class="login-box"
+    *ngIf="!isLoggedIn"
+  >
 
-    <div class="option">
-      💳 Payments
-    </div>
+    <h2>
+      Please Login First
+    </h2>
 
-    <div class="option">
-      📞 Contact Support
-    </div>
-
-    <div
-      class="option logout"
-      (click)="logout()"
-    >
-      🚪 Logout
-    </div>
+    <button (click)="login()">
+      Login
+    </button>
 
   </div>
 

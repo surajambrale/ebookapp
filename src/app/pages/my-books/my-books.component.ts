@@ -17,19 +17,19 @@ export class MyBooksComponent implements OnInit {
 
   user: any;
 
-  ngOnInit(): void {
+ ngOnInit(): void {
 
-    this.user = JSON.parse(
-      localStorage.getItem('user') || '{}'
-    );
+  const storedUser = localStorage.getItem('user');
 
-    if (this.user?._id) {
+  if (storedUser) {
 
-      this.loadBooks();
+    this.user = JSON.parse(storedUser);
 
-    }
+    this.loadBooks();
 
   }
+
+}
 
   loadBooks() {
 

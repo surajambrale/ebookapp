@@ -507,6 +507,49 @@ app.get('/my-books/:userId', async (req, res) => {
 
 });
 
+// ================= PROFILE DATA =================
+
+app.get('/profile-data/:userId', async (req, res) => {
+
+  try {
+
+    const user = await User.findById(req.params.userId);
+
+    if (!user) {
+
+      return res.status(404).json({
+        message: 'User not found'
+      });
+
+    }
+
+    const purchases = await Purchase.find({
+      userId: req.params.userId
+    });
+
+    // total payment calculate
+    const totalSpent = purchases.length * 49;
+
+    res.json({
+
+      user,
+
+      purchases,
+
+      totalSpent
+
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      message: 'Error loading profile'
+    });
+
+  }
+
+});
+
 // ================= START =================
 
 const PORT = process.env.PORT || 5000;
