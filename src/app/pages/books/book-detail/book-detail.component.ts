@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-book-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,  RouterModule],
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
