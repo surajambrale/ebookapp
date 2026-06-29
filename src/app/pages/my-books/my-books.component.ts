@@ -64,6 +64,18 @@ export class MyBooksComponent implements OnInit {
 
   }
 
+  // bookaccess code start
+
+  hasAccess(bookId: any): boolean {
+
+  return this.purchasedBooks.some(
+    b => b.id == bookId
+  );
+
+}
+
+//  bookaccess code end
+
   // 🔥 OPEN BOOK PDF
   readBook(bookId: any) {
 

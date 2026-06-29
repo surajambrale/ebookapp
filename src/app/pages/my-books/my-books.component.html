@@ -17,13 +17,25 @@
 
       <p>{{ book.author }}</p>
 
-      <button
+      <!-- <button
         (click)="readBook(book.id)"
       >
         Read Now
       </button>
 
-    </div>
+    </div> -->
+
+    <!-- read now access button start -->
+
+    <button
+  class="buy"
+  *ngIf="hasAccess(book.id)"
+  (click)="readBook(book.id)"
+>
+  Read Book
+</button>
+
+    <!-- read now access button end -->
 
   </div>
 
