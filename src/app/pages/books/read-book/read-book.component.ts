@@ -77,6 +77,8 @@ isLoading = true;
       });
   }
 
+
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/']);

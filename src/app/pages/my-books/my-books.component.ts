@@ -66,24 +66,23 @@ export class MyBooksComponent implements OnInit {
 
   // bookaccess code start
 
-hasAccess(bookId: any): boolean {
+readBook(bookId: any) {
 
-  return this.purchasedBooks.some(
-    b => b.bookId == bookId
-  );
+  window.location.href =
+    `/read/${bookId}`;
 
 }
 
 //  bookaccess code end
 
   // 🔥 OPEN BOOK PDF
-  readBook(bookId: any) {
+  // readBook(bookId: any) {
 
-    window.open(
-      `https://ebookapp.onrender.com/book/${this.user._id}/${bookId}`,
-      '_blank'
-    );
+  //   window.open(
+  //     `https://ebookapp.onrender.com/book/${this.user._id}/${bookId}`,
+  //     '_blank'
+  //   );
 
-  }
+  // }
 
 }
