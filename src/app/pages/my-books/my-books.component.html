@@ -29,8 +29,7 @@
 
     <button
   class="buy"
-  *ngIf="hasAccess(book.id)"
-  (click)="readBook(book.id)"
+  (click)="readBook(book.bookId)"
 >
   Read Book
 </button>

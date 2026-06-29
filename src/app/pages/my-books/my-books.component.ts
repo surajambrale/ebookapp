@@ -66,10 +66,10 @@ export class MyBooksComponent implements OnInit {
 
   // bookaccess code start
 
-  hasAccess(bookId: any): boolean {
+hasAccess(bookId: any): boolean {
 
   return this.purchasedBooks.some(
-    b => b.id == bookId
+    b => b.bookId == bookId
   );
 
 }
