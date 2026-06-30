@@ -559,6 +559,57 @@ app.get('/my-books/:userId', async (req, res) => {
 
 });
 
+// payment verification data start
+
+// ================= PAYMENTS =================
+
+app.get('/payments/:userId', async (req, res) => {
+
+  try {
+
+    // 🔥 USER PURCHASES
+    const purchases = await Purchase.find({
+      userId: req.params.userId
+    });
+
+    // 🔥 BOOKS + PAYMENT MERGE
+    const paymentData = purchases.map((p) => {
+
+      const book = books.find(
+        b => b.id.toString() === p.bookId.toString()
+      );
+
+      return {
+
+        paymentId: p.paymentId,
+
+        bookTitle: book
+          ? book.name
+          : 'Unknown Book',
+
+        amount: 49
+
+      };
+
+    });
+
+    res.json(paymentData);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: 'Error loading payments'
+    });
+
+  }
+
+});
+
+//payment verification data end 
+
+
 // ================= PROFILE DATA =================
 
 app.get('/profile-data/:userId', async (req, res) => {
