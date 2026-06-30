@@ -142,3 +142,114 @@
     transform: rotate(360deg);
   }
 }
+
+// bottom navbar scss start
+
+/* 🔥 BOTTOM NAVBAR */
+
+.bottom-navbar {
+
+  position: fixed;
+
+  bottom: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  background: #0d0d0d;
+
+  display: flex;
+
+  justify-content: space-around;
+
+  align-items: center;
+
+  padding: 12px 0;
+
+  border-top: 1px solid #222;
+
+  z-index: 99999;
+
+  backdrop-filter: blur(10px);
+}
+
+/* 🔥 NAV ITEM */
+
+.nav-item {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  color: #888;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  font-size: 0.8rem;
+
+  width: 25%;
+}
+
+/* 🔥 ICON */
+
+.nav-item span {
+
+  font-size: 1.4rem;
+
+  transition: 0.3s;
+}
+
+/* 🔥 TEXT */
+
+.nav-item p {
+
+  margin: 0;
+
+  transition: 0.3s;
+}
+
+/* 🔥 HOVER */
+
+.nav-item:hover {
+
+  color: white;
+
+  transform: translateY(-2px);
+}
+
+/* 🔥 ACTIVE TAB */
+
+.active {
+
+  color: gold !important;
+}
+
+/* 🔥 ACTIVE ICON */
+
+.active span {
+
+  color: gold !important;
+
+  transform: scale(1.1);
+}
+
+/* 🔥 ACTIVE TEXT */
+
+.active p {
+
+  color: gold !important;
+
+  font-weight: 600;
+}
+
+
+//bottom navbar scss end

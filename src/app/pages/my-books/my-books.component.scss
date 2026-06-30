@@ -101,39 +101,46 @@ button {
 🔥 BOTTOM NAVBAR start
 ========================================= */
 
+/* 🔥 BOTTOM NAVBAR */
+
 .bottom-navbar {
 
   position: fixed;
 
   bottom: 0;
+
   left: 0;
 
   width: 100%;
 
-  background: rgba(0,0,0,0.95);
-
-  backdrop-filter: blur(10px);
+  background: #0d0d0d;
 
   display: flex;
+
   justify-content: space-around;
+
   align-items: center;
 
   padding: 12px 0;
 
   border-top: 1px solid #222;
 
-  z-index: 999;
+  z-index: 99999;
+
+  backdrop-filter: blur(10px);
 }
-
-
 
 /* 🔥 NAV ITEM */
 
 .nav-item {
 
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
+  justify-content: center;
 
   gap: 4px;
 
@@ -143,25 +150,61 @@ button {
 
   transition: 0.3s;
 
-  span {
-    font-size: 1.3rem;
-  }
+  font-size: 0.8rem;
 
-  p {
-    font-size: 0.75rem;
-  }
-
-  &:hover {
-    color: gold;
-  }
+  width: 25%;
 }
 
+/* 🔥 ICON */
 
+.nav-item span {
 
-/* 🔥 ACTIVE */
+  font-size: 1.4rem;
+
+  transition: 0.3s;
+}
+
+/* 🔥 TEXT */
+
+.nav-item p {
+
+  margin: 0;
+
+  transition: 0.3s;
+}
+
+/* 🔥 HOVER */
+
+.nav-item:hover {
+
+  color: white;
+
+  transform: translateY(-2px);
+}
+
+/* 🔥 ACTIVE TAB */
 
 .active {
-  color: gold;
+
+  color: gold !important;
+}
+
+/* 🔥 ACTIVE ICON */
+
+.active span {
+
+  color: gold !important;
+
+  transform: scale(1.1);
+}
+
+/* 🔥 ACTIVE TEXT */
+
+.active p {
+
+  color: gold !important;
+
+  font-weight: 600;
 }
 
 /* =========================================
