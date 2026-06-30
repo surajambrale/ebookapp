@@ -26,16 +26,26 @@
 
 /* SEARCH */
 
+/* 🔥 SEARCH SECTION */
+
 .search-box {
 
-  margin-bottom: 30px;
+  width: 100%;
+
+  padding: 0 15px;
+
+  margin-bottom: 20px;
+
+  box-sizing: border-box;
 }
 
 .search-box input {
 
   width: 100%;
 
-  padding: 15px;
+  height: 52px;
+
+  padding: 0 18px;
 
   border-radius: 14px;
 
@@ -49,6 +59,8 @@
 
   outline: none;
 
+  box-sizing: border-box;
+
   transition: 0.3s;
 }
 
@@ -56,7 +68,12 @@
 
   border-color: gold;
 
-  box-shadow: 0 0 10px rgba(255,215,0,0.4);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.search-box input::placeholder {
+
+  color: #777;
 }
 
 /* GRID */

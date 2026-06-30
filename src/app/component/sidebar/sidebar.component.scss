@@ -118,3 +118,71 @@
     padding: 8px 10px;
   }
 }
+
+
+// sidebar content scss start
+
+
+.sidebar h2 {
+
+  margin-bottom: 30px;
+
+  color: gold;
+
+  font-size: 1.4rem;
+}
+
+.menu-item {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  margin-bottom: 12px;
+
+  background: #161616;
+
+  transition: 0.3s;
+}
+
+.menu-item:hover {
+
+  background: #222;
+
+  transform: translateX(4px);
+}
+
+.menu-item span {
+
+  font-size: 1.3rem;
+}
+
+.menu-item a {
+
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 0.95rem;
+
+  width: 100%;
+}
+
+.version {
+
+  margin-top: 30px;
+
+  color: #777;
+
+  font-size: 0.85rem;
+
+  text-align: center;
+}
+
+// sidebar content scss end
