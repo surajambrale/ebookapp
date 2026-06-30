@@ -1,7 +1,5 @@
 <div class="profile-page">
 
-  <!-- 🔥 TITLE -->
-
   <h1>👤 My Profile</h1>
 
   <!-- 🔥 ROLE SELECT -->
@@ -30,7 +28,7 @@
 
   <div *ngIf="selectedRole === 'user'">
 
-    <!-- 🔥 LOGIN BOX -->
+    <!-- 🔥 LOGIN -->
 
     <div
       class="login-box"
@@ -95,17 +93,43 @@
 
         <div class="menu-item">
 
-          <span>💳</span>
-
-          <p>Payments</p>
-
-        </div>
-
-        <div class="menu-item">
-
           <span>📞</span>
 
           <p>Support: 9372336433</p>
+
+        </div>
+
+      </div>
+
+      <!-- 🔥 PAYMENTS -->
+
+      <div class="payments-box">
+
+        <h3>
+          💳 Payment History
+        </h3>
+
+        <div
+          class="payment-card"
+          *ngFor="let payment of payments"
+        >
+
+          <h4>
+            {{ payment.bookTitle }}
+          </h4>
+
+          <p>
+            ₹{{ payment.amount }}
+          </p>
+
+        </div>
+
+        <div
+          class="empty-payment"
+          *ngIf="payments.length === 0"
+        >
+
+          No Payments Found
 
         </div>
 
@@ -124,7 +148,7 @@
 
   </div>
 
-  <!-- 🔥 ADMIN SECTION -->
+  <!-- 🔥 ADMIN -->
 
   <div *ngIf="selectedRole === 'admin'">
 
@@ -145,7 +169,6 @@
   </div>
 
 </div>
-
 
 
 

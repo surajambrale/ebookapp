@@ -89,7 +89,7 @@ h1 {
   cursor: pointer;
 }
 
-/* 🔥 PROFILE CARD */
+/* 🔥 PROFILE */
 
 .profile-card {
 
@@ -193,6 +193,54 @@ h1 {
   font-size: 1rem;
 }
 
+/* 🔥 PAYMENTS */
+
+.payments-box {
+
+  background: #111;
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  margin-bottom: 20px;
+}
+
+.payments-box h3 {
+
+  margin-bottom: 15px;
+}
+
+.payment-card {
+
+  background: #1a1a1a;
+
+  padding: 15px;
+
+  border-radius: 14px;
+
+  margin-bottom: 12px;
+}
+
+.payment-card h4 {
+
+  margin: 0;
+
+  margin-bottom: 5px;
+}
+
+.payment-card p {
+
+  color: gold;
+
+  margin: 0;
+}
+
+.empty-payment {
+
+  color: #888;
+}
+
 /* 🔥 LOGOUT */
 
 .logout-btn {
@@ -215,8 +263,6 @@ h1 {
 
   cursor: pointer;
 }
-
-/* 🔥 ADMIN LOGIN */
 
 /* 🔥 ADMIN LOGIN */
 
@@ -285,6 +331,7 @@ h1 {
 
   transform: scale(1.01);
 }
+
 /* 🔥 NAVBAR */
 
 .bottom-navbar {
@@ -357,6 +404,7 @@ h1 {
 
   color: gold !important;
 }
+
 
 /* =========================================
 🔥 BOTTOM NAVBAR start

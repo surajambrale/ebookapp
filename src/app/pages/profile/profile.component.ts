@@ -31,6 +31,8 @@ export class ProfileComponent implements OnInit {
 
   adminPassword = '';
 
+  payments: any[] = [];
+
   constructor(
     private router: Router,
     private http: HttpClient
@@ -48,7 +50,41 @@ export class ProfileComponent implements OnInit {
 
       this.isLoggedIn = true;
 
+      this.loadPayments();
+
     }
+
+  }
+
+  // 🔥 LOAD PAYMENTS
+
+  loadPayments() {
+
+    if (!this.user?._id) return;
+
+    this.http.get<any[]>(
+      `https://ebookapp.onrender.com/payments/${this.user._id}`
+    )
+    .subscribe({
+
+      next: (res) => {
+
+        this.payments = res;
+
+        console.log(
+          'Payments:',
+          res
+        );
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
 
   }
 
@@ -74,7 +110,6 @@ export class ProfileComponent implements OnInit {
 
       next: () => {
 
-        // 🔥 DIRECT ADMIN PAGE
         this.router.navigate(['/admin']);
 
       },
