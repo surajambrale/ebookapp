@@ -1,66 +1,87 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import {
+  Router,
+  RouterModule
+} from '@angular/router';
+
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule
+  ],
+
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+
+  user: any;
+
+  isLoggedIn = false;
+
+  selectedRole = 'user';
+
+  adminPassword = '';
 
   constructor(
     private router: Router,
     private http: HttpClient
   ) {}
 
-  user: any = null;
-
-  purchases: any[] = [];
-
-  totalSpent = 0;
-
-  isLoggedIn = false;
-
   ngOnInit(): void {
 
-    const storedUser = localStorage.getItem('user');
+    const storedUser =
+      localStorage.getItem('user');
 
     if (storedUser) {
 
+      this.user =
+        JSON.parse(storedUser);
+
       this.isLoggedIn = true;
-
-      this.user = JSON.parse(storedUser);
-
-      this.loadProfile();
 
     }
 
   }
 
-  loadProfile() {
+  // 🔥 GO LOGIN
 
-    this.http.get<any>(
-      `https://ebookapp.onrender.com/profile-data/${this.user._id}`
+  goLogin() {
+
+    this.router.navigate(['/login']);
+
+  }
+
+  // 🔥 ADMIN LOGIN
+
+  adminLogin() {
+
+    this.http.post<any>(
+      'https://ebookapp.onrender.com/admin-login',
+      {
+        password: this.adminPassword
+      }
     )
     .subscribe({
 
-      next: (res) => {
+      next: () => {
 
-        this.user = res.user;
-
-        this.purchases = res.purchases;
-
-        this.totalSpent = res.totalSpent;
+        // 🔥 DIRECT ADMIN PAGE
+        this.router.navigate(['/admin']);
 
       },
 
-      error: (err) => {
+      error: () => {
 
-        console.log(err);
+        alert('Wrong Admin Password ❌');
 
       }
 
@@ -68,15 +89,15 @@ export class ProfileComponent implements OnInit {
 
   }
 
+  // 🔥 LOGOUT
+
   logout() {
 
-    localStorage.clear();
+    localStorage.removeItem('user');
 
-    this.router.navigate(['/']);
+    this.isLoggedIn = false;
 
-  }
-
-  login() {
+    this.user = null;
 
     this.router.navigate(['/login']);
 

@@ -1,92 +1,152 @@
 <div class="profile-page">
 
-  <!-- LOGGED IN -->
+  <!-- 🔥 TITLE -->
 
-  <div *ngIf="isLoggedIn">
+  <h1>👤 My Profile</h1>
 
-    <div class="profile-card">
+  <!-- 🔥 ROLE SELECT -->
 
-      <div class="profile-image">
-        👤
-      </div>
+  <div class="role-box">
 
-      <h2>{{ user?.name }}</h2>
+    <label>
+      Select Account Type
+    </label>
 
-      <p>{{ user?.phone }}</p>
+    <select [(ngModel)]="selectedRole">
+
+      <option value="user">
+        User
+      </option>
+
+      <option value="admin">
+        Admin
+      </option>
+
+    </select>
+
+  </div>
+
+  <!-- 🔥 USER SECTION -->
+
+  <div *ngIf="selectedRole === 'user'">
+
+    <!-- 🔥 LOGIN BOX -->
+
+    <div
+      class="login-box"
+      *ngIf="!isLoggedIn"
+    >
+
+      <h3>
+        Login to Continue
+      </h3>
+
+      <button
+        class="login-btn"
+        (click)="goLogin()"
+      >
+        Login
+      </button>
 
     </div>
 
-    <div class="profile-options">
+    <!-- 🔥 PROFILE -->
 
-      <!-- MY PURCHASE -->
+    <div *ngIf="isLoggedIn">
 
-      <div class="option">
+      <div class="profile-card">
 
-        📚 My Purchases
+        <div class="profile-top">
 
-        <span>
-          {{ purchases.length }} Books
-        </span>
+          <div class="profile-image">
+            👤
+          </div>
 
-      </div>
+          <div class="profile-info">
 
-      <!-- PAYMENT -->
+            <h2>
+              {{ user?.name }}
+            </h2>
 
-      <div class="option">
+            <p>
+              {{ user?.phone }}
+            </p>
 
-        💳 Total Payment
+          </div>
 
-        <span>
-          ₹{{ totalSpent }}
-        </span>
-
-      </div>
-
-      <!-- SUPPORT -->
-
-      <div class="option">
-
-        📞 Contact Support
-
-        <span>
-          9372336433
-        </span>
+        </div>
 
       </div>
 
-      <!-- LOGOUT -->
+      <!-- 🔥 MENU -->
 
-      <div
-        class="option logout"
+      <div class="menu-card">
+
+        <div
+          class="menu-item"
+          routerLink="/my-books"
+        >
+
+          <span>📚</span>
+
+          <p>My Books</p>
+
+        </div>
+
+        <div class="menu-item">
+
+          <span>💳</span>
+
+          <p>Payments</p>
+
+        </div>
+
+        <div class="menu-item">
+
+          <span>📞</span>
+
+          <p>Support: 9372336433</p>
+
+        </div>
+
+      </div>
+
+      <!-- 🔥 LOGOUT -->
+
+      <button
+        class="logout-btn"
         (click)="logout()"
       >
-
-        🚪 Logout
-
-      </div>
+        Logout
+      </button>
 
     </div>
 
   </div>
 
-  <!-- LOGGED OUT -->
+  <!-- 🔥 ADMIN SECTION -->
 
-  <div
-    class="login-box"
-    *ngIf="!isLoggedIn"
-  >
+  <div *ngIf="selectedRole === 'admin'">
 
-    <h2>
-      Please Login First
-    </h2>
+    <div class="admin-login">
 
-    <button (click)="login()">
-      Login
-    </button>
+      <input
+        type="password"
+        placeholder="Enter Admin Password"
+        [(ngModel)]="adminPassword"
+      />
+
+      <button (click)="adminLogin()">
+        Login Admin
+      </button>
+
+    </div>
 
   </div>
 
 </div>
+
+
 
 
 <!-- navbar start start -->
