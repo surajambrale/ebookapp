@@ -144,9 +144,29 @@
 
 //Ai bot scss start
 
-/* BOT ICON */
-.fitness-bot-icon {
+/* 🔥 OVERLAY */
+
+.chat-overlay {
+
   position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background: transparent;
+
+  z-index: 9998;
+}
+
+/* 🔥 BOT ICON */
+
+.fitness-bot-icon {
+
+  position: fixed;
+
   bottom: 90px;
   right: 20px;
 
@@ -156,24 +176,38 @@
   border-radius: 50%;
 
   background: #ff3c00;
+
   color: white;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
   font-size: 28px;
+
   cursor: pointer;
 
   z-index: 9999;
 
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  box-shadow:
+    0 5px 20px rgba(0,0,0,0.3);
+
+  transition: 0.3s;
 }
 
-/* CHAT BOX */
+.fitness-bot-icon:hover {
+
+  transform: scale(1.08);
+}
+
+/* 🔥 CHAT BOX */
+
 .fitness-chat {
 
   position: fixed;
+
   bottom: 160px;
   right: 20px;
 
@@ -181,6 +215,7 @@
   height: 450px;
 
   background: #111;
+
   border-radius: 20px;
 
   overflow: hidden;
@@ -188,24 +223,78 @@
   z-index: 9999;
 
   display: flex;
+
   flex-direction: column;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.45);
+
+  animation: popup 0.25s ease;
 }
 
-/* HEADER */
+/* 🔥 POPUP ANIMATION */
+
+@keyframes popup {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(20px)
+      scale(0.95);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+/* 🔥 HEADER */
+
 .chat-header {
 
   background: #eef123;
-  color: rgb(14, 12, 12);
+
+  color: #111;
 
   padding: 15px;
 
   font-size: 18px;
+
   font-weight: bold;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
 }
 
-/* BODY */
+/* 🔥 CLOSE BUTTON */
+
+.close-btn {
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.close-btn:hover {
+
+  transform: scale(1.15);
+}
+
+/* 🔥 BODY */
+
 .chat-body {
 
   flex: 1;
@@ -215,11 +304,16 @@
   overflow-y: auto;
 
   display: flex;
+
   flex-direction: column;
+
   gap: 10px;
+
+  background: #111;
 }
 
-/* BOT MESSAGE */
+/* 🔥 BOT MESSAGE */
+
 .bot-msg {
 
   background: #222;
@@ -228,59 +322,26 @@
 
   padding: 10px 14px;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
   width: fit-content;
+
   max-width: 90%;
+
+  line-height: 1.4;
 }
 
-/* INPUT */
-.chat-input {
-
-  display: flex;
-  gap: 10px;
-
-  padding: 12px;
-
-  background: #1a1a1a;
-}
-
-.chat-input input,
-.chat-input select {
-
-  flex: 1;
-
-  padding: 10px;
-
-  border: none;
-  outline: none;
-
-  border-radius: 8px;
-}
-
-.chat-input button {
-
-  background: #ff3c00;
-  color: white;
-
-  border: none;
-
-  padding: 10px 16px;
-
-  border-radius: 8px;
-
-  cursor: pointer;
-}
+/* 🔥 USER MESSAGE */
 
 .user-msg {
 
   background: #f3ec1e;
 
-  color: rgb(16, 4, 4);
+  color: #111;
 
   padding: 10px 14px;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
   width: fit-content;
 
@@ -289,9 +350,90 @@
   align-self: flex-end;
 
   margin-left: auto;
+
+  line-height: 1.4;
 }
 
-//Ai bot scss start
+/* 🔥 INPUT AREA */
+
+.chat-input {
+
+  display: flex;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  background: #1a1a1a;
+}
+
+/* 🔥 INPUT */
+
+.chat-input input,
+.chat-input select {
+
+  flex: 1;
+
+  padding: 10px 12px;
+
+  border: none;
+
+  outline: none;
+
+  border-radius: 10px;
+
+  background: #2a2a2a;
+
+  color: white;
+}
+
+.chat-input input::placeholder {
+
+  color: #aaa;
+}
+
+/* 🔥 BUTTON */
+
+.chat-input button {
+
+  background: #ff3c00;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 16px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.chat-input button:hover {
+
+  transform: scale(1.05);
+
+  background: #ff5722;
+}
+
+/* 🔥 MOBILE */
+
+@media (max-width: 480px) {
+
+  .fitness-chat {
+
+    width: 92%;
+
+    right: 4%;
+
+    height: 430px;
+  }
+
+}
+
+//Ai bot scss end
 
 
 // category code start

@@ -77,32 +77,74 @@
 <!-- Ai bot start -->
 
 <!-- FITNESS BOT ICON -->
-<div class="fitness-bot-icon" (click)="toggleBot()">
+<!-- 🔥 FITNESS BOT ICON -->
+
+<div
+  class="fitness-bot-icon"
+  (click)="toggleBot()"
+>
   🤖
 </div>
 
-<!-- BOT CHAT -->
-<div class="fitness-chat" *ngIf="isBotOpen">
+<!-- 🔥 OVERLAY -->
+
+<div
+  class="chat-overlay"
+  *ngIf="isBotOpen"
+  (click)="isBotOpen = false"
+>
+</div>
+
+<!-- 🔥 BOT CHAT -->
+
+<div
+  class="fitness-chat"
+  *ngIf="isBotOpen"
+>
+
+  <!-- HEADER -->
 
   <div class="chat-header">
-    Fitness Assistant
+
+    <span>
+      Fitness Assistant
+    </span>
+
+    <!-- CLOSE -->
+
+    <span
+      class="close-btn"
+      (click)="isBotOpen = false"
+    >
+      ×
+    </span>
+
   </div>
+
+  <!-- BODY -->
 
   <div class="chat-body">
 
-  <div
-    *ngFor="let msg of messages"
-    [ngClass]="msg.type === 'bot' ? 'bot-msg' : 'user-msg'">
+    <div
+      *ngFor="let msg of messages"
+      [ngClass]="
+        msg.type === 'bot'
+        ? 'bot-msg'
+        : 'user-msg'
+      "
+    >
 
-    {{ msg.text }}
+      {{ msg.text }}
+
+    </div>
 
   </div>
 
-</div>
+  <!-- INPUT -->
 
   <div class="chat-input">
 
-    <!-- STEP INPUTS -->
+    <!-- NORMAL INPUT -->
 
     <input
       *ngIf="step !== 5"
@@ -111,17 +153,37 @@
     />
 
     <!-- GOAL SELECT -->
-    <select *ngIf="step === 5" [(ngModel)]="goal">
-      <option value="fatloss">Fat Loss</option>
-      <option value="musclegain">Muscle Gain</option>
-      <option value="fitness">Normal Fitness</option>
+
+    <select
+      *ngIf="step === 5"
+      [(ngModel)]="goal"
+    >
+
+      <option value="fatloss">
+        Fat Loss
+      </option>
+
+      <option value="musclegain">
+        Muscle Gain
+      </option>
+
+      <option value="fitness">
+        Normal Fitness
+      </option>
+
     </select>
 
-    <button (click)="nextStep()">Send</button>
+    <!-- SEND -->
+
+    <button (click)="nextStep()">
+      Send
+    </button>
 
   </div>
 
 </div>
+
+<!-- 🔥 AI BOT END -->
 
 <!-- Ai bot end -->
 
