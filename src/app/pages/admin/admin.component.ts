@@ -1,132 +1,423 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders
+} from '@angular/common/http';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { environment } from '../../../environments/environment';
-import { RouterModule } from '@angular/router';
+
+import { environment }
+from '../../../environments/environment';
+
+import { RouterModule }
+from '@angular/router';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule , RouterModule],
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule
+  ],
+
+  templateUrl:
+    './admin.component.html',
+
+  styleUrls:
+    ['./admin.component.scss']
 })
+
 export class AdminComponent {
 
+  // 🔐 LOGIN
+
   password = '';
+
   isLoggedIn = false;
+
   token = '';
 
+  // 🔥 DATA
+
   users: any[] = [];
+
   purchases: any[] = [];
+
   books: any[] = [];
+
   selectedUser = '';
+
   selectedBook = '';
+
+  // 🔥 STATS
+
+  stats: any;
+
+  recentPurchases: any[] = [];
+
+  totalRevenue = 0;
 
   api = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient
+  ) {}
 
-  // 🔐 LOGIN
+  // ================= LOGIN =================
+
   login() {
 
-    const cleanPassword = this.password.trim();
+    const cleanPassword =
+      this.password.trim();
 
-    this.http.post(`${this.api}/admin-login`, { password: cleanPassword })
-      .subscribe({
-        next: (res: any) => {
-          this.token = res.token;
-          this.isLoggedIn = true;
-          this.loadData();
-        },
-        error: () => alert('Wrong password ❌')
-      });
-  }
+    this.http.post(
 
-  // 📊 LOAD DATA
-  loadData() {
+      `${this.api}/admin-login`,
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
+      {
+        password: cleanPassword
+      }
+
+    ).subscribe({
+
+      next: (res: any) => {
+
+        this.token =
+          res.token;
+
+        this.isLoggedIn = true;
+
+        // 🔥 SAVE TOKEN
+        localStorage.setItem(
+          'adminToken',
+          this.token
+        );
+
+        this.loadData();
+
+        this.loadStats();
+
+      },
+
+      error: () => {
+
+        alert(
+          'Wrong password ❌'
+        );
+
+      }
+
     });
 
-    this.http.get(`${this.api}/admin/users`, { headers })
-      .subscribe((res: any) => this.users = res);
-
-    this.http.get(`${this.api}/admin/purchases`, { headers })
-      .subscribe((res: any) => this.purchases = res);
-
-      this.http.get(`${this.api}/admin/books`, { headers })
-      .subscribe((res: any) => this.books = res);
   }
 
-   // 🔥 CENTRAL ACCESS CONTROL
+  // ================= LOAD DATA =================
+
+  loadData() {
+
+    const headers =
+      new HttpHeaders({
+
+        Authorization:
+          this.token
+
+      });
+
+    // USERS
+
+    this.http.get(
+
+      `${this.api}/admin/users`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: (res: any) => {
+
+        this.users = res;
+
+      }
+
+    });
+
+    // PURCHASES
+
+    this.http.get(
+
+      `${this.api}/admin/purchases`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: (res: any) => {
+
+        this.purchases = res;
+
+      }
+
+    });
+
+    // BOOKS
+
+    this.http.get(
+
+      `${this.api}/admin/books`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: (res: any) => {
+
+        this.books = res;
+
+      }
+
+    });
+
+  }
+
+  // ================= LOAD STATS =================
+
+  loadStats() {
+
+    const headers =
+      new HttpHeaders({
+
+        Authorization:
+          this.token
+
+      });
+
+    this.http.get<any>(
+
+      `${this.api}/admin/stats`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: (res) => {
+
+        console.log(
+          'Stats:',
+          res
+        );
+
+        this.stats = res;
+
+        this.totalRevenue =
+          res.totalRevenue;
+
+        this.recentPurchases =
+          res.recentPurchases;
+
+      },
+
+      error: (err) => {
+
+        console.log(
+          err
+        );
+
+      }
+
+    });
+
+  }
+
+  // ================= ACCESS CONTROL =================
+
   grantAccess() {
 
-    if (!this.selectedUser || !this.selectedBook) {
-      alert('Select user & book ❌');
+    if (
+      !this.selectedUser
+      ||
+      !this.selectedBook
+    ) {
+
+      alert(
+        'Select user & book ❌'
+      );
+
       return;
     }
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
+    const headers =
+      new HttpHeaders({
+
+        Authorization:
+          this.token
+
+      });
+
+    this.http.post(
+
+      `${this.api}/admin/grant-access`,
+
+      {
+        userId:
+          this.selectedUser,
+
+        bookId:
+          this.selectedBook
+      },
+
+      { headers }
+
+    ).subscribe({
+
+      next: () => {
+
+        alert(
+          'Access granted ✅'
+        );
+
+        this.loadData();
+
+        this.loadStats();
+
+      },
+
+      error: (err) => {
+
+        alert(
+
+          err.error.message
+          ||
+          'Error ❌'
+
+        );
+
+      }
+
     });
 
-    this.http.post(`${this.api}/admin/grant-access`, {
-      userId: this.selectedUser,
-      bookId: this.selectedBook
-    }, { headers }).subscribe({
-      next: () => {
-        alert('Access granted ✅');
-        this.loadData();
-      },
-      error: (err) => {
-        alert(err.error.message || 'Error ❌');
-      }
-    });
   }
 
-  // 🔥 CENTRAL ACCESS CONTROL
+  // ================= DELETE USER =================
 
-  // ❌ DELETE USER
   deleteUser(id: string) {
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
+    const headers =
+      new HttpHeaders({
+
+        Authorization:
+          this.token
+
+      });
+
+    this.http.delete(
+
+      `${this.api}/admin/user/${id}`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: () => {
+
+        alert(
+          'User deleted ✅'
+        );
+
+        this.loadData();
+
+        this.loadStats();
+
+      }
+
     });
 
-    this.http.delete(`${this.api}/admin/user/${id}`, { headers })
-      .subscribe(() => {
-        alert('User deleted ✅');
-        this.loadData();
-      });
   }
 
-  // ❌ DELETE PURCHASE
+  // ================= DELETE PURCHASE =================
+
   deletePurchase(id: string) {
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
+    const headers =
+      new HttpHeaders({
+
+        Authorization:
+          this.token
+
+      });
+
+    this.http.delete(
+
+      `${this.api}/admin/purchase/${id}`,
+
+      { headers }
+
+    ).subscribe({
+
+      next: () => {
+
+        alert(
+          'Purchase deleted ✅'
+        );
+
+        this.loadData();
+
+        this.loadStats();
+
+      }
+
     });
 
-    this.http.delete(`${this.api}/admin/purchase/${id}`, { headers })
-      .subscribe(() => {
-        alert('Purchase deleted ✅');
-        this.loadData();
-      });
   }
 
-  // 🔓 LOGOUT (🔥 FORCE PASSWORD AGAIN)
-  logout() {
-    this.isLoggedIn = false;
-    this.token = '';
-    this.password = '';
-    this.users = [];
-    this.purchases = [];
-  }
+  // ================= BOOK NAME =================
 
   getBookName(id: string) {
-  const book = this.books.find(b => b.id.toString() === id.toString());
-  return book ? book.name : 'Unknown';
-}
+
+    const book =
+      this.books.find(
+
+        b =>
+
+        b.id.toString()
+        ===
+        id.toString()
+
+      );
+
+    return book
+      ? book.name
+      : 'Unknown';
+
+  }
+
+  // ================= LOGOUT =================
+
+  logout() {
+
+    this.isLoggedIn = false;
+
+    this.token = '';
+
+    this.password = '';
+
+    this.users = [];
+
+    this.purchases = [];
+
+    this.books = [];
+
+    this.stats = null;
+
+    this.recentPurchases = [];
+
+    // 🔥 REMOVE TOKEN
+
+    localStorage.removeItem(
+      'adminToken'
+    );
+
+  }
+
 }

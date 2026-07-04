@@ -653,6 +653,110 @@ app.get('/profile-data/:userId', async (req, res) => {
 
 });
 
+// admin stats code start
+
+// ================= ADMIN STATS =================
+
+app.get('/admin/stats', verifyAdmin, async (req, res) => {
+
+  try {
+
+    // 👥 TOTAL USERS
+    const totalUsers =
+      await User.countDocuments();
+
+    // 💳 TOTAL PURCHASES
+    const totalPurchases =
+      await Purchase.countDocuments();
+
+    // 📚 TOTAL BOOKS
+    const totalBooks =
+      books.length;
+
+    // 💰 TOTAL REVENUE
+    const totalRevenue =
+      totalPurchases * 49;
+
+    // 🔥 RECENT PURCHASES
+    const recentPurchases =
+      await Purchase.find()
+      .sort({ _id: -1 })
+      .limit(5);
+
+    const recentData =
+      await Promise.all(
+
+        recentPurchases.map(async (p) => {
+
+          const user =
+            await User.findById(p.userId);
+
+          const book =
+            books.find(
+              b =>
+              b.id.toString()
+              ===
+              p.bookId.toString()
+            );
+
+          return {
+
+            userName:
+              user
+              ? user.name
+              : 'Unknown',
+
+            phone:
+              user
+              ? user.phone
+              : 'N/A',
+
+            bookName:
+              book
+              ? book.name
+              : 'Unknown Book',
+
+            paymentId:
+              p.paymentId
+
+          };
+
+        })
+
+      );
+
+    res.json({
+
+      totalUsers,
+
+      totalPurchases,
+
+      totalBooks,
+
+      totalRevenue,
+
+      recentPurchases:
+        recentData
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message:
+        'Stats loading error'
+
+    });
+
+  }
+
+});
+
+//admin stats code end
+
 // ================= START =================
 
 const PORT = process.env.PORT || 5000;

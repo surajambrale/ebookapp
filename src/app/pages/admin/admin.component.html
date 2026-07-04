@@ -1,110 +1,269 @@
 <div class="admin">
 
   <!-- 🔐 LOGIN -->
-  <div *ngIf="!isLoggedIn" class="login-box">
-    <h2>Admin Login</h2>
-    <input type="password" [(ngModel)]="password" placeholder="Enter password">
-    <button (click)="login()">Login</button>
-  </div>
 
-  <!-- 📊 DASHBOARD -->
-  <div *ngIf="isLoggedIn">
+  <div
+    *ngIf="!isLoggedIn"
+    class="login-box"
+  >
 
-    <button (click)="logout()" style="margin-bottom: 20px; background: red; color: white;">
-      Logout
+    <h2>
+      Admin Login
+    </h2>
+
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Enter password"
+    >
+
+    <button (click)="login()">
+      Login
     </button>
 
-    <!-- 🔥 CENTRAL ACCESS CONTROL -->
-    <div class="card" style="margin-bottom: 20px;">
-      <h3>Grant Book Access</h3>
+  </div>
+
+  <!-- 🔥 DASHBOARD -->
+
+  <div *ngIf="isLoggedIn">
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+      <h1>
+        📊 Admin Dashboard
+      </h1>
+
+      <button
+        class="logout-btn"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+    <!-- 🔥 STATS -->
+
+    <div
+      class="stats-grid"
+      *ngIf="stats"
+    >
+
+      <div class="stat-card">
+
+        <h3>
+          👥 Users
+        </h3>
+
+        <p>
+          {{ stats.totalUsers }}
+        </p>
+
+      </div>
+
+      <div class="stat-card">
+
+        <h3>
+          📚 Books
+        </h3>
+
+        <p>
+          {{ stats.totalBooks }}
+        </p>
+
+      </div>
+
+      <div class="stat-card">
+
+        <h3>
+          💳 Purchases
+        </h3>
+
+        <p>
+          {{ stats.totalPurchases }}
+        </p>
+
+      </div>
+
+      <div
+        class="stat-card revenue"
+      >
+
+        <h3>
+          💰 Revenue
+        </h3>
+
+        <p>
+          ₹{{ stats.totalRevenue }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- 🔥 ACCESS -->
+
+    <div class="card">
+
+      <h3>
+        🔥 Grant Book Access
+      </h3>
 
       <select [(ngModel)]="selectedUser">
-        <option value="">Select User</option>
-        <option *ngFor="let u of users" [value]="u._id">
-          {{ u.name }} ({{ u.phone }})
+
+        <option value="">
+          Select User
         </option>
+
+        <option
+          *ngFor="let u of users"
+          [value]="u._id"
+        >
+
+          {{ u.name }}
+          ({{ u.phone }})
+
+        </option>
+
       </select>
 
       <select [(ngModel)]="selectedBook">
-        <option value="">Select Book</option>
-        <option *ngFor="let b of books" [value]="b.id">
-          {{ b.name }}
+
+        <option value="">
+          Select Book
         </option>
+
+        <option
+          *ngFor="let b of books"
+          [value]="b.id"
+        >
+
+          {{ b.name }}
+
+        </option>
+
       </select>
 
-      <button (click)="grantAccess()">Give Access</button>
-    </div>
-<!-- 🔥 CENTRAL ACCESS CONTROL -->
+      <button (click)="grantAccess()">
+        Give Access
+      </button>
 
-    <h2>Users</h2>
-    <div *ngFor="let user of users" class="card">
-      <p><b>Name:</b> {{user.name}}</p>
-      <p><b>Phone:</b> {{user.phone}}</p>
-
-      <button (click)="deleteUser(user._id)">Delete</button>
     </div>
 
-    <h2>Purchases</h2>
-    <div *ngFor="let p of purchases" class="card">
-       <p><b>Name:</b> {{p.userName}}</p>
-       <p><b>Phone:</b> {{p.userPhone}}</p>
-       <p><b>Book ID:</b> {{p.bookId}}</p>
-       <p><b>Book:</b> {{ getBookName(p.bookId) }}</p>
-       <p><b>Payment ID:</b> {{p.paymentId}}</p>
+    <!-- 🔥 RECENT -->
 
-       <button (click)="deletePurchase(p._id)">Delete Purchase</button>
+    <h2 class="section-title">
+
+      🔥 Recent Purchases
+
+    </h2>
+
+    <div
+      class="card"
+      *ngFor="
+        let r
+        of recentPurchases
+      "
+    >
+
+      <p>
+        <b>User:</b>
+        {{ r.userName }}
+      </p>
+
+      <p>
+        <b>Phone:</b>
+        {{ r.phone }}
+      </p>
+
+      <p>
+        <b>Book:</b>
+        {{ r.bookName }}
+      </p>
+
+      <p>
+        <b>Payment:</b>
+        {{ r.paymentId }}
+      </p>
+
+    </div>
+
+    <!-- USERS -->
+
+    <h2 class="section-title">
+
+      👥 Users
+
+    </h2>
+
+    <div
+      *ngFor="let user of users"
+      class="card"
+    >
+
+      <p>
+        <b>Name:</b>
+        {{ user.name }}
+      </p>
+
+      <p>
+        <b>Phone:</b>
+        {{ user.phone }}
+      </p>
+
+      <button
+        class="delete-btn"
+        (click)="deleteUser(user._id)"
+      >
+        Delete User
+      </button>
+
+    </div>
+
+    <!-- PURCHASES -->
+
+    <h2 class="section-title">
+
+      💳 Purchases
+
+    </h2>
+
+    <div
+      *ngFor="let p of purchases"
+      class="card"
+    >
+
+      <p>
+        <b>Name:</b>
+        {{ p.userName }}
+      </p>
+
+      <p>
+        <b>Phone:</b>
+        {{ p.userPhone }}
+      </p>
+
+      <p>
+        <b>Book:</b>
+        {{ getBookName(p.bookId) }}
+      </p>
+
+      <p>
+        <b>Payment:</b>
+        {{ p.paymentId }}
+      </p>
+
+      <button
+        class="delete-btn"
+        (click)="deletePurchase(p._id)"
+      >
+        Delete Purchase
+      </button>
+
     </div>
 
   </div>
 
 </div>
-
-<!-- navbar start start -->
-<!-- 🔥 BOTTOM NAVBAR -->
-
-<div class="bottom-navbar">
-
-  <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
-    <span>🏠</span>
-    <p>Home</p>
-  </div>
-
-  <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
-    <span>🔍</span>
-    <p>Explore</p>
-  </div>
-
-  <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
-    <span>📚</span>
-    <p>My Books</p>
-  </div>
-
-  <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
-    <span>👤</span>
-    <p>Profile</p>
-  </div>
-
-</div>
-
-<!-- navbar end -->
