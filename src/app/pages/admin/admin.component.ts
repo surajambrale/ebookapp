@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+
 import {
   HttpClient,
   HttpHeaders
 } from '@angular/common/http';
 
 import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 import { environment }
@@ -14,6 +16,7 @@ import { RouterModule }
 from '@angular/router';
 
 @Component({
+
   standalone: true,
 
   imports: [
@@ -27,6 +30,7 @@ from '@angular/router';
 
   styleUrls:
     ['./admin.component.scss']
+
 })
 
 export class AdminComponent {
@@ -59,6 +63,18 @@ export class AdminComponent {
 
   totalRevenue = 0;
 
+  // 🔍 SEARCH
+
+  searchPhone = '';
+
+  filteredUsers: any[] = [];
+
+  filteredPurchases: any[] = [];
+
+  // 🔥 SECTION FILTER
+
+  selectedSection = 'recent';
+
   api = environment.apiUrl;
 
   constructor(
@@ -84,12 +100,10 @@ export class AdminComponent {
 
       next: (res: any) => {
 
-        this.token =
-          res.token;
+        this.token = res.token;
 
         this.isLoggedIn = true;
 
-        // 🔥 SAVE TOKEN
         localStorage.setItem(
           'adminToken',
           this.token
@@ -139,6 +153,8 @@ export class AdminComponent {
 
         this.users = res;
 
+        this.filteredUsers = res;
+
       }
 
     });
@@ -156,6 +172,8 @@ export class AdminComponent {
       next: (res: any) => {
 
         this.purchases = res;
+
+        this.filteredPurchases = res;
 
       }
 
@@ -203,11 +221,6 @@ export class AdminComponent {
 
       next: (res) => {
 
-        console.log(
-          'Stats:',
-          res
-        );
-
         this.stats = res;
 
         this.totalRevenue =
@@ -216,21 +229,58 @@ export class AdminComponent {
         this.recentPurchases =
           res.recentPurchases;
 
-      },
-
-      error: (err) => {
-
-        console.log(
-          err
-        );
-
       }
 
     });
 
   }
 
-  // ================= ACCESS CONTROL =================
+  // ================= SEARCH =================
+
+  searchUser() {
+
+    const phone =
+      this.searchPhone.trim();
+
+    // RESET
+
+    if (!phone) {
+
+      this.filteredUsers =
+        this.users;
+
+      this.filteredPurchases =
+        this.purchases;
+
+      return;
+
+    }
+
+    // FILTER USERS
+
+    this.filteredUsers =
+      this.users.filter(
+
+        (u: any) =>
+
+          u.phone.includes(phone)
+
+      );
+
+    // FILTER PURCHASES
+
+    this.filteredPurchases =
+      this.purchases.filter(
+
+        (p: any) =>
+
+          p.userPhone.includes(phone)
+
+      );
+
+  }
+
+  // ================= ACCESS =================
 
   grantAccess() {
 
@@ -245,6 +295,7 @@ export class AdminComponent {
       );
 
       return;
+
     }
 
     const headers =
@@ -280,18 +331,6 @@ export class AdminComponent {
         this.loadData();
 
         this.loadStats();
-
-      },
-
-      error: (err) => {
-
-        alert(
-
-          err.error.message
-          ||
-          'Error ❌'
-
-        );
 
       }
 
@@ -408,11 +447,13 @@ export class AdminComponent {
 
     this.books = [];
 
+    this.filteredUsers = [];
+
+    this.filteredPurchases = [];
+
     this.stats = null;
 
     this.recentPurchases = [];
-
-    // 🔥 REMOVE TOKEN
 
     localStorage.removeItem(
       'adminToken'

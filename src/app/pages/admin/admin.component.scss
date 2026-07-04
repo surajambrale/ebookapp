@@ -27,6 +27,62 @@
   font-size: 2rem;
 }
 
+/* SEARCH */
+
+.search-box {
+
+  margin-bottom: 20px;
+}
+
+.search-box input {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  border: none;
+
+  outline: none;
+
+  background: #1f1f1f;
+
+  color: white;
+
+  font-size: 15px;
+
+  border: 1px solid #2f2f2f;
+}
+
+/* SECTION FILTER */
+
+.section-filter {
+
+  margin-bottom: 25px;
+}
+
+.section-filter select {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  border: none;
+
+  outline: none;
+
+  background: #1f1f1f;
+
+  color: white;
+
+  font-size: 15px;
+
+  border: 1px solid #2f2f2f;
+}
+
 /* LOGOUT */
 
 .logout-btn {

@@ -27,7 +27,7 @@
 
   <div *ngIf="isLoggedIn">
 
-    <!-- TOP BAR -->
+    <!-- 🔥 TOP -->
 
     <div class="top-bar">
 
@@ -41,6 +41,41 @@
       >
         Logout
       </button>
+
+    </div>
+
+    <!-- 🔍 SEARCH -->
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        placeholder="Search by phone number..."
+        [(ngModel)]="searchPhone"
+        (input)="searchUser()"
+      />
+
+    </div>
+
+    <!-- 🔥 SECTION FILTER -->
+
+    <div class="section-filter">
+
+      <select [(ngModel)]="selectedSection">
+
+        <option value="recent">
+          Recent Purchases
+        </option>
+
+        <option value="users">
+          Users
+        </option>
+
+        <option value="purchases">
+          Purchases
+        </option>
+
+      </select>
 
     </div>
 
@@ -152,115 +187,133 @@
 
     </div>
 
-    <!-- 🔥 RECENT -->
+    <!-- 🔥 RECENT PURCHASES -->
 
-    <h2 class="section-title">
+    <div *ngIf="selectedSection === 'recent'">
 
-      🔥 Recent Purchases
+      <h2 class="section-title">
 
-    </h2>
+        🔥 Recent Purchases
 
-    <div
-      class="card"
-      *ngFor="
-        let r
-        of recentPurchases
-      "
-    >
+      </h2>
 
-      <p>
-        <b>User:</b>
-        {{ r.userName }}
-      </p>
+      <div
+        class="card"
+        *ngFor="
+          let r
+          of recentPurchases
+        "
+      >
 
-      <p>
-        <b>Phone:</b>
-        {{ r.phone }}
-      </p>
+        <p>
+          <b>User:</b>
+          {{ r.userName }}
+        </p>
 
-      <p>
-        <b>Book:</b>
-        {{ r.bookName }}
-      </p>
+        <p>
+          <b>Phone:</b>
+          {{ r.phone }}
+        </p>
 
-      <p>
-        <b>Payment:</b>
-        {{ r.paymentId }}
-      </p>
+        <p>
+          <b>Book:</b>
+          {{ r.bookName }}
+        </p>
+
+        <p>
+          <b>Payment:</b>
+          {{ r.paymentId }}
+        </p>
+
+      </div>
 
     </div>
 
     <!-- USERS -->
 
-    <h2 class="section-title">
+    <div *ngIf="selectedSection === 'users'">
 
-      👥 Users
+      <h2 class="section-title">
 
-    </h2>
+        👥 Users
 
-    <div
-      *ngFor="let user of users"
-      class="card"
-    >
+      </h2>
 
-      <p>
-        <b>Name:</b>
-        {{ user.name }}
-      </p>
-
-      <p>
-        <b>Phone:</b>
-        {{ user.phone }}
-      </p>
-
-      <button
-        class="delete-btn"
-        (click)="deleteUser(user._id)"
+      <div
+        *ngFor="
+          let user
+          of filteredUsers
+        "
+        class="card"
       >
-        Delete User
-      </button>
+
+        <p>
+          <b>Name:</b>
+          {{ user.name }}
+        </p>
+
+        <p>
+          <b>Phone:</b>
+          {{ user.phone }}
+        </p>
+
+        <button
+          class="delete-btn"
+          (click)="deleteUser(user._id)"
+        >
+          Delete User
+        </button>
+
+      </div>
 
     </div>
 
     <!-- PURCHASES -->
 
-    <h2 class="section-title">
+    <div *ngIf="selectedSection === 'purchases'">
 
-      💳 Purchases
+      <h2 class="section-title">
 
-    </h2>
+        💳 Purchases
 
-    <div
-      *ngFor="let p of purchases"
-      class="card"
-    >
+      </h2>
 
-      <p>
-        <b>Name:</b>
-        {{ p.userName }}
-      </p>
-
-      <p>
-        <b>Phone:</b>
-        {{ p.userPhone }}
-      </p>
-
-      <p>
-        <b>Book:</b>
-        {{ getBookName(p.bookId) }}
-      </p>
-
-      <p>
-        <b>Payment:</b>
-        {{ p.paymentId }}
-      </p>
-
-      <button
-        class="delete-btn"
-        (click)="deletePurchase(p._id)"
+      <div
+        *ngFor="
+          let p
+          of filteredPurchases
+        "
+        class="card"
       >
-        Delete Purchase
-      </button>
+
+        <p>
+          <b>Name:</b>
+          {{ p.userName }}
+        </p>
+
+        <p>
+          <b>Phone:</b>
+          {{ p.userPhone }}
+        </p>
+
+        <p>
+          <b>Book:</b>
+          {{ getBookName(p.bookId) }}
+        </p>
+
+        <p>
+          <b>Payment:</b>
+          {{ p.paymentId }}
+        </p>
+
+        <button
+          class="delete-btn"
+          (click)="deletePurchase(p._id)"
+        >
+          Delete Purchase
+        </button>
+
+      </div>
 
     </div>
 
