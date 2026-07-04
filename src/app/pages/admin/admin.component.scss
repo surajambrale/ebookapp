@@ -7,6 +7,8 @@
   color: white;
 
   padding: 20px;
+
+  overflow-x: hidden;
 }
 
 /* TOP */
@@ -20,6 +22,10 @@
   align-items: center;
 
   margin-bottom: 25px;
+
+  gap: 15px;
+
+  flex-wrap: wrap;
 }
 
 .top-bar h1 {
@@ -31,6 +37,8 @@
 
 .search-box {
 
+  width: 100%;
+
   margin-bottom: 20px;
 }
 
@@ -38,11 +46,13 @@
 
   width: 100%;
 
-  padding: 14px;
+  box-sizing: border-box;
 
-  border-radius: 12px;
+  padding: 14px 16px;
 
-  border: none;
+  border-radius: 14px;
+
+  border: 1px solid #2f2f2f;
 
   outline: none;
 
@@ -51,13 +61,13 @@
   color: white;
 
   font-size: 15px;
-
-  border: 1px solid #2f2f2f;
 }
 
 /* SECTION FILTER */
 
 .section-filter {
+
+  width: 100%;
 
   margin-bottom: 25px;
 }
@@ -66,11 +76,13 @@
 
   width: 100%;
 
-  padding: 14px;
+  box-sizing: border-box;
 
-  border-radius: 12px;
+  padding: 14px 16px;
 
-  border: none;
+  border-radius: 14px;
+
+  border: 1px solid #2f2f2f;
 
   outline: none;
 
@@ -79,8 +91,6 @@
   color: white;
 
   font-size: 15px;
-
-  border: 1px solid #2f2f2f;
 }
 
 /* LOGOUT */
@@ -98,6 +108,8 @@
   border-radius: 10px;
 
   cursor: pointer;
+
+  min-width: 120px;
 }
 
 /* STATS */
@@ -188,19 +200,23 @@
 
   width: 100%;
 
-  padding: 12px;
+  box-sizing: border-box;
+
+  padding: 14px 16px;
 
   margin-bottom: 14px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
-  border: none;
+  border: 1px solid #333;
 
   outline: none;
 
   background: #2a2a2a;
 
   color: white;
+
+  font-size: 15px;
 }
 
 /* BUTTON */
@@ -216,13 +232,21 @@
 
   border: none;
 
-  padding: 12px;
+  padding: 13px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   font-weight: bold;
 
   cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.card button:hover,
+.login-box button:hover {
+
+  transform: translateY(-2px);
 }
 
 /* DELETE */
@@ -240,17 +264,21 @@
 
 .login-box {
 
-  max-width: 400px;
+  width: 100%;
+
+  max-width: 420px;
 
   margin: auto;
 
   background: #1b1b1b;
 
-  padding: 30px;
+  padding: 30px 22px;
 
   border-radius: 20px;
 
-  margin-top: 120px;
+  margin-top: 100px;
+
+  box-sizing: border-box;
 }
 
 .login-box h2 {
@@ -264,16 +292,38 @@
 
 @media (max-width: 768px) {
 
+  .admin {
+
+    padding: 15px;
+  }
+
   .top-bar {
 
     flex-direction: column;
 
-    gap: 15px;
+    align-items: flex-start;
   }
 
   .top-bar h1 {
 
     font-size: 1.5rem;
+  }
+
+  .stats-grid {
+
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+
+    padding: 16px;
+  }
+
+  .login-box {
+
+    margin-top: 70px;
+
+    padding: 25px 18px;
   }
 
 }
