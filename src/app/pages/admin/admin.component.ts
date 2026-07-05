@@ -79,41 +79,41 @@ export class AdminComponent {
   // 🔥 LOAD DATA
   loadData() {
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
+  const headers = new HttpHeaders({
+    Authorization: this.token
+  });
+
+  // 🔥 USERS
+  this.http.get(`${this.api}/admin/users`, { headers })
+
+    .subscribe((res: any) => {
+
+      this.users = res;
+
     });
 
-    // USERS
-    this.http.get(`${this.api}/admin/users`, { headers })
+  // 🔥 BOOKS FIRST
+  this.http.get(`${this.api}/admin/books`, { headers })
 
-      .subscribe((res: any) => {
+    .subscribe((booksRes: any) => {
 
-        this.users = res;
+      this.books = booksRes;
 
-      });
+      // 🔥 PURCHASES AFTER BOOKS
+      this.http.get(`${this.api}/admin/purchases`, { headers })
 
-    // BOOKS
-    this.http.get(`${this.api}/admin/books`, { headers })
+        .subscribe((purchaseRes: any) => {
 
-      .subscribe((res: any) => {
+          this.purchases = purchaseRes;
 
-        this.books = res;
+          // 🔥 NOW ANALYTICS
+          this.calculateAnalytics();
 
-      });
+        });
 
-    // PURCHASES
-    this.http.get(`${this.api}/admin/purchases`, { headers })
+    });
 
-      .subscribe((res: any) => {
-
-        this.purchases = res;
-
-        // 🔥 AFTER PURCHASE LOAD
-        this.calculateAnalytics();
-
-      });
-
-  }
+}
 
   // 🔥 ANALYTICS
   calculateAnalytics() {
