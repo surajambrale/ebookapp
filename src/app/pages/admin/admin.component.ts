@@ -220,38 +220,62 @@ export class AdminComponent {
   }
 
   // 🔥 EXPORT CSV
-  exportCSV() {
+ exportCSV() {
 
-    let csv =
-`Name,Phone,Book ID,Book Name,Amount,Payment ID\n`;
+  let csvRows = [];
 
-    this.purchases.forEach((p: any) => {
+  // 🔥 COLUMN HEADERS
+  csvRows.push([
+    'Name',
+    'Phone',
+    'Book ID',
+    'Book Name',
+    'Amount',
+    'Payment ID'
+  ]);
 
-      csv +=
-`${p.userName},
-${p.userPhone},
-${p.bookId},
-${this.getBookName(p.bookId)},
-${p.amount},
-${p.paymentId}\n`;
+  // 🔥 DATA ROWS
+  this.purchases.forEach((p: any) => {
 
-    });
+    csvRows.push([
 
-    const blob = new Blob([csv], {
-      type: 'text/csv'
-    });
+      p.userName || '',
 
-    const url = window.URL.createObjectURL(blob);
+      p.userPhone || '',
 
-    const a = document.createElement('a');
+      p.bookId || '',
 
-    a.href = url;
+      this.getBookName(p.bookId),
 
-    a.download = 'purchases.csv';
+      p.amount || 0,
 
-    a.click();
+      p.paymentId || ''
 
-  }
+    ]);
+
+  });
+
+  // 🔥 CONVERT TO CSV
+  const csvContent = csvRows
+    .map(e => e.join(','))
+    .join('\n');
+
+  // 🔥 DOWNLOAD
+  const blob = new Blob([csvContent], {
+    type: 'text/csv;charset=utf-8;'
+  });
+
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url;
+
+  a.download = 'purchases.csv';
+
+  a.click();
+
+}
 
   // 🔥 GRANT ACCESS
   grantAccess() {
