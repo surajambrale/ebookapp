@@ -116,137 +116,119 @@ export class AdminComponent {
 }
 
   // 🔥 ANALYTICS
-  calculateAnalytics() {
+calculateAnalytics() {
 
-    this.totalRevenue = 0;
-    this.todayRevenue = 0;
-    this.weeklyRevenue = 0;
-    this.monthlyRevenue = 0;
+  this.totalRevenue = 0;
+  this.todayRevenue = 0;
+  this.weeklyRevenue = 0;
+  this.monthlyRevenue = 0;
 
-    const today = new Date();
+  const today = new Date();
 
-    const topBooks: any = {};
+  const topBooks: any = {};
 
-    this.purchases.forEach((p: any) => {
+  this.purchases.forEach((p: any) => {
 
-      // 🔥 FALLBACK AMOUNT
-      let amount = Number(p.amount || 0);
+    // 🔥 ALWAYS USE BOOK PRICE
+    const amount = this.getBookAmount(p.bookId);
 
-      // 🔥 OLD PURCHASE RECOVERY
-     if (!amount || amount === 0) {
+    // 🔥 TOTAL
+    this.totalRevenue += amount;
 
-  amount = this.getBookAmount(p.bookId);
+    const purchaseDate = new Date(
+      p.createdAt || p.date || new Date()
+    );
 
-}
+    // 🔥 TODAY
+    if (
+      purchaseDate.toDateString() ===
+      today.toDateString()
+    ) {
 
-      // 🔥 TOTAL
-      this.totalRevenue += amount;
-
-      const purchaseDate = new Date(
-        p.createdAt || p.date || new Date()
-      );
-
-      // 🔥 TODAY
-      if (
-        purchaseDate.toDateString() ===
-        today.toDateString()
-      ) {
-
-        this.todayRevenue += amount;
-
-      }
-
-      // 🔥 WEEKLY
-      const diffDays =
-
-        (today.getTime() - purchaseDate.getTime()) /
-
-        (1000 * 60 * 60 * 24);
-
-      if (diffDays <= 7) {
-
-        this.weeklyRevenue += amount;
-
-      }
-
-      // 🔥 MONTHLY
-      if (
-
-        purchaseDate.getMonth() === today.getMonth()
-
-        &&
-
-        purchaseDate.getFullYear() ===
-        today.getFullYear()
-
-      ) {
-
-        this.monthlyRevenue += amount;
-
-      }
-
-      // 🔥 TOP SELLING
-      topBooks[p.bookId] =
-
-        (topBooks[p.bookId] || 0) + 1;
-
-    });
-
-    // 🔥 FIND TOP BOOK
-    let max = 0;
-
-    let topId = '';
-
-    for (const id in topBooks) {
-
-      if (topBooks[id] > max) {
-
-        max = topBooks[id];
-
-        topId = id;
-
-      }
+      this.todayRevenue += amount;
 
     }
 
-    const book = this.books.find(
+    // 🔥 WEEKLY
+    const diffDays =
+      (today.getTime() - purchaseDate.getTime()) /
+      (1000 * 60 * 60 * 24);
 
-      b => b.id.toString() === topId.toString()
+    if (diffDays <= 7) {
 
-    );
+      this.weeklyRevenue += amount;
 
-    this.topSellingBook =
+    }
 
-      book ? book.name : 'No Data';
+    // 🔥 MONTHLY
+    if (
+      purchaseDate.getMonth() === today.getMonth()
+      &&
+      purchaseDate.getFullYear() === today.getFullYear()
+    ) {
 
-    this.topSellingCount = max;
+      this.monthlyRevenue += amount;
+
+    }
+
+    // 🔥 TOP SELLING
+    topBooks[p.bookId] =
+      (topBooks[p.bookId] || 0) + 1;
+
+  });
+
+  // 🔥 FIND TOP BOOK
+  let max = 0;
+  let topId = '';
+
+  for (const id in topBooks) {
+
+    if (topBooks[id] > max) {
+
+      max = topBooks[id];
+      topId = id;
+
+    }
 
   }
+
+  const book = this.books.find(
+    b => b.id.toString() === topId.toString()
+  );
+
+  this.topSellingBook =
+    book
+      ? (book.title || book.name)
+      : 'No Data';
+
+  this.topSellingCount = max;
+
+}
 
   // 🔥 GET BOOK NAME
   getBookName(id: string) {
 
-    const book = this.books.find(
-
-      b => b.id.toString() === id.toString()
-
-    );
-
-    return book ? book.name : 'Unknown';
-
-  }
-
-  // 🔥 GET BOOK AMOUNT
-  getBookAmount(bookId: string) {
-
   const book = this.books.find(
-
-    b => b.id.toString() === bookId.toString()
-
+    b => b.id.toString() === id.toString()
   );
 
-  // 🔥 ACTUAL PRICE
-  return Number(book?.actualPrice || book?.price || 0);
+  return book
+    ? (book.title || book.name)
+    : 'Unknown';
+
+}
+
+  // 🔥 GET BOOK AMOUNT
+ getBookAmount(bookId: string) {
+
+  const book = this.books.find(
+    b => b.id.toString() === bookId.toString()
+  );
+
+  if (!book) return 0;
+
+  // 🔥 ALWAYS TAKE ACTUAL BOOK PRICE
+  return Number(book.price || 0);
 
 }
 
