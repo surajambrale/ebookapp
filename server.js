@@ -11,6 +11,14 @@ const axios = require('axios');
 
 const app = express();
 
+// multer code start
+
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// multer code end
+
 // gmail code start
 const nodemailer = require('nodemailer');
 //gmail code end
@@ -756,6 +764,299 @@ app.get('/admin/stats', verifyAdmin, async (req, res) => {
 });
 
 //admin stats code end
+
+// multer code start
+
+// ==========================
+// 🔥 MULTER STORAGE
+// ==========================
+
+const storage = multer.diskStorage({
+
+  destination: function (req, file, cb) {
+
+    if (file.fieldname === 'image') {
+
+      cb(null, 'uploads/images');
+
+    } else {
+
+      cb(null, 'uploads/pdfs');
+
+    }
+
+  },
+
+  filename: function (req, file, cb) {
+
+    cb(
+      null,
+      Date.now() + '-' + file.originalname
+    );
+
+  }
+
+});
+
+const upload = multer({ storage });
+
+
+// ==========================
+// 🔥 BOOK MODEL
+// ==========================
+
+const BookSchema = new mongoose.Schema({
+
+  name: String,
+  price: Number,
+  category: String,
+
+  image: String,
+  pdf: String,
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+
+});
+
+const Book = mongoose.model('Book', BookSchema);
+
+
+// ==========================
+// 🔥 UPLOAD BOOK
+// ==========================
+
+app.post(
+  '/admin/upload-book',
+
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'pdf', maxCount: 1 }
+  ]),
+
+  async (req, res) => {
+
+    try {
+
+      const {
+        name,
+        price,
+        category
+      } = req.body;
+
+      const image =
+        req.files['image'][0].filename;
+
+      const pdf =
+        req.files['pdf'][0].filename;
+
+      const book = new Book({
+
+        name,
+        price,
+        category,
+
+        image,
+        pdf
+
+      });
+
+      await book.save();
+
+      res.json({
+        success: true,
+        message: 'Book Uploaded ✅'
+      });
+
+    } catch (err) {
+
+      console.log(err);
+
+      res.status(500).json({
+        message: 'Upload Error'
+      });
+
+    }
+
+  }
+);
+
+
+// ==========================
+// 🔥 GET ALL BOOKS
+// ==========================
+
+app.get('/admin/books-full', async (req, res) => {
+
+  const books = await Book.find();
+
+  res.json(books);
+
+});
+
+
+// ==========================
+// 🔥 DASHBOARD ANALYTICS
+// ==========================
+
+app.get('/admin/dashboard-stats', async (req, res) => {
+
+  try {
+
+    const purchases =
+      await Purchase.find();
+
+    const users =
+      await User.find();
+
+    const totalRevenue =
+      purchases.reduce(
+        (sum, p) => sum + Number(p.amount || 0),
+        0
+      );
+
+    // 🔥 TODAY
+
+    const today = new Date();
+
+    today.setHours(0,0,0,0);
+
+    const todayRevenue =
+      purchases
+        .filter(p =>
+          new Date(p.createdAt) >= today
+        )
+        .reduce(
+          (sum, p) =>
+            sum + Number(p.amount || 0),
+          0
+        );
+
+    // 🔥 WEEK
+
+    const week = new Date();
+
+    week.setDate(
+      week.getDate() - 7
+    );
+
+    const weeklyRevenue =
+      purchases
+        .filter(p =>
+          new Date(p.createdAt) >= week
+        )
+        .reduce(
+          (sum, p) =>
+            sum + Number(p.amount || 0),
+          0
+        );
+
+    // 🔥 MONTH
+
+    const month = new Date();
+
+    month.setMonth(
+      month.getMonth() - 1
+    );
+
+    const monthlyRevenue =
+      purchases
+        .filter(p =>
+          new Date(p.createdAt) >= month
+        )
+        .reduce(
+          (sum, p) =>
+            sum + Number(p.amount || 0),
+          0
+        );
+
+    // 🔥 TOP SELLING
+
+    const bookCounts = {};
+
+    purchases.forEach(p => {
+
+      if (!bookCounts[p.bookId]) {
+
+        bookCounts[p.bookId] = 0;
+
+      }
+
+      bookCounts[p.bookId]++;
+
+    });
+
+    let topBook = '';
+
+    let topSales = 0;
+
+    for (let key in bookCounts) {
+
+      if (bookCounts[key] > topSales) {
+
+        topSales = bookCounts[key];
+
+        topBook = key;
+
+      }
+
+    }
+
+    // 🔥 BOOK-WISE REVENUE
+
+    const revenueByBook = {};
+
+    purchases.forEach(p => {
+
+      if (!revenueByBook[p.bookTitle]) {
+
+        revenueByBook[p.bookTitle] = 0;
+
+      }
+
+      revenueByBook[p.bookTitle] +=
+        Number(p.amount || 0);
+
+    });
+
+    res.json({
+
+      totalUsers: users.length,
+
+      totalPurchases:
+        purchases.length,
+
+      totalRevenue,
+
+      todayRevenue,
+
+      weeklyRevenue,
+
+      monthlyRevenue,
+
+      topBook,
+
+      topSales,
+
+      revenueByBook
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: 'Stats Error'
+    });
+
+  }
+
+});
+
+// multer code end
 
 // ================= START =================
 

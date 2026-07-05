@@ -14,8 +14,8 @@
     <input
       type="password"
       [(ngModel)]="password"
-      placeholder="Enter password"
-    >
+      placeholder="Enter Password"
+    />
 
     <button (click)="login()">
       Login
@@ -23,16 +23,17 @@
 
   </div>
 
+
   <!-- 🔥 DASHBOARD -->
 
   <div *ngIf="isLoggedIn">
 
-    <!-- 🔥 TOP -->
+    <!-- TOP -->
 
     <div class="top-bar">
 
       <h1>
-        📊 Admin Dashboard
+        Admin Dashboard
       </h1>
 
       <button
@@ -44,27 +45,31 @@
 
     </div>
 
-    <!-- 🔍 SEARCH -->
+    <!-- SEARCH -->
 
     <div class="search-box">
 
       <input
         type="text"
-        placeholder="Search by phone number..."
-        [(ngModel)]="searchPhone"
-        (input)="searchUser()"
+        placeholder="Search user / phone"
+        [(ngModel)]="searchTerm"
+        (input)="searchData()"
       />
 
     </div>
 
-    <!-- 🔥 SECTION FILTER -->
+    <!-- FILTER -->
 
     <div class="section-filter">
 
-      <select [(ngModel)]="selectedSection">
+      <select [(ngModel)]="section">
 
-        <option value="recent">
-          Recent Purchases
+        <option value="dashboard">
+          Dashboard
+        </option>
+
+        <option value="access">
+          Grant Access
         </option>
 
         <option value="users">
@@ -79,170 +84,167 @@
 
     </div>
 
-    <!-- 🔥 STATS -->
+    <!-- DASHBOARD -->
 
-    <div
-      class="stats-grid"
-      *ngIf="stats"
-    >
+    <div *ngIf="section === 'dashboard'">
 
-      <div class="stat-card">
+      <div class="stats-grid">
 
-        <h3>
-          👥 Users
-        </h3>
+        <div class="stat-card">
 
-        <p>
-          {{ stats.totalUsers }}
-        </p>
+          <h3>Total Users</h3>
+
+          <p>
+            {{ dashboardStats.totalUsers }}
+          </p>
+
+        </div>
+
+        <div class="stat-card">
+
+          <h3>Total Purchases</h3>
+
+          <p>
+            {{ dashboardStats.totalPurchases }}
+          </p>
+
+        </div>
+
+        <div class="stat-card revenue">
+
+          <h3>Total Revenue</h3>
+
+          <p>
+            ₹{{ dashboardStats.totalRevenue }}
+          </p>
+
+        </div>
+
+        <div class="stat-card">
+
+          <h3>Today Revenue</h3>
+
+          <p>
+            ₹{{ dashboardStats.todayRevenue }}
+          </p>
+
+        </div>
+
+        <div class="stat-card">
+
+          <h3>Weekly Revenue</h3>
+
+          <p>
+            ₹{{ dashboardStats.weeklyRevenue }}
+          </p>
+
+        </div>
+
+        <div class="stat-card">
+
+          <h3>Monthly Revenue</h3>
+
+          <p>
+            ₹{{ dashboardStats.monthlyRevenue }}
+          </p>
+
+        </div>
+
+        <div class="stat-card">
+
+          <h3>Top Selling</h3>
+
+          <p>
+            {{ dashboardStats.topBook }}
+          </p>
+
+        </div>
 
       </div>
 
-      <div class="stat-card">
+      <!-- EXPORT -->
 
-        <h3>
-          📚 Books
-        </h3>
-
-        <p>
-          {{ stats.totalBooks }}
-        </p>
-
-      </div>
-
-      <div class="stat-card">
-
-        <h3>
-          💳 Purchases
-        </h3>
-
-        <p>
-          {{ stats.totalPurchases }}
-        </p>
-
-      </div>
-
-      <div
-        class="stat-card revenue"
+      <button
+        class="export-btn"
+        (click)="exportExcel()"
       >
-
-        <h3>
-          💰 Revenue
-        </h3>
-
-        <p>
-          ₹{{ stats.totalRevenue }}
-        </p>
-
-      </div>
-
-    </div>
-
-    <!-- 🔥 ACCESS -->
-
-    <div class="card">
-
-      <h3>
-        🔥 Grant Book Access
-      </h3>
-
-      <select [(ngModel)]="selectedUser">
-
-        <option value="">
-          Select User
-        </option>
-
-        <option
-          *ngFor="let u of users"
-          [value]="u._id"
-        >
-
-          {{ u.name }}
-          ({{ u.phone }})
-
-        </option>
-
-      </select>
-
-      <select [(ngModel)]="selectedBook">
-
-        <option value="">
-          Select Book
-        </option>
-
-        <option
-          *ngFor="let b of books"
-          [value]="b.id"
-        >
-
-          {{ b.name }}
-
-        </option>
-
-      </select>
-
-      <button (click)="grantAccess()">
-        Give Access
+        Export Excel
       </button>
 
     </div>
 
-    <!-- 🔥 RECENT PURCHASES -->
 
-    <div *ngIf="selectedSection === 'recent'">
+    <!-- ACCESS -->
 
-      <h2 class="section-title">
+    <div *ngIf="section === 'access'">
 
-        🔥 Recent Purchases
+      <div class="card">
 
-      </h2>
+        <h3>
+          Grant Book Access
+        </h3>
 
-      <div
-        class="card"
-        *ngFor="
-          let r
-          of recentPurchases
-        "
-      >
+        <select
+          [(ngModel)]="selectedUser"
+        >
 
-        <p>
-          <b>User:</b>
-          {{ r.userName }}
-        </p>
+          <option value="">
+            Select User
+          </option>
 
-        <p>
-          <b>Phone:</b>
-          {{ r.phone }}
-        </p>
+          <option
+            *ngFor="let u of users"
+            [value]="u._id"
+          >
 
-        <p>
-          <b>Book:</b>
-          {{ r.bookName }}
-        </p>
+            {{ u.name }}
+            ({{ u.phone }})
 
-        <p>
-          <b>Payment:</b>
-          {{ r.paymentId }}
-        </p>
+          </option>
+
+        </select>
+
+        <select
+          [(ngModel)]="selectedBook"
+        >
+
+          <option value="">
+            Select Book
+          </option>
+
+          <option
+            *ngFor="let b of books"
+            [value]="b.id"
+          >
+
+            {{ b.name }}
+
+          </option>
+
+        </select>
+
+        <button
+          (click)="grantAccess()"
+        >
+          Give Access
+        </button>
 
       </div>
 
     </div>
 
+
     <!-- USERS -->
 
-    <div *ngIf="selectedSection === 'users'">
+    <div *ngIf="section === 'users'">
 
       <h2 class="section-title">
-
-        👥 Users
-
+        Users
       </h2>
 
       <div
         *ngFor="
-          let user
-          of filteredUsers
+          let user of filteredUsers
         "
         class="card"
       >
@@ -268,20 +270,18 @@
 
     </div>
 
+
     <!-- PURCHASES -->
 
-    <div *ngIf="selectedSection === 'purchases'">
+    <div *ngIf="section === 'purchases'">
 
       <h2 class="section-title">
-
-        💳 Purchases
-
+        Purchases
       </h2>
 
       <div
         *ngFor="
-          let p
-          of filteredPurchases
+          let p of filteredPurchases
         "
         class="card"
       >
@@ -302,7 +302,7 @@
         </p>
 
         <p>
-          <b>Payment:</b>
+          <b>Payment ID:</b>
           {{ p.paymentId }}
         </p>
 

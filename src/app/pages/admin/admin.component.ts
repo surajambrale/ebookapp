@@ -9,14 +9,15 @@ import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 
-import { environment }
-from '../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
-import { RouterModule }
-from '@angular/router';
+import { RouterModule } from '@angular/router';
+
+import * as XLSX from 'xlsx';
+
+import { saveAs } from 'file-saver';
 
 @Component({
-
   standalone: true,
 
   imports: [
@@ -25,17 +26,12 @@ from '@angular/router';
     RouterModule
   ],
 
-  templateUrl:
-    './admin.component.html',
+  templateUrl: './admin.component.html',
 
-  styleUrls:
-    ['./admin.component.scss']
-
+  styleUrls: ['./admin.component.scss']
 })
 
 export class AdminComponent {
-
-  // 🔐 LOGIN
 
   password = '';
 
@@ -43,37 +39,25 @@ export class AdminComponent {
 
   token = '';
 
-  // 🔥 DATA
-
   users: any[] = [];
 
   purchases: any[] = [];
 
   books: any[] = [];
 
-  selectedUser = '';
-
-  selectedBook = '';
-
-  // 🔥 STATS
-
-  stats: any;
-
-  recentPurchases: any[] = [];
-
-  totalRevenue = 0;
-
-  // 🔍 SEARCH
-
-  searchPhone = '';
-
   filteredUsers: any[] = [];
 
   filteredPurchases: any[] = [];
 
-  // 🔥 SECTION FILTER
+  selectedUser = '';
 
-  selectedSection = 'recent';
+  selectedBook = '';
+
+  section = 'dashboard';
+
+  searchTerm = '';
+
+  dashboardStats: any = {};
 
   api = environment.apiUrl;
 
@@ -81,7 +65,7 @@ export class AdminComponent {
     private http: HttpClient
   ) {}
 
-  // ================= LOGIN =================
+  // 🔐 LOGIN
 
   login() {
 
@@ -89,9 +73,7 @@ export class AdminComponent {
       this.password.trim();
 
     this.http.post(
-
       `${this.api}/admin-login`,
-
       {
         password: cleanPassword
       }
@@ -104,22 +86,13 @@ export class AdminComponent {
 
         this.isLoggedIn = true;
 
-        localStorage.setItem(
-          'adminToken',
-          this.token
-        );
-
         this.loadData();
-
-        this.loadStats();
 
       },
 
       error: () => {
 
-        alert(
-          'Wrong password ❌'
-        );
+        alert('Wrong Password ❌');
 
       }
 
@@ -127,172 +100,110 @@ export class AdminComponent {
 
   }
 
-  // ================= LOAD DATA =================
+  // 🔥 LOAD DATA
 
   loadData() {
 
     const headers =
       new HttpHeaders({
 
-        Authorization:
-          this.token
+        Authorization: this.token
 
       });
 
     // USERS
 
     this.http.get(
-
       `${this.api}/admin/users`,
-
       { headers }
 
-    ).subscribe({
+    ).subscribe((res: any) => {
 
-      next: (res: any) => {
+      this.users = res;
 
-        this.users = res;
-
-        this.filteredUsers = res;
-
-      }
+      this.filteredUsers = res;
 
     });
 
     // PURCHASES
 
     this.http.get(
-
       `${this.api}/admin/purchases`,
-
       { headers }
 
-    ).subscribe({
+    ).subscribe((res: any) => {
 
-      next: (res: any) => {
+      this.purchases = res;
 
-        this.purchases = res;
-
-        this.filteredPurchases = res;
-
-      }
+      this.filteredPurchases = res;
 
     });
 
     // BOOKS
 
     this.http.get(
-
       `${this.api}/admin/books`,
-
       { headers }
 
-    ).subscribe({
+    ).subscribe((res: any) => {
 
-      next: (res: any) => {
+      this.books = res;
 
-        this.books = res;
+    });
 
-      }
+    // DASHBOARD
+
+    this.http.get(
+      `${this.api}/admin/dashboard-stats`,
+      { headers }
+
+    ).subscribe((res: any) => {
+
+      this.dashboardStats = res;
 
     });
 
   }
 
-  // ================= LOAD STATS =================
+  // 🔥 SEARCH
 
-  loadStats() {
+  searchData() {
 
-    const headers =
-      new HttpHeaders({
-
-        Authorization:
-          this.token
-
-      });
-
-    this.http.get<any>(
-
-      `${this.api}/admin/stats`,
-
-      { headers }
-
-    ).subscribe({
-
-      next: (res) => {
-
-        this.stats = res;
-
-        this.totalRevenue =
-          res.totalRevenue;
-
-        this.recentPurchases =
-          res.recentPurchases;
-
-      }
-
-    });
-
-  }
-
-  // ================= SEARCH =================
-
-  searchUser() {
-
-    const phone =
-      this.searchPhone.trim();
-
-    // RESET
-
-    if (!phone) {
-
-      this.filteredUsers =
-        this.users;
-
-      this.filteredPurchases =
-        this.purchases;
-
-      return;
-
-    }
-
-    // FILTER USERS
+    const term =
+      this.searchTerm.toLowerCase();
 
     this.filteredUsers =
-      this.users.filter(
+      this.users.filter((u: any) =>
 
-        (u: any) =>
+        u.phone?.includes(term) ||
 
-          u.phone.includes(phone)
+        u.name?.toLowerCase()
+          .includes(term)
 
       );
 
-    // FILTER PURCHASES
-
     this.filteredPurchases =
-      this.purchases.filter(
+      this.purchases.filter((p: any) =>
 
-        (p: any) =>
+        p.userPhone?.includes(term) ||
 
-          p.userPhone.includes(phone)
+        p.userName?.toLowerCase()
+          .includes(term)
 
       );
 
   }
 
-  // ================= ACCESS =================
+  // 🔥 ACCESS
 
   grantAccess() {
 
     if (
-      !this.selectedUser
-      ||
+      !this.selectedUser ||
       !this.selectedBook
     ) {
 
-      alert(
-        'Select user & book ❌'
-      );
+      alert('Select User & Book ❌');
 
       return;
 
@@ -301,8 +212,7 @@ export class AdminComponent {
     const headers =
       new HttpHeaders({
 
-        Authorization:
-          this.token
+        Authorization: this.token
 
       });
 
@@ -311,11 +221,8 @@ export class AdminComponent {
       `${this.api}/admin/grant-access`,
 
       {
-        userId:
-          this.selectedUser,
-
-        bookId:
-          this.selectedBook
+        userId: this.selectedUser,
+        bookId: this.selectedBook
       },
 
       { headers }
@@ -324,13 +231,18 @@ export class AdminComponent {
 
       next: () => {
 
-        alert(
-          'Access granted ✅'
-        );
+        alert('Access Granted ✅');
 
         this.loadData();
 
-        this.loadStats();
+      },
+
+      error: (err) => {
+
+        alert(
+          err.error.message ||
+          'Error ❌'
+        );
 
       }
 
@@ -338,100 +250,99 @@ export class AdminComponent {
 
   }
 
-  // ================= DELETE USER =================
+  // 🔥 DELETE USER
 
   deleteUser(id: string) {
 
     const headers =
       new HttpHeaders({
 
-        Authorization:
-          this.token
+        Authorization: this.token
 
       });
 
     this.http.delete(
-
       `${this.api}/admin/user/${id}`,
-
       { headers }
 
-    ).subscribe({
+    ).subscribe(() => {
 
-      next: () => {
+      alert('User Deleted ✅');
 
-        alert(
-          'User deleted ✅'
-        );
-
-        this.loadData();
-
-        this.loadStats();
-
-      }
+      this.loadData();
 
     });
 
   }
 
-  // ================= DELETE PURCHASE =================
+  // 🔥 DELETE PURCHASE
 
   deletePurchase(id: string) {
 
     const headers =
       new HttpHeaders({
 
-        Authorization:
-          this.token
+        Authorization: this.token
 
       });
 
     this.http.delete(
-
       `${this.api}/admin/purchase/${id}`,
-
       { headers }
 
-    ).subscribe({
+    ).subscribe(() => {
 
-      next: () => {
+      alert('Purchase Deleted ✅');
 
-        alert(
-          'Purchase deleted ✅'
-        );
-
-        this.loadData();
-
-        this.loadStats();
-
-      }
+      this.loadData();
 
     });
 
   }
 
-  // ================= BOOK NAME =================
+  // 🔥 EXPORT EXCEL
 
-  getBookName(id: string) {
+  exportExcel() {
 
-    const book =
-      this.books.find(
-
-        b =>
-
-        b.id.toString()
-        ===
-        id.toString()
-
+    const worksheet =
+      XLSX.utils.json_to_sheet(
+        this.purchases
       );
 
-    return book
-      ? book.name
-      : 'Unknown';
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      'Purchases'
+    );
+
+    const excelBuffer =
+      XLSX.write(workbook, {
+
+        bookType: 'xlsx',
+
+        type: 'array'
+
+      });
+
+    const blob = new Blob(
+      [excelBuffer],
+      {
+        type:
+          'application/octet-stream'
+      }
+    );
+
+    saveAs(
+      blob,
+      'purchases.xlsx'
+    );
 
   }
 
-  // ================= LOGOUT =================
+  // 🔥 LOGOUT
 
   logout() {
 
@@ -445,19 +356,24 @@ export class AdminComponent {
 
     this.purchases = [];
 
-    this.books = [];
+  }
 
-    this.filteredUsers = [];
+  // 🔥 BOOK NAME
 
-    this.filteredPurchases = [];
+  getBookName(id: string) {
 
-    this.stats = null;
+    const book =
+      this.books.find(
 
-    this.recentPurchases = [];
+        b =>
+          b.id.toString() ===
+          id.toString()
 
-    localStorage.removeItem(
-      'adminToken'
-    );
+      );
+
+    return book
+      ? book.name
+      : 'Unknown';
 
   }
 
