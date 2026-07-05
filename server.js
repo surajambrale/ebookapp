@@ -149,6 +149,10 @@ const purchaseSchema = new mongoose.Schema({
   bookId: String,
   paymentId: String,
   orderId: String
+
+  },{
+
+  timestamps: true
 });
 
 const User = mongoose.model('User', userSchema);

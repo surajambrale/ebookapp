@@ -130,37 +130,31 @@ calculateAnalytics() {
 
   this.purchases.forEach((p: any) => {
 
+    // 🔥 BOOK PRICE
     const amount = this.getBookAmount(p.bookId);
 
-    // 🔥 TOTAL
+    // 🔥 TOTAL REVENUE
     this.totalRevenue += amount;
 
-    // 🔥 DATE CHECK
-    if (!p.createdAt && !p.date) {
-      return;
-    }
+    // 🔥 PURCHASE DATE
+    const purchaseDate = new Date(p.createdAt);
 
-    const purchaseDate = new Date(
-      p.createdAt || p.date
-    );
-
-    // 🔥 INVALID DATE SKIP
+    // 🔥 INVALID DATE CHECK
     if (isNaN(purchaseDate.getTime())) {
       return;
     }
 
-    // 🔥 TODAY
-    if (
+    // 🔥 TODAY REVENUE
+    const isToday =
       purchaseDate.getDate() === today.getDate() &&
       purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear()
-    ) {
+      purchaseDate.getFullYear() === today.getFullYear();
 
+    if (isToday) {
       this.todayRevenue += amount;
-
     }
 
-    // 🔥 WEEKLY
+    // 🔥 WEEKLY REVENUE
     const diffTime =
       today.getTime() - purchaseDate.getTime();
 
@@ -168,20 +162,16 @@ calculateAnalytics() {
       diffTime / (1000 * 60 * 60 * 24);
 
     if (diffDays >= 0 && diffDays <= 7) {
-
       this.weeklyRevenue += amount;
-
     }
 
-    // 🔥 MONTHLY
-    if (
-      purchaseDate.getMonth() === today.getMonth()
-      &&
-      purchaseDate.getFullYear() === today.getFullYear()
-    ) {
+    // 🔥 MONTHLY REVENUE
+    const isCurrentMonth =
+      purchaseDate.getMonth() === today.getMonth() &&
+      purchaseDate.getFullYear() === today.getFullYear();
 
+    if (isCurrentMonth) {
       this.monthlyRevenue += amount;
-
     }
 
     // 🔥 TOP SELLING
@@ -190,9 +180,9 @@ calculateAnalytics() {
 
   });
 
-  // 🔥 TOP BOOK
+  // 🔥 FIND TOP BOOK
   let max = 0;
-  let topId = '';
+  let topId: any = null;
 
   for (const id in topBooks) {
 
@@ -205,16 +195,23 @@ calculateAnalytics() {
 
   }
 
+  // 🔥 FIND BOOK
   const book = this.books.find(
-    b => b.id.toString() === topId.toString()
+    (b: any) =>
+      b.id.toString() === topId?.toString()
   );
 
   this.topSellingBook =
-    book
-      ? (book.title || book.name)
-      : 'No Data';
+    book?.title ||
+    book?.name ||
+    'No Data';
 
   this.topSellingCount = max;
+
+  // 🔥 DEBUG LOGS
+  console.log('TODAY:', this.todayRevenue);
+  console.log('WEEKLY:', this.weeklyRevenue);
+  console.log('MONTHLY:', this.monthlyRevenue);
 
 }
 
