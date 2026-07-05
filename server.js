@@ -346,7 +346,8 @@ app.post('/verify-payment', async (req, res) => {
       bookId,
       // bookId: Number(bookId),
       paymentId: razorpay_payment_id,
-      orderId: razorpay_order_id
+      orderId: razorpay_order_id,
+      createdAt: new Date()
     });
 
      //gmail send code start
