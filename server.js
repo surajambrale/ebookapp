@@ -1057,6 +1057,126 @@ app.get('/admin/dashboard-stats', async (req, res) => {
 
 // multer code end
 
+
+// admin total revenue weekly revenue monthly revenue code start
+
+// 🔥 ADMIN ANALYTICS API
+
+app.get('/admin/dashboard-stats', async (req, res) => {
+
+  try {
+
+    const usersCount = await User.countDocuments();
+
+    const purchases = await Purchase.find();
+
+    let totalRevenue = 0;
+    let todayRevenue = 0;
+    let weeklyRevenue = 0;
+    let monthlyRevenue = 0;
+
+    const now = new Date();
+
+    purchases.forEach((p) => {
+
+      const amount = Number(p.amount || 0);
+
+      totalRevenue += amount;
+
+      const created = new Date(p.createdAt || Date.now());
+
+      // TODAY
+      if (
+        created.toDateString() === now.toDateString()
+      ) {
+        todayRevenue += amount;
+      }
+
+      // WEEK
+      const diffDays =
+        (now - created) / (1000 * 60 * 60 * 24);
+
+      if (diffDays <= 7) {
+        weeklyRevenue += amount;
+      }
+
+      // MONTH
+      if (
+        created.getMonth() === now.getMonth() &&
+        created.getFullYear() === now.getFullYear()
+      ) {
+        monthlyRevenue += amount;
+      }
+
+    });
+
+    // 🔥 TOP SELLING BOOK
+
+    const salesMap = {};
+
+    purchases.forEach((p) => {
+
+      if (!salesMap[p.bookId]) {
+
+        salesMap[p.bookId] = 0;
+
+      }
+
+      salesMap[p.bookId]++;
+
+    });
+
+    let topBookId = '';
+    let topSellingCount = 0;
+
+    for (const id in salesMap) {
+
+      if (salesMap[id] > topSellingCount) {
+
+        topSellingCount = salesMap[id];
+
+        topBookId = id;
+
+      }
+
+    }
+
+    res.json({
+
+      usersCount,
+
+      purchasesCount: purchases.length,
+
+      totalRevenue,
+
+      todayRevenue,
+
+      weeklyRevenue,
+
+      monthlyRevenue,
+
+      topBookId,
+
+      topSellingCount
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      message: 'Server Error'
+    });
+
+  }
+
+});
+
+// admin total revenue weekly revenue monthly revenue code end
+
 // ================= START =================
 
 const PORT = process.env.PORT || 5000;
