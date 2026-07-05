@@ -148,7 +148,8 @@ const purchaseSchema = new mongoose.Schema({
   userId: String,
   bookId: String,
   paymentId: String,
-  orderId: String
+  orderId: String,
+  amount: Number
 
   },{
 
@@ -191,6 +192,10 @@ app.get('/admin/purchases', verifyAdmin, async (req, res) => {
           _id: p._id,
           bookId: p.bookId,
           paymentId: p.paymentId,
+
+          amount: p.amount,
+
+  createdAt: p.createdAt,
 
           userName: user ? user.name : "Unknown",
           userPhone: user ? user.phone : "N/A"
@@ -329,7 +334,8 @@ app.post('/verify-payment', async (req, res) => {
       razorpay_payment_id,
       razorpay_signature,
       userId,
-      bookId
+      bookId,
+      amount
     } = req.body;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -348,6 +354,7 @@ app.post('/verify-payment', async (req, res) => {
     await Purchase.create({
       userId,
       bookId,
+      amount,
       // bookId: Number(bookId),
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,

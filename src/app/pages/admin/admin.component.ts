@@ -130,88 +130,106 @@ calculateAnalytics() {
 
   this.purchases.forEach((p: any) => {
 
-    // 🔥 BOOK PRICE
-    const amount = this.getBookAmount(p.bookId);
+    const amount =
+      Number(p.amount || 0);
 
-    // 🔥 TOTAL REVENUE
     this.totalRevenue += amount;
 
-    // 🔥 PURCHASE DATE
-    const purchaseDate = new Date(p.createdAt);
+    const purchaseDate =
+      new Date(p.createdAt);
 
-    // 🔥 INVALID DATE CHECK
-    if (isNaN(purchaseDate.getTime())) {
-      return;
-    }
-
-    // 🔥 TODAY REVENUE
+    // 🔥 TODAY
     const isToday =
-      purchaseDate.getDate() === today.getDate() &&
-      purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
+
+      purchaseDate.getDate() === today.getDate()
+
+      &&
+
+      purchaseDate.getMonth() === today.getMonth()
+
+      &&
+
+      purchaseDate.getFullYear() ===
+      today.getFullYear();
 
     if (isToday) {
+
       this.todayRevenue += amount;
+
     }
 
-    // 🔥 WEEKLY REVENUE
-    const diffTime =
-      today.getTime() - purchaseDate.getTime();
-
+    // 🔥 WEEKLY
     const diffDays =
-      diffTime / (1000 * 60 * 60 * 24);
+
+      (today.getTime() - purchaseDate.getTime())
+
+      /
+
+      (1000 * 60 * 60 * 24);
 
     if (diffDays >= 0 && diffDays <= 7) {
+
       this.weeklyRevenue += amount;
+
     }
 
-    // 🔥 MONTHLY REVENUE
+    // 🔥 MONTHLY
     const isCurrentMonth =
-      purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
+
+      purchaseDate.getMonth() === today.getMonth()
+
+      &&
+
+      purchaseDate.getFullYear() ===
+      today.getFullYear();
 
     if (isCurrentMonth) {
+
       this.monthlyRevenue += amount;
+
     }
 
     // 🔥 TOP SELLING
     topBooks[p.bookId] =
+
       (topBooks[p.bookId] || 0) + 1;
 
   });
 
-  // 🔥 FIND TOP BOOK
+  // 🔥 TOP BOOK
   let max = 0;
-  let topId: any = null;
+
+  let topId = '';
 
   for (const id in topBooks) {
 
     if (topBooks[id] > max) {
 
       max = topBooks[id];
+
       topId = id;
 
     }
 
   }
 
-  // 🔥 FIND BOOK
   const book = this.books.find(
+
     (b: any) =>
-      b.id.toString() === topId?.toString()
+
+      b.id.toString() === topId.toString()
+
   );
 
   this.topSellingBook =
-    book?.title ||
+
     book?.name ||
+
+    book?.title ||
+
     'No Data';
 
   this.topSellingCount = max;
-
-  // 🔥 DEBUG LOGS
-  console.log('TODAY:', this.todayRevenue);
-  console.log('WEEKLY:', this.weeklyRevenue);
-  console.log('MONTHLY:', this.monthlyRevenue);
 
 }
 

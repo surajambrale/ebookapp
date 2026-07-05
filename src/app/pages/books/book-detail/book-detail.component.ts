@@ -244,7 +244,8 @@ handleSwipe() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               userId: user._id,
-              bookId: this.book.id.toString()
+              bookId: this.book.id.toString(),
+               amount: this.book.price
             }).subscribe({
 
               next: () => {
