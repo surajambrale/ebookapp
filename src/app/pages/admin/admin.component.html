@@ -20,8 +20,7 @@
   <!-- 🔥 DASHBOARD -->
   <div *ngIf="isLoggedIn">
 
-    <!-- TOP BAR -->
-
+    <!-- 🔥 TOP BAR -->
     <div class="top-bar">
 
       <h2>📊 Admin Dashboard</h2>
@@ -79,9 +78,101 @@
 
     </div>
 
-    <!-- 🔥 ACCESS CONTROL -->
+    <!-- 🔥 DROPDOWN SYSTEM -->
 
-    <div class="card">
+    <div class="view-select">
+
+      <select [(ngModel)]="selectedView">
+
+        <option value="users">
+          Users
+        </option>
+
+        <option value="purchases">
+          Purchases
+        </option>
+
+        <option value="grant">
+          Grant Access
+        </option>
+
+      </select>
+
+    </div>
+
+    <!-- 🔥 SEARCH -->
+
+    <div class="search-area">
+
+      <input
+        type="text"
+        [(ngModel)]="searchPhone"
+        placeholder="Search by phone number..."
+      >
+
+      <button (click)="searchUser()">
+        GO
+      </button>
+
+    </div>
+
+    <!-- 🔥 SEARCH RESULT -->
+
+    <div *ngIf="searchedPurchases.length > 0">
+
+      <h2 class="section-title">
+        🔎 Search Result
+      </h2>
+
+      <div
+        *ngFor="let p of searchedPurchases"
+        class="card"
+      >
+
+        <p>
+          <b>Name:</b>
+          {{ p.userName }}
+        </p>
+
+        <p>
+          <b>Phone:</b>
+          {{ p.userPhone }}
+        </p>
+
+        <p>
+          <b>Book:</b>
+          {{ getBookName(p.bookId) }}
+        </p>
+
+        <p>
+          <b>Amount:</b>
+          ₹{{ p.amount }}
+        </p>
+
+        <p>
+          <b>Payment ID:</b>
+          {{ p.paymentId }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- 🔥 EXPORT -->
+
+    <button
+      class="export-btn"
+      (click)="exportCSV()"
+    >
+      Export Full CSV
+    </button>
+
+    <!-- 🔥 GRANT ACCESS -->
+
+    <div
+      *ngIf="selectedView === 'grant'"
+      class="card"
+    >
 
       <h3>Grant Book Access</h3>
 
@@ -121,101 +212,91 @@
 
     </div>
 
-    <!-- 🔥 SEARCH -->
-
-    <input
-      type="text"
-      placeholder="Search by user name or phone..."
-      [(ngModel)]="searchTerm"
-      class="search-box"
-    >
-
-    <!-- 🔥 EXPORT -->
-
-    <button
-      class="export-btn"
-      (click)="exportCSV()"
-    >
-      Export CSV
-    </button>
-
     <!-- 🔥 USERS -->
 
-    <h2 class="section-title">
-      👥 Users
-    </h2>
+    <div *ngIf="selectedView === 'users'">
 
-    <div
-      *ngFor="let user of users"
-      class="card"
-    >
+      <h2 class="section-title">
+        👥 Users
+      </h2>
 
-      <p>
-        <b>Name:</b>
-        {{ user.name }}
-      </p>
-
-      <p>
-        <b>Phone:</b>
-        {{ user.phone }}
-      </p>
-
-      <button
-        class="delete-btn"
-        (click)="deleteUser(user._id)"
+      <div
+        *ngFor="let user of users"
+        class="card"
       >
-        Delete User
-      </button>
+
+        <p>
+          <b>Name:</b>
+          {{ user.name }}
+        </p>
+
+        <p>
+          <b>Phone:</b>
+          {{ user.phone }}
+        </p>
+
+        <button
+          class="delete-btn"
+          (click)="deleteUser(user._id)"
+        >
+          Delete User
+        </button>
+
+      </div>
 
     </div>
 
     <!-- 🔥 PURCHASES -->
 
-    <h2 class="section-title">
-      💳 Purchases
-    </h2>
+    <div *ngIf="selectedView === 'purchases'">
 
-    <div
-      *ngFor="let p of filteredPurchases"
-      class="card"
-    >
+      <h2 class="section-title">
+        💳 Purchases
+      </h2>
 
-      <p>
-        <b>Name:</b>
-        {{ p.userName }}
-      </p>
-
-      <p>
-        <b>Phone:</b>
-        {{ p.userPhone }}
-      </p>
-
-      <p>
-        <b>Book ID:</b>
-        {{ p.bookId }}
-      </p>
-
-      <p>
-        <b>Book:</b>
-        {{ getBookName(p.bookId) }}
-      </p>
-
-      <p>
-        <b>Amount:</b>
-        ₹{{ p.amount }}
-      </p>
-
-      <p>
-        <b>Payment ID:</b>
-        {{ p.paymentId }}
-      </p>
-
-      <button
-        class="delete-btn"
-        (click)="deletePurchase(p._id)"
+      <div
+        *ngFor="let p of purchases"
+        class="card"
       >
-        Delete Purchase
-      </button>
+
+        <p>
+          <b>Name:</b>
+          {{ p.userName }}
+        </p>
+
+        <p>
+          <b>Phone:</b>
+          {{ p.userPhone }}
+        </p>
+
+        <p>
+          <b>Book ID:</b>
+          {{ p.bookId }}
+        </p>
+
+        <p>
+          <b>Book Name:</b>
+          {{ getBookName(p.bookId) }}
+        </p>
+
+        <p>
+          <b>Amount:</b>
+          ₹{{ p.amount }}
+        </p>
+
+        <p>
+          <b>Payment ID:</b>
+          {{ p.paymentId }}
+        </p>
+
+        <button
+          class="delete-btn"
+          (click)="deletePurchase(p._id)"
+        >
+          Delete Purchase
+        </button>
+
+      </div>
 
     </div>
 

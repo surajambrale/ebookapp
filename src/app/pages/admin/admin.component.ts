@@ -24,9 +24,14 @@ export class AdminComponent {
   selectedUser = '';
   selectedBook = '';
 
-  searchTerm = '';
+  // 🔥 DROPDOWN
+  selectedView = 'users';
 
-  // 🔥 DASHBOARD STATS
+  // 🔥 SEARCH
+  searchPhone = '';
+  searchedPurchases: any[] = [];
+
+  // 🔥 ANALYTICS
   totalRevenue = 0;
   todayRevenue = 0;
   weeklyRevenue = 0;
@@ -57,7 +62,9 @@ export class AdminComponent {
         this.loadData();
 
       },
-      error: () => alert('Wrong password ❌')
+      error: () => {
+        alert('Wrong password ❌');
+      }
     });
 
   }
@@ -81,29 +88,31 @@ export class AdminComponent {
 
         this.purchases = res;
 
-        this.calculateRevenue();
-
-        this.calculateTopSelling();
+        this.calculateAnalytics();
 
       });
 
     // BOOKS
     this.http.get(`${this.api}/admin/books`, { headers })
       .subscribe((res: any) => {
+
         this.books = res;
+
       });
 
   }
 
-  // 🔥 REVENUE CALCULATIONS
-  calculateRevenue() {
-
-    const today = new Date();
+  // 🔥 ANALYTICS
+  calculateAnalytics() {
 
     this.totalRevenue = 0;
     this.todayRevenue = 0;
     this.weeklyRevenue = 0;
     this.monthlyRevenue = 0;
+
+    const today = new Date();
+
+    const topBooks: any = {};
 
     this.purchases.forEach((p: any) => {
 
@@ -111,13 +120,18 @@ export class AdminComponent {
 
       this.totalRevenue += amount;
 
-      const purchaseDate = new Date(p.createdAt);
+      const purchaseDate = new Date(
+        p.createdAt || p.date || new Date()
+      );
 
       // TODAY
       if (
-        purchaseDate.toDateString() === today.toDateString()
+        purchaseDate.toDateString() ===
+        today.toDateString()
       ) {
+
         this.todayRevenue += amount;
+
       }
 
       // WEEKLY
@@ -126,7 +140,9 @@ export class AdminComponent {
         (1000 * 60 * 60 * 24);
 
       if (diffDays <= 7) {
+
         this.weeklyRevenue += amount;
+
       }
 
       // MONTHLY
@@ -134,44 +150,39 @@ export class AdminComponent {
         purchaseDate.getMonth() === today.getMonth() &&
         purchaseDate.getFullYear() === today.getFullYear()
       ) {
+
         this.monthlyRevenue += amount;
+
       }
 
-    });
-
-  }
-
-  // 🔥 TOP SELLING BOOK
-  calculateTopSelling() {
-
-    const counts: any = {};
-
-    this.purchases.forEach((p: any) => {
-
-      counts[p.bookId] = (counts[p.bookId] || 0) + 1;
+      // TOP SELLING
+      topBooks[p.bookId] =
+        (topBooks[p.bookId] || 0) + 1;
 
     });
 
+    // 🔥 FIND TOP BOOK
     let max = 0;
-    let topBookId = '';
+    let topId = '';
 
-    for (const id in counts) {
+    for (const id in topBooks) {
 
-      if (counts[id] > max) {
+      if (topBooks[id] > max) {
 
-        max = counts[id];
+        max = topBooks[id];
 
-        topBookId = id;
+        topId = id;
 
       }
 
     }
 
     const book = this.books.find(
-      b => b.id.toString() === topBookId.toString()
+      b => b.id.toString() === topId.toString()
     );
 
-    this.topSellingBook = book ? book.name : 'N/A';
+    this.topSellingBook =
+      book ? book.name : 'No Data';
 
     this.topSellingCount = max;
 
@@ -188,19 +199,23 @@ export class AdminComponent {
 
   }
 
-  // 🔥 FILTERED PURCHASES
-  get filteredPurchases() {
+  // 🔥 SEARCH USER
+  searchUser() {
 
-    if (!this.searchTerm) return this.purchases;
+    if (!this.searchPhone) {
 
-    return this.purchases.filter((p: any) =>
+      this.searchedPurchases = [];
 
-      p.userPhone?.includes(this.searchTerm) ||
+      return;
 
-      p.userName?.toLowerCase()
-        .includes(this.searchTerm.toLowerCase())
+    }
 
-    );
+    this.searchedPurchases =
+      this.purchases.filter((p: any) =>
+
+        p.userPhone?.includes(this.searchPhone)
+
+      );
 
   }
 
@@ -208,13 +223,14 @@ export class AdminComponent {
   exportCSV() {
 
     let csv =
-`Name,Phone,Book Name,Amount,Payment ID\n`;
+`Name,Phone,Book ID,Book Name,Amount,Payment ID\n`;
 
-    this.filteredPurchases.forEach((p: any) => {
+    this.purchases.forEach((p: any) => {
 
       csv +=
 `${p.userName},
 ${p.userPhone},
+${p.bookId},
 ${this.getBookName(p.bookId)},
 ${p.amount},
 ${p.paymentId}\n`;
@@ -253,11 +269,16 @@ ${p.paymentId}\n`;
 
     .subscribe({
       next: () => {
+
         alert('Access Granted ✅');
+
         this.loadData();
+
       },
       error: () => {
+
         alert('Error ❌');
+
       }
     });
 

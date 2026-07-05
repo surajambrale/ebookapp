@@ -77,14 +77,6 @@
     font-weight: bold;
 
     cursor: pointer;
-
-    transition: 0.3s;
-
-    &:hover {
-
-      transform: scale(1.02);
-
-    }
   }
 }
 
@@ -100,9 +92,9 @@
 
   margin-bottom: 25px;
 
-  gap: 10px;
-
   flex-wrap: wrap;
+
+  gap: 10px;
 
   h2 {
 
@@ -151,16 +143,6 @@
 
   text-align: center;
 
-  transition: 0.3s;
-
-  &:hover {
-
-    transform: translateY(-4px);
-
-    border-color: gold;
-
-  }
-
   h3 {
 
     color: #bbb;
@@ -188,6 +170,98 @@
   }
 }
 
+/* DROPDOWN */
+
+.view-select {
+
+  margin-bottom: 20px;
+
+  select {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #1d1d1d;
+
+    color: white;
+
+    outline: none;
+  }
+}
+
+/* SEARCH */
+
+.search-area {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-bottom: 20px;
+
+  input {
+
+    flex: 1;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #1d1d1d;
+
+    color: white;
+  }
+
+  button {
+
+    padding: 14px 20px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: gold;
+
+    color: black;
+
+    font-weight: bold;
+
+    cursor: pointer;
+  }
+}
+
+/* EXPORT */
+
+.export-btn {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #00c853;
+
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  margin-bottom: 25px;
+}
+
 /* CARD */
 
 .card {
@@ -202,28 +276,18 @@
 
   border: 1px solid #2d2d2d;
 
-  transition: 0.3s;
-
-  &:hover {
-
-    border-color: gold;
-
-  }
-
-  h3 {
-
-    margin-bottom: 16px;
-
-    color: gold;
-
-  }
-
   p {
 
     margin-bottom: 10px;
 
     color: #ddd;
+  }
 
+  h3 {
+
+    color: gold;
+
+    margin-bottom: 15px;
   }
 
   select,
@@ -268,60 +332,6 @@
   }
 }
 
-/* SEARCH */
-
-.search-box {
-
-  width: 100%;
-
-  padding: 14px;
-
-  border: none;
-
-  border-radius: 12px;
-
-  outline: none;
-
-  background: #1d1d1d;
-
-  color: white;
-
-  margin-bottom: 15px;
-
-  box-sizing: border-box;
-}
-
-/* EXPORT */
-
-.export-btn {
-
-  width: 100%;
-
-  padding: 14px;
-
-  border: none;
-
-  border-radius: 12px;
-
-  background: #00c853;
-
-  color: white;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-  margin-bottom: 25px;
-
-  transition: 0.3s;
-
-  &:hover {
-
-    transform: scale(1.01);
-
-  }
-}
-
 /* DELETE */
 
 .delete-btn {
@@ -343,11 +353,11 @@
   margin-top: 10px;
 }
 
-/* SECTION */
+/* TITLE */
 
 .section-title {
 
-  margin: 30px 0 18px;
+  margin: 25px 0 18px;
 
   color: gold;
 }
@@ -375,6 +385,12 @@
   .stats-grid {
 
     grid-template-columns: 1fr;
+
+  }
+
+  .search-area {
+
+    flex-direction: column;
 
   }
 
