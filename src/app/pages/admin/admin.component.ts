@@ -130,30 +130,37 @@ calculateAnalytics() {
 
   this.purchases.forEach((p: any) => {
 
-    // 🔥 BOOK PRICE
     const amount = this.getBookAmount(p.bookId);
 
-    // 🔥 TOTAL REVENUE
+    // 🔥 TOTAL
     this.totalRevenue += amount;
 
-    // 🔥 PURCHASE DATE
+    // 🔥 DATE CHECK
+    if (!p.createdAt && !p.date) {
+      return;
+    }
+
     const purchaseDate = new Date(
-      p.createdAt || p.date || new Date()
+      p.createdAt || p.date
     );
 
-    // 🔥 TODAY REVENUE
-    const isToday =
+    // 🔥 INVALID DATE SKIP
+    if (isNaN(purchaseDate.getTime())) {
+      return;
+    }
+
+    // 🔥 TODAY
+    if (
       purchaseDate.getDate() === today.getDate() &&
       purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
-
-    if (isToday) {
+      purchaseDate.getFullYear() === today.getFullYear()
+    ) {
 
       this.todayRevenue += amount;
 
     }
 
-    // 🔥 WEEKLY REVENUE
+    // 🔥 WEEKLY
     const diffTime =
       today.getTime() - purchaseDate.getTime();
 
@@ -166,12 +173,12 @@ calculateAnalytics() {
 
     }
 
-    // 🔥 MONTHLY REVENUE
-    const isThisMonth =
-      purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
-
-    if (isThisMonth) {
+    // 🔥 MONTHLY
+    if (
+      purchaseDate.getMonth() === today.getMonth()
+      &&
+      purchaseDate.getFullYear() === today.getFullYear()
+    ) {
 
       this.monthlyRevenue += amount;
 
@@ -183,7 +190,7 @@ calculateAnalytics() {
 
   });
 
-  // 🔥 FIND TOP BOOK
+  // 🔥 TOP BOOK
   let max = 0;
   let topId = '';
 
