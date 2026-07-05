@@ -116,6 +116,7 @@ export class AdminComponent {
 }
 
   // 🔥 ANALYTICS
+// 🔥 ANALYTICS
 calculateAnalytics() {
 
   this.totalRevenue = 0;
@@ -129,43 +130,48 @@ calculateAnalytics() {
 
   this.purchases.forEach((p: any) => {
 
-    // 🔥 ALWAYS USE BOOK PRICE
+    // 🔥 BOOK PRICE
     const amount = this.getBookAmount(p.bookId);
 
-    // 🔥 TOTAL
+    // 🔥 TOTAL REVENUE
     this.totalRevenue += amount;
 
+    // 🔥 PURCHASE DATE
     const purchaseDate = new Date(
       p.createdAt || p.date || new Date()
     );
 
-    // 🔥 TODAY
-    if (
-      purchaseDate.toDateString() ===
-      today.toDateString()
-    ) {
+    // 🔥 TODAY REVENUE
+    const isToday =
+      purchaseDate.getDate() === today.getDate() &&
+      purchaseDate.getMonth() === today.getMonth() &&
+      purchaseDate.getFullYear() === today.getFullYear();
+
+    if (isToday) {
 
       this.todayRevenue += amount;
 
     }
 
-    // 🔥 WEEKLY
-    const diffDays =
-      (today.getTime() - purchaseDate.getTime()) /
-      (1000 * 60 * 60 * 24);
+    // 🔥 WEEKLY REVENUE
+    const diffTime =
+      today.getTime() - purchaseDate.getTime();
 
-    if (diffDays <= 7) {
+    const diffDays =
+      diffTime / (1000 * 60 * 60 * 24);
+
+    if (diffDays >= 0 && diffDays <= 7) {
 
       this.weeklyRevenue += amount;
 
     }
 
-    // 🔥 MONTHLY
-    if (
-      purchaseDate.getMonth() === today.getMonth()
-      &&
-      purchaseDate.getFullYear() === today.getFullYear()
-    ) {
+    // 🔥 MONTHLY REVENUE
+    const isThisMonth =
+      purchaseDate.getMonth() === today.getMonth() &&
+      purchaseDate.getFullYear() === today.getFullYear();
+
+    if (isThisMonth) {
 
       this.monthlyRevenue += amount;
 
