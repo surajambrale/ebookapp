@@ -14,7 +14,6 @@ const app = express();
 // multer code start
 
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs');
 
 // multer code end
