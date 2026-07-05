@@ -1,21 +1,15 @@
 <div class="admin">
 
   <!-- 🔐 LOGIN -->
+  <div *ngIf="!isLoggedIn" class="login-box">
 
-  <div
-    *ngIf="!isLoggedIn"
-    class="login-box"
-  >
-
-    <h2>
-      Admin Login
-    </h2>
+    <h2>Admin Login</h2>
 
     <input
       type="password"
       [(ngModel)]="password"
-      placeholder="Enter Password"
-    />
+      placeholder="Enter password"
+    >
 
     <button (click)="login()">
       Login
@@ -23,297 +17,205 @@
 
   </div>
 
-
   <!-- 🔥 DASHBOARD -->
-
   <div *ngIf="isLoggedIn">
 
-    <!-- TOP -->
+    <!-- TOP BAR -->
 
     <div class="top-bar">
 
-      <h1>
-        Admin Dashboard
-      </h1>
+      <h2>📊 Admin Dashboard</h2>
 
-      <button
-        class="logout-btn"
-        (click)="logout()"
-      >
+      <button class="logout-btn" (click)="logout()">
         Logout
       </button>
 
     </div>
 
-    <!-- SEARCH -->
+    <!-- 🔥 ANALYTICS -->
 
-    <div class="search-box">
+    <div class="stats-grid">
 
-      <input
-        type="text"
-        placeholder="Search user / phone"
-        [(ngModel)]="searchTerm"
-        (input)="searchData()"
-      />
+      <div class="stat-card">
+        <h3>Total Users</h3>
+        <p>{{ users.length }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Total Purchases</h3>
+        <p>{{ purchases.length }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Total Revenue</h3>
+        <p>₹{{ totalRevenue }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Today Revenue</h3>
+        <p>₹{{ todayRevenue }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Weekly Revenue</h3>
+        <p>₹{{ weeklyRevenue }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Monthly Revenue</h3>
+        <p>₹{{ monthlyRevenue }}</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Top Selling</h3>
+
+        <p>{{ topSellingBook }}</p>
+
+        <small>
+          {{ topSellingCount }} Sales
+        </small>
+
+      </div>
 
     </div>
 
-    <!-- FILTER -->
+    <!-- 🔥 ACCESS CONTROL -->
 
-    <div class="section-filter">
+    <div class="card">
 
-      <select [(ngModel)]="section">
+      <h3>Grant Book Access</h3>
 
-        <option value="dashboard">
-          Dashboard
+      <select [(ngModel)]="selectedUser">
+
+        <option value="">
+          Select User
         </option>
 
-        <option value="access">
-          Grant Access
-        </option>
-
-        <option value="users">
-          Users
-        </option>
-
-        <option value="purchases">
-          Purchases
+        <option
+          *ngFor="let u of users"
+          [value]="u._id"
+        >
+          {{ u.name }} ({{ u.phone }})
         </option>
 
       </select>
 
-    </div>
+      <select [(ngModel)]="selectedBook">
 
-    <!-- DASHBOARD -->
+        <option value="">
+          Select Book
+        </option>
 
-    <div *ngIf="section === 'dashboard'">
+        <option
+          *ngFor="let b of books"
+          [value]="b.id"
+        >
+          {{ b.name }}
+        </option>
 
-      <div class="stats-grid">
+      </select>
 
-        <div class="stat-card">
-
-          <h3>Total Users</h3>
-
-          <p>
-            {{ dashboardStats.totalUsers }}
-          </p>
-
-        </div>
-
-        <div class="stat-card">
-
-          <h3>Total Purchases</h3>
-
-          <p>
-            {{ dashboardStats.totalPurchases }}
-          </p>
-
-        </div>
-
-        <div class="stat-card revenue">
-
-          <h3>Total Revenue</h3>
-
-          <p>
-            ₹{{ dashboardStats.totalRevenue }}
-          </p>
-
-        </div>
-
-        <div class="stat-card">
-
-          <h3>Today Revenue</h3>
-
-          <p>
-            ₹{{ dashboardStats.todayRevenue }}
-          </p>
-
-        </div>
-
-        <div class="stat-card">
-
-          <h3>Weekly Revenue</h3>
-
-          <p>
-            ₹{{ dashboardStats.weeklyRevenue }}
-          </p>
-
-        </div>
-
-        <div class="stat-card">
-
-          <h3>Monthly Revenue</h3>
-
-          <p>
-            ₹{{ dashboardStats.monthlyRevenue }}
-          </p>
-
-        </div>
-
-        <div class="stat-card">
-
-          <h3>Top Selling</h3>
-
-          <p>
-            {{ dashboardStats.topBook }}
-          </p>
-
-        </div>
-
-      </div>
-
-      <!-- EXPORT -->
-
-      <button
-        class="export-btn"
-        (click)="exportExcel()"
-      >
-        Export Excel
+      <button (click)="grantAccess()">
+        Give Access
       </button>
 
     </div>
 
+    <!-- 🔥 SEARCH -->
 
-    <!-- ACCESS -->
+    <input
+      type="text"
+      placeholder="Search by user name or phone..."
+      [(ngModel)]="searchTerm"
+      class="search-box"
+    >
 
-    <div *ngIf="section === 'access'">
+    <!-- 🔥 EXPORT -->
 
-      <div class="card">
+    <button
+      class="export-btn"
+      (click)="exportCSV()"
+    >
+      Export CSV
+    </button>
 
-        <h3>
-          Grant Book Access
-        </h3>
+    <!-- 🔥 USERS -->
 
-        <select
-          [(ngModel)]="selectedUser"
-        >
+    <h2 class="section-title">
+      👥 Users
+    </h2>
 
-          <option value="">
-            Select User
-          </option>
+    <div
+      *ngFor="let user of users"
+      class="card"
+    >
 
-          <option
-            *ngFor="let u of users"
-            [value]="u._id"
-          >
+      <p>
+        <b>Name:</b>
+        {{ user.name }}
+      </p>
 
-            {{ u.name }}
-            ({{ u.phone }})
+      <p>
+        <b>Phone:</b>
+        {{ user.phone }}
+      </p>
 
-          </option>
-
-        </select>
-
-        <select
-          [(ngModel)]="selectedBook"
-        >
-
-          <option value="">
-            Select Book
-          </option>
-
-          <option
-            *ngFor="let b of books"
-            [value]="b.id"
-          >
-
-            {{ b.name }}
-
-          </option>
-
-        </select>
-
-        <button
-          (click)="grantAccess()"
-        >
-          Give Access
-        </button>
-
-      </div>
+      <button
+        class="delete-btn"
+        (click)="deleteUser(user._id)"
+      >
+        Delete User
+      </button>
 
     </div>
 
+    <!-- 🔥 PURCHASES -->
 
-    <!-- USERS -->
+    <h2 class="section-title">
+      💳 Purchases
+    </h2>
 
-    <div *ngIf="section === 'users'">
+    <div
+      *ngFor="let p of filteredPurchases"
+      class="card"
+    >
 
-      <h2 class="section-title">
-        Users
-      </h2>
+      <p>
+        <b>Name:</b>
+        {{ p.userName }}
+      </p>
 
-      <div
-        *ngFor="
-          let user of filteredUsers
-        "
-        class="card"
+      <p>
+        <b>Phone:</b>
+        {{ p.userPhone }}
+      </p>
+
+      <p>
+        <b>Book ID:</b>
+        {{ p.bookId }}
+      </p>
+
+      <p>
+        <b>Book:</b>
+        {{ getBookName(p.bookId) }}
+      </p>
+
+      <p>
+        <b>Amount:</b>
+        ₹{{ p.amount }}
+      </p>
+
+      <p>
+        <b>Payment ID:</b>
+        {{ p.paymentId }}
+      </p>
+
+      <button
+        class="delete-btn"
+        (click)="deletePurchase(p._id)"
       >
-
-        <p>
-          <b>Name:</b>
-          {{ user.name }}
-        </p>
-
-        <p>
-          <b>Phone:</b>
-          {{ user.phone }}
-        </p>
-
-        <button
-          class="delete-btn"
-          (click)="deleteUser(user._id)"
-        >
-          Delete User
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- PURCHASES -->
-
-    <div *ngIf="section === 'purchases'">
-
-      <h2 class="section-title">
-        Purchases
-      </h2>
-
-      <div
-        *ngFor="
-          let p of filteredPurchases
-        "
-        class="card"
-      >
-
-        <p>
-          <b>Name:</b>
-          {{ p.userName }}
-        </p>
-
-        <p>
-          <b>Phone:</b>
-          {{ p.userPhone }}
-        </p>
-
-        <p>
-          <b>Book:</b>
-          {{ getBookName(p.bookId) }}
-        </p>
-
-        <p>
-          <b>Payment ID:</b>
-          {{ p.paymentId }}
-        </p>
-
-        <button
-          class="delete-btn"
-          (click)="deletePurchase(p._id)"
-        >
-          Delete Purchase
-        </button>
-
-      </div>
+        Delete Purchase
+      </button>
 
     </div>
 
