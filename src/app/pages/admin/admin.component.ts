@@ -133,16 +133,11 @@ export class AdminComponent {
       let amount = Number(p.amount || 0);
 
       // 🔥 OLD PURCHASE RECOVERY
-      if (!amount || amount === 0) {
+     if (!amount || amount === 0) {
 
-        if (p.bookId == '1') amount = 299;
-        else if (p.bookId == '2') amount = 399;
-        else if (p.bookId == '3') amount = 199;
-        else if (p.bookId == '4') amount = 149;
-        else if (p.bookId == '5') amount = 249;
-        else if (p.bookId == '6') amount = 349;
+  amount = this.getBookAmount(p.bookId);
 
-      }
+}
 
       // 🔥 TOTAL
       this.totalRevenue += amount;
@@ -244,16 +239,16 @@ export class AdminComponent {
   // 🔥 GET BOOK AMOUNT
   getBookAmount(bookId: string) {
 
-    if (bookId == '1') return 299;
-    if (bookId == '2') return 399;
-    if (bookId == '3') return 199;
-    if (bookId == '4') return 149;
-    if (bookId == '5') return 249;
-    if (bookId == '6') return 349;
+  const book = this.books.find(
 
-    return 0;
+    b => b.id.toString() === bookId.toString()
 
-  }
+  );
+
+  // 🔥 ACTUAL PRICE
+  return Number(book?.actualPrice || book?.price || 0);
+
+}
 
   // 🔥 SEARCH USER
   searchUser() {
