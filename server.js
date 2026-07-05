@@ -479,6 +479,12 @@ const books = [
     name: "PCOD / PCOS Guide",
     price: 49,
     image: "assets/images/pcod.jpg"
+  },
+  {
+    id: "7",
+    name: "Admin Testing Book",
+    price: 1,
+    image: "assets/images/admin-testing-book.jpg"
   }
 
 ];
