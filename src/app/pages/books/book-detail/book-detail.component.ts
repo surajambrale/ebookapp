@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
+
 @Component({
   selector: 'app-book-detail',
   standalone: true,
@@ -23,6 +24,7 @@ export class BookDetailComponent {
    // 🔥 SLIDER
   currentImageIndex = 0;
 
+  
   books = [
     {
       id: 1,
