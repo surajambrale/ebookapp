@@ -11,6 +11,8 @@ const axios = require('axios');
 
 const app = express();
 
+const books = require('./data/books');
+
 // multer code start
 
 const multer = require('multer');
@@ -448,57 +450,57 @@ app.get('/book/:userId/:bookId', async (req, res) => {
 //   { id: "6", name: "PCOD / PCOS Guide" }
 // ];
 
-const books = [
+// const books = [
 
-  {
-    id: "1",
-    name: "Complete Fat Loss Guide",
-    price: 49,
-    image: "assets/images/fatloss-book.jpeg"
-  },
+//   {
+//     id: "1",
+//     name: "Complete Fat Loss Guide",
+//     price: 49,
+//     image: "assets/images/fatloss-book.jpeg"
+//   },
 
-  {
-    id: "2",
-    name: "1500-Calories Diet Plan",
-    price: 49,
-    image: "assets/images/1500-cal-diet.jpg"
-  },
+//   {
+//     id: "2",
+//     name: "1500-Calories Diet Plan",
+//     price: 49,
+//     image: "assets/images/1500-cal-diet.jpg"
+//   },
 
-  {
-    id: "3",
-    name: "Habits That Change Your Life",
-    price: 49,
-    image: "assets/images/habits.jpg"
-  },
+//   {
+//     id: "3",
+//     name: "Habits That Change Your Life",
+//     price: 49,
+//     image: "assets/images/habits.jpg"
+//   },
 
-  {
-    id: "4",
-    name: "Beginner Guide",
-    price: 49,
-    image: "assets/images/beginner-guide.jpg"
-  },
+//   {
+//     id: "4",
+//     name: "Beginner Guide",
+//     price: 49,
+//     image: "assets/images/beginner-guide.jpg"
+//   },
 
-  {
-    id: "5",
-    name: "Diabetes Control",
-    price: 49,
-    image: "assets/images/diabetes-control.jpg"
-  },
+//   {
+//     id: "5",
+//     name: "Diabetes Control",
+//     price: 49,
+//     image: "assets/images/diabetes-control.jpg"
+//   },
 
-  {
-    id: "6",
-    name: "PCOD / PCOS Guide",
-    price: 49,
-    image: "assets/images/pcod.jpg"
-  },
-  {
-    id: "7",
-    name: "Admin Testing Book",
-    price: 1,
-    image: "assets/images/admin-testing-book.jpg"
-  }
+//   {
+//     id: "6",
+//     name: "PCOD / PCOS Guide",
+//     price: 49,
+//     image: "assets/images/pcod.jpg"
+//   },
+//   {
+//     id: "7",
+//     name: "Admin Testing Book",
+//     price: 1,
+//     image: "assets/images/admin-testing-book.jpg"
+//   }
 
-];
+// ];
 
 // 📚 GET BOOKS
 app.get('/admin/books', verifyAdmin, (req, res) => {
