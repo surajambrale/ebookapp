@@ -17,8 +17,13 @@ export class ReadBookComponent implements OnDestroy {
 
   bookId: any;
   allowed = false;
-  pdfUrl: string = '';   // ✅ STRING रखना है (IMPORTANT)
+  pdfUrl: string = '';
   user: any;
+
+  isLoading = true;
+
+  // 🔥 NEW
+  currentProgress = 0;
 
   private keyListener: any;
 
@@ -28,63 +33,151 @@ export class ReadBookComponent implements OnDestroy {
     private auth: AuthService,
     private http: HttpClient
   ) {}
-isLoading = true;
 
   ngOnInit() {
 
-    // 🔐 Disable shortcuts
+    // 🔥 DISABLE SHORTCUTS
     this.keyListener = (e: KeyboardEvent) => {
-      if (e.ctrlKey && ['s', 'p', 'u'].includes(e.key.toLowerCase())) {
+
+      if (
+        e.ctrlKey &&
+        ['s', 'p', 'u'].includes(
+          e.key.toLowerCase()
+        )
+      ) {
+
         e.preventDefault();
+
       }
+
     };
-    document.addEventListener('keydown', this.keyListener);
+
+    document.addEventListener(
+      'keydown',
+      this.keyListener
+    );
 
     this.user = this.auth.getUser();
 
-    // ❌ NOT LOGGED IN
+    // 🔥 LOGIN CHECK
     if (!this.user || !this.user._id) {
+
       alert('Please login first ❌');
+
       this.router.navigate(['/login']);
+
       return;
+
     }
 
-    this.bookId = this.route.snapshot.params['id'];
+    this.bookId =
+      this.route.snapshot.params['id'];
 
-    // 🔐 CHECK ACCESS
-    this.http.get(`${environment.apiUrl}/check/${this.user._id}/${this.bookId}`)
-      .subscribe({
-        next: (res: any) => {
+    // 🔥 CHECK ACCESS
+    this.http.get(
+      `${environment.apiUrl}/check/${this.user._id}/${this.bookId}`
+    )
+    .subscribe({
 
-          if (res.access) {
-            this.allowed = true;
+      next: (res: any) => {
 
-            // 🔥 DIRECT URL (NO SANITIZER)
-            this.pdfUrl = `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`;
+        if (res.access) {
 
-            console.log("PDF URL 👉", this.pdfUrl); // debug
-            this.isLoading = false; // 🔥 STOP LOADER
-          } else {
-            alert('Access Denied ❌');
-            this.router.navigate(['/']);
-          }
+          this.allowed = true;
 
-        },
-        error: () => {
-          alert('Server error ❌');
+          this.pdfUrl =
+            `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`;
+
+          this.isLoading = false;
+
+          // 🔥 START TRACKING
+          this.trackReadingProgress();
+
+        } else {
+
+          alert('Access Denied ❌');
+
           this.router.navigate(['/']);
+
         }
-      });
+
+      },
+
+      error: () => {
+
+        alert('Server error ❌');
+
+        this.router.navigate(['/']);
+
+      }
+
+    });
+
   }
 
+  // 🔥 TRACK READING
+  trackReadingProgress() {
 
+    window.addEventListener(
+      'scroll',
+      this.handleScroll,
+      true
+    );
+
+  }
+
+  // 🔥 HANDLE SCROLL
+  handleScroll = () => {
+
+    const scrollTop =
+      window.scrollY;
+
+    const docHeight =
+      document.body.scrollHeight -
+      window.innerHeight;
+
+    if (docHeight <= 0) return;
+
+    const progress =
+      Math.round(
+        (scrollTop / docHeight) * 100
+      );
+
+    this.currentProgress = progress;
+
+    // 🔥 SAVE PROGRESS
+    localStorage.setItem(
+
+      `progress_${this.user._id}_${this.bookId}`,
+
+      progress.toString()
+
+    );
+
+  };
 
   logout() {
+
     this.auth.logout();
+
     this.router.navigate(['/']);
+
   }
 
   ngOnDestroy() {
-    document.removeEventListener('keydown', this.keyListener);
+
+    document.removeEventListener(
+      'keydown',
+      this.keyListener
+    );
+
+    // 🔥 REMOVE SCROLL
+    window.removeEventListener(
+      'scroll',
+      this.handleScroll,
+      true
+    );
+
   }
+
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-my-books',
@@ -12,7 +12,10 @@ import { RouterModule } from '@angular/router';
 })
 export class MyBooksComponent implements OnInit {
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   purchasedBooks: any[] = [];
 
@@ -51,7 +54,25 @@ export class MyBooksComponent implements OnInit {
 
         console.log("Purchased Books:", res);
 
-        this.purchasedBooks = res;
+        // 🔥 ADD READING PROGRESS
+        this.purchasedBooks = res.map((book: any) => {
+
+          const progress =
+            localStorage.getItem(
+              `progress_${this.user._id}_${book.id}`
+            );
+
+          return {
+
+            ...book,
+
+            progress: progress
+              ? Number(progress)
+              : 0
+
+          };
+
+        });
 
       },
 
@@ -65,25 +86,17 @@ export class MyBooksComponent implements OnInit {
 
   }
 
-  // bookaccess code start
+  // 🔥 READ BOOK
+  readBook(bookId: any) {
 
-readBook(bookId: any) {
+    // 🔥 SAVE LAST OPEN BOOK
+    localStorage.setItem(
+      `lastBook_${this.user._id}`,
+      bookId
+    );
 
-  window.location.href =
-    `/read/${bookId}`;
+    this.router.navigate(['/read', bookId]);
 
-}
-
-//  bookaccess code end
-
-  // 🔥 OPEN BOOK PDF
-  // readBook(bookId: any) {
-
-  //   window.open(
-  //     `https://ebookapp.onrender.com/book/${this.user._id}/${bookId}`,
-  //     '_blank'
-  //   );
-
-  // }
+  }
 
 }

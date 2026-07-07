@@ -106,17 +106,27 @@ export class ProfileComponent implements OnInit {
   }
 
   // 🔥 CONTINUE READING
+continueReading() {
 
-  continueReading() {
+  const lastBook =
+    localStorage.getItem(
+      `lastBook_${this.user._id}`
+    );
 
-    if (!this.continueReadingBook) return;
+  if (lastBook) {
 
     this.router.navigate([
-      '/book',
-      this.continueReadingBook.bookId
+      '/read',
+      lastBook
     ]);
 
+  } else {
+
+    alert('No book started yet 📚');
+
   }
+
+}
 
   // 🔥 GO LOGIN
 

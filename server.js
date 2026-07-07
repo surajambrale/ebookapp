@@ -171,6 +171,117 @@ const purchaseSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Purchase = mongoose.model('Purchase', purchaseSchema);
 
+//book reading code start
+
+const ReadingProgressSchema = new mongoose.Schema({
+
+  userId: String,
+
+  bookId: String,
+
+  currentPage: Number,
+
+  totalPages: Number,
+
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+
+});
+
+const ReadingProgress = mongoose.model(
+  'ReadingProgress',
+  ReadingProgressSchema
+);
+
+// 🔥 SAVE READING PROGRESS
+
+app.post('/save-progress', async (req, res) => {
+
+  try {
+
+    const {
+      userId,
+      bookId,
+      currentPage,
+      totalPages
+    } = req.body;
+
+    const existing =
+      await ReadingProgress.findOne({
+        userId,
+        bookId
+      });
+
+    if (existing) {
+
+      existing.currentPage = currentPage;
+
+      existing.totalPages = totalPages;
+
+      existing.updatedAt = new Date();
+
+      await existing.save();
+
+    } else {
+
+      await ReadingProgress.create({
+
+        userId,
+        bookId,
+        currentPage,
+        totalPages
+
+      });
+
+    }
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      error: 'Progress save failed'
+    });
+
+  }
+
+});
+
+// 🔥 GET LAST READING
+
+app.get('/last-reading/:userId', async (req, res) => {
+
+  try {
+
+    const progress =
+      await ReadingProgress.findOne({
+
+        userId: req.params.userId
+
+      }).sort({ updatedAt: -1 });
+
+    res.json(progress);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      error: 'Failed'
+    });
+
+  }
+
+});
+
+//book reading code end
+
 
 // ================= ADMIN DATA =================
 

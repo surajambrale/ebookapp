@@ -7,34 +7,53 @@
     *ngFor="let book of purchasedBooks"
   >
 
-    <!-- <img [src]="book.image" /> -->
-
-   <img [src]="book.image" />
+    <img [src]="book.image" />
 
     <div class="book-info">
 
-      <h3>{{ book.name  }}</h3>
+      <h3>{{ book.name }}</h3>
 
       <p>{{ book.author }}</p>
 
-      <!-- <button
+      <!-- 🔥 PROGRESS BAR START -->
+
+      <div class="progress-section">
+
+        <div class="progress-top">
+
+          <span>Reading Progress</span>
+
+          <span>{{ book.progress || 0 }}%</span>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            [style.width.%]="book.progress || 0"
+          ></div>
+
+        </div>
+
+      </div>
+
+      <!-- 🔥 PROGRESS BAR END -->
+
+      <button
+        class="buy"
         (click)="readBook(book.id)"
       >
-        Read Now
+
+        {{
+          book.progress > 0
+          ? 'Continue Reading'
+          : 'Read Book'
+        }}
+
       </button>
 
-    </div> -->
-
-    <!-- read now access button start -->
-
-   <button
-  class="buy"
-  (click)="readBook(book.id)"
->
-  Read Book
-</button>
-
-    <!-- read now access button end -->
+    </div>
 
   </div>
 
@@ -49,12 +68,9 @@
 
 </div>
 
-<!-- navbar start start -->
-<!-- 🔥 BOTTOM NAVBAR -->
-
+<!-- navbar start -->
 <div class="bottom-navbar">
 
-  <!-- HOME -->
   <div
     class="nav-item"
     routerLink="/"
@@ -65,7 +81,6 @@
     <p>Home</p>
   </div>
 
-  <!-- EXPLORE -->
   <div
     class="nav-item"
     routerLink="/explore"
@@ -75,7 +90,6 @@
     <p>Explore</p>
   </div>
 
-  <!-- MY BOOKS -->
   <div
     class="nav-item"
     routerLink="/my-books"
@@ -85,7 +99,6 @@
     <p>My Books</p>
   </div>
 
-  <!-- PROFILE -->
   <div
     class="nav-item"
     routerLink="/profile"
@@ -96,5 +109,4 @@
   </div>
 
 </div>
-
 <!-- navbar end -->

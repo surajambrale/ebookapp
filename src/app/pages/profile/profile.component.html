@@ -89,6 +89,36 @@
     routerLink="/my-books"
   >
 
+  <!-- addedd start -->
+
+  <!-- PURCHASE COUNT -->
+
+<div class="menu-item">
+
+  <span>🛒</span>
+
+  <p>
+    Purchased:
+    {{ purchasedBooksCount }}
+  </p>
+
+</div>
+
+<!-- CONTINUE READING -->
+
+<div
+  class="menu-item"
+  (click)="continueReading()"
+>
+
+  <span>📖</span>
+
+  <p>Continue Reading</p>
+
+</div>
+
+  <!-- addedd end -->
+
     <span>📚</span>
 
     <p>My Books</p>
@@ -156,6 +186,8 @@
         </div>
 
       </div>
+
+ 
 
       <!-- 🔥 LOGOUT -->
 
