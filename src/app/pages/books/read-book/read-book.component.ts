@@ -180,4 +180,11 @@ export class ReadBookComponent implements OnDestroy {
 
   }
 
+  // 🔥 GO BACK TO MY BOOKS
+goBackToBooks() {
+
+  this.router.navigate(['/my-books']);
+
+}
+
 }

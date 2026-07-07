@@ -226,6 +226,27 @@ submitTestimonial() {
 }
   
 
+// 🔥 TESTIMONIAL robot code
+
+scrollToTestimonial() {
+
+  const section =
+    document.getElementById(
+      'testimonial-section'
+    );
+
+  if (section) {
+
+    section.scrollIntoView({
+
+      behavior: 'smooth'
+
+    });
+
+  }
+
+}
+
   //testimonial code end
 
   //Ai bot start
