@@ -115,7 +115,7 @@
 
   <!-- 🔥 TESTIMONIAL LIST -->
 
-  <div
+  <!-- <div
     *ngFor="let t of testimonials"
     class="testimonial-card"
   >
@@ -127,6 +127,33 @@
     <small>
       ⭐ {{ t.rating }}/5
     </small>
+
+  </div>
+
+</div> -->
+
+<!-- 🔥 TESTIMONIAL SECTION -->
+
+<div class="testimonial-wrapper">
+
+  <div
+    class="testimonial-card"
+    *ngFor="let t of testimonials"
+  >
+
+    <div class="testimonial-top">
+
+      <h3>{{ t.name }}</h3>
+
+      <span>
+        ⭐ {{ t.rating }}/5
+      </span>
+
+    </div>
+
+    <p class="testimonial-message">
+      "{{ t.message }}"
+    </p>
 
   </div>
 
