@@ -78,28 +78,50 @@
 
       <!-- 🔥 MENU -->
 
-      <div class="menu-card">
+      <!-- 🔥 QUICK STATS -->
 
-        <div
-          class="menu-item"
-          routerLink="/my-books"
-        >
+<div class="menu-card">
 
-          <span>📚</span>
+  <!-- MY BOOKS -->
 
-          <p>My Books</p>
+  <div
+    class="menu-item"
+    routerLink="/my-books"
+  >
 
-        </div>
+    <span>📚</span>
 
-        <div class="menu-item">
+    <p>My Books</p>
 
-          <span>📞</span>
+  </div>
 
-          <p>Support: 9372336433</p>
+  <!-- PURCHASE COUNT -->
 
-        </div>
+  <div class="menu-item">
 
-      </div>
+    <span>🛒</span>
+
+    <p>
+      Purchased:
+      {{ purchasedBooksCount }}
+    </p>
+
+  </div>
+
+  <!-- CONTINUE READING -->
+
+  <div
+    class="menu-item"
+    (click)="continueReading()"
+  >
+
+    <span>📖</span>
+
+    <p>Continue Reading</p>
+
+  </div>
+
+</div>
 
       <!-- 🔥 PAYMENTS -->
 

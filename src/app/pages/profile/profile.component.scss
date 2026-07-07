@@ -519,3 +519,81 @@ h1 {
 /* =========================================
 🔥 BOTTOM NAVBAR end
 ========================================= */
+
+// profile scss start
+
+/* 🔥 QUICK STATS */
+
+.quick-stats {
+
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+}
+
+.quick-card {
+
+  flex: 1;
+  background: #111;
+  color: white;
+  padding: 18px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+
+}
+
+.quick-card h3 {
+
+  font-size: 15px;
+  margin-bottom: 10px;
+
+}
+
+.quick-card p {
+
+  font-size: 18px;
+  font-weight: bold;
+
+}
+
+/* 🔥 PAYMENT */
+
+.payment-card {
+
+  background: #111;
+  color: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.payment-left h4 {
+
+  margin: 0;
+  font-size: 16px;
+
+}
+
+.payment-left small {
+
+  color: #bbb;
+
+}
+
+.payment-right {
+
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff88;
+
+}
+
+// profile scss end
