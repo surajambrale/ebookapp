@@ -32,6 +32,114 @@ export class AdminComponent {
   searchPhone = '';
   searchedPurchases: any[] = [];
 
+  //testimonial code start
+  testimonials: any[] = [];
+
+  // 🔥 LOAD TESTIMONIALS
+loadTestimonials() {
+
+  const headers = new HttpHeaders({
+    Authorization: this.token
+  });
+
+  this.http.get(`${this.api}/admin/testimonials`, { headers })
+
+    .subscribe({
+
+      next: (res: any) => {
+
+        this.testimonials = res;
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+}
+
+// 🔥 DELETE TESTIMONIAL
+deleteTestimonial(id: string) {
+
+  const headers = new HttpHeaders({
+    Authorization: this.token
+  });
+
+  this.http.delete(`${this.api}/admin/testimonial/${id}`, { headers })
+
+    .subscribe({
+
+      next: () => {
+
+        alert('Testimonial Deleted ✅');
+
+        this.loadTestimonials();
+
+      },
+
+      error: () => {
+
+        alert('Delete Failed ❌');
+
+      }
+
+    });
+
+}
+
+// 🔥 EXPORT TESTIMONIAL CSV
+exportTestimonialsCSV() {
+
+  let csvRows = [];
+
+  csvRows.push([
+    'Name',
+    'Message',
+    'Rating',
+    'Date'
+  ]);
+
+  this.testimonials.forEach((t: any) => {
+
+    csvRows.push([
+
+      t.name || '',
+
+      t.message || '',
+
+      t.rating || '',
+
+      new Date(t.createdAt).toLocaleDateString()
+
+    ]);
+
+  });
+
+  const csvContent = csvRows
+    .map(e => e.join(','))
+    .join('\n');
+
+  const blob = new Blob([csvContent], {
+    type: 'text/csv;charset=utf-8;'
+  });
+
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url;
+
+  a.download = 'testimonials.csv';
+
+  a.click();
+
+}
+  //testimonial code end
+
   // 🔥 ANALYTICS
   totalRevenue = 0;
   todayRevenue = 0;
@@ -108,6 +216,9 @@ export class AdminComponent {
 
           // 🔥 NOW ANALYTICS
           this.calculateAnalytics();
+
+          // 🔥 LOAD TESTIMONIALS
+          this.loadTestimonials();
 
         });
 

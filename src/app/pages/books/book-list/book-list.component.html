@@ -74,6 +74,66 @@
 
 </div>
 
+<!-- 🔥 TESTIMONIAL SECTION start -->
+
+<div class="testimonial-section">
+
+  <h2 class="testimonial-title">
+    ⭐ Client Feedback
+  </h2>
+
+  <!-- 🔥 FORM -->
+
+  <div class="testimonial-form">
+
+    <input
+      type="text"
+      [(ngModel)]="testimonialName"
+      placeholder="Enter your name"
+    >
+
+    <textarea
+      [(ngModel)]="testimonialMessage"
+      placeholder="Write your feedback"
+    ></textarea>
+
+    <select [(ngModel)]="testimonialRating">
+
+      <option value="5">⭐⭐⭐⭐⭐</option>
+      <option value="4">⭐⭐⭐⭐</option>
+      <option value="3">⭐⭐⭐</option>
+      <option value="2">⭐⭐</option>
+      <option value="1">⭐</option>
+
+    </select>
+
+    <button (click)="submitTestimonial()">
+      Submit Feedback
+    </button>
+
+  </div>
+
+  <!-- 🔥 TESTIMONIAL LIST -->
+
+  <div
+    *ngFor="let t of testimonials"
+    class="testimonial-card"
+  >
+
+    <h3>{{ t.name }}</h3>
+
+    <p>{{ t.message }}</p>
+
+    <small>
+      ⭐ {{ t.rating }}/5
+    </small>
+
+  </div>
+
+</div>
+
+<!-- testimonial section end -->
+
 <!-- Ai bot start -->
 
 <!-- FITNESS BOT ICON -->

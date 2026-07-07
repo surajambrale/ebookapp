@@ -95,6 +95,10 @@
           Grant Access
         </option>
 
+        <option value="testimonials">
+  Testimonials
+</option>
+
       </select>
 
     </div>
@@ -296,6 +300,61 @@
       </div>
 
     </div>
+
+    //testimonial code start
+
+    <!-- 🔥 TESTIMONIALS -->
+
+<div *ngIf="selectedView === 'testimonials'">
+
+  <h2 class="section-title">
+    ⭐ Testimonials
+  </h2>
+
+  <button
+    class="export-btn"
+    (click)="exportTestimonialsCSV()"
+  >
+    Export Testimonials CSV
+  </button>
+
+  <div
+    *ngFor="let t of testimonials"
+    class="card"
+  >
+
+    <p>
+      <b>Name:</b>
+      {{ t.name }}
+    </p>
+
+    <p>
+      <b>Message:</b>
+      {{ t.message }}
+    </p>
+
+    <p>
+      <b>Rating:</b>
+      ⭐ {{ t.rating }}/5
+    </p>
+
+    <p>
+      <b>Date:</b>
+      {{ t.createdAt | date:'medium' }}
+    </p>
+
+    <button
+      class="delete-btn"
+      (click)="deleteTestimonial(t._id)"
+    >
+      Delete Testimonial
+    </button>
+
+  </div>
+
+</div>
+
+    //testimonial code end
 
   </div>
 

@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
 
+const Testimonial = require('./models/Testimonial');
 //dns code start
 
 const dns = require('dns');
@@ -1211,6 +1212,191 @@ app.get('/admin/dashboard-stats', async (req, res) => {
 });
 
 // admin total revenue weekly revenue monthly revenue code end
+
+// testimonial code start
+
+// 🔥 SAVE TESTIMONIAL
+app.post('/add-testimonial', async (req, res) => {
+
+  try {
+
+    const testimonial = new Testimonial({
+
+      name: req.body.name,
+
+      rating: req.body.rating,
+
+      message: req.body.message
+
+    });
+
+    await testimonial.save();
+
+    res.json({
+      success: true,
+      message: 'Testimonial Added'
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 GET TESTIMONIALS
+app.get('/testimonials', async (req, res) => {
+
+  try {
+
+    const testimonials =
+      await Testimonial.find()
+      .sort({ createdAt: -1 });
+
+    res.json(testimonials);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 DELETE TESTIMONIAL
+app.delete('/testimonial/:id', async (req, res) => {
+
+  try {
+
+    await Testimonial.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 TESTIMONIAL SCHEMA
+const testimonialSchema = new mongoose.Schema({
+
+  name: String,
+
+  message: String,
+
+  rating: Number
+
+}, {
+  timestamps: true
+});
+
+const Testimonial =
+  mongoose.model('Testimonial', testimonialSchema);
+
+
+// 🔥 SAVE TESTIMONIAL
+app.post('/testimonial', async (req, res) => {
+
+  try {
+
+    const testimonial = new Testimonial(req.body);
+
+    await testimonial.save();
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 GET TESTIMONIALS
+app.get('/testimonials', async (req, res) => {
+
+  try {
+
+    const data = await Testimonial
+      .find()
+      .sort({ createdAt: -1 });
+
+    res.json(data);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 ADMIN TESTIMONIALS
+app.get('/admin/testimonials', verifyAdmin, async (req, res) => {
+
+  try {
+
+    const data = await Testimonial
+      .find()
+      .sort({ createdAt: -1 });
+
+    res.json(data);
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// 🔥 admin DELETE TESTIMONIAL
+app.delete('/admin/testimonial/:id', verifyAdmin, async (req, res) => {
+
+  try {
+
+    await Testimonial.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+
+    res.status(500).json({
+      error: err.message
+    });
+
+  }
+
+});
+
+// testimonial code end
 
 // ================= START =================
 

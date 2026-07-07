@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http'
+import { environment } from '../../../../environments/environment.prod';
 
 @Component({
   selector: 'app-book-list',
@@ -11,8 +13,11 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./book-list.component.scss']
 })
 export class BookListComponent {
+api = environment.apiUrl;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+              private http: HttpClient
+  ) {}
 
   books = [
     {
@@ -108,6 +113,9 @@ export class BookListComponent {
   // 🔥 ON INIT
   ngOnInit() {
     this.filteredBooks = this.books;
+
+    // 🔥 LOAD TESTIMONIALS
+  this.loadTestimonials();
   }
 
 
@@ -136,6 +144,89 @@ export class BookListComponent {
   }
 
 
+  //testimonial code start
+
+  // 🔥 TESTIMONIAL FORM
+testimonialName = '';
+testimonialMessage = '';
+testimonialRating = 5;
+
+// 🔥 TESTIMONIAL LIST
+testimonials: any[] = [];
+
+// 🔥 LOAD TESTIMONIALS
+loadTestimonials() {
+
+  this.http.get(`${this.api}/testimonials`)
+    .subscribe({
+
+      next: (res: any) => {
+
+        this.testimonials = res;
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+}
+
+// 🔥 SUBMIT TESTIMONIAL
+submitTestimonial() {
+
+  if (
+    !this.testimonialName ||
+    !this.testimonialMessage
+  ) {
+
+    alert('Please fill all fields ❌');
+    return;
+
+  }
+
+  this.http.post(`${this.api}/testimonial`, {
+
+    name: this.testimonialName,
+
+    message: this.testimonialMessage,
+
+    rating: this.testimonialRating
+
+  })
+
+  .subscribe({
+
+    next: () => {
+
+      alert('Feedback Submitted ✅');
+
+      // RESET
+      this.testimonialName = '';
+      this.testimonialMessage = '';
+      this.testimonialRating = 5;
+
+      // RELOAD
+      this.loadTestimonials();
+
+    },
+
+    error: () => {
+
+      alert('Error submitting feedback ❌');
+
+    }
+
+  });
+
+}
+  
+
+  //testimonial code end
 
   //Ai bot start
 
