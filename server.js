@@ -1304,8 +1304,8 @@ const testimonialSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Testimonial =
-  mongoose.model('Testimonial', testimonialSchema);
+// const Testimonial =
+//   mongoose.model('Testimonial', testimonialSchema);
 
 
 // 🔥 SAVE TESTIMONIAL
