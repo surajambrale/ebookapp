@@ -145,9 +145,18 @@
 
       <h3>{{ t.name }}</h3>
 
-      <span>
+      <!-- <span>
         ⭐ {{ t.rating }}/5
-      </span>
+      </span> -->
+      <div class="stars">
+
+  <span *ngFor="let star of [1,2,3,4,5]">
+
+    {{ star <= t.rating ? '⭐' : '☆' }}
+
+  </span>
+
+</div>
 
     </div>
 
