@@ -9,6 +9,14 @@ const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
 
+//dns code start
+
+const dns = require('dns');
+
+dns.setDefaultResultOrder('ipv4first');
+
+//dns code end
+
 const app = express();
 
 // const books = require('./data/books');

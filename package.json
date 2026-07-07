@@ -21,6 +21,7 @@
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.6",
     "cors": "^2.8.6",
+    "dns": "^0.2.2",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "file-saver": "^2.0.5",
