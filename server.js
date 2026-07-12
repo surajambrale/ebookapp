@@ -13,6 +13,12 @@ const Testimonial = require('./models/Testimonial');
 
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const Subscription = require('./models/Subscription');
+const bookRoutes = require('./routes/bookRoutes');
+
+const User = require('./models/User');
+const Purchase = require('./models/Purchase');
+
+app.use('/', bookRoutes);
 //dns code start
 
 const dns = require('dns');
@@ -156,25 +162,26 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // 📦 SCHEMA
-const userSchema = new mongoose.Schema({
-  name: String,
-  phone: { type: String, unique: true }
-});
+// const userSchema = new mongoose.Schema({
+//   name: String,
+//   phone: { type: String, unique: true }
+// });
 
-const purchaseSchema = new mongoose.Schema({
-  userId: String,
-  bookId: String,
-  paymentId: String,
-  orderId: String,
-  amount: Number
+// const purchaseSchema = new mongoose.Schema({
+//   userId: String,
+//   bookId: String,
+//   paymentId: String,
+//   orderId: String,
+//   amount: Number
 
-  },{
+//   },{
 
-  timestamps: true
-});
+//   timestamps: true
+// });
 
-const User = mongoose.model('User', userSchema);
-const Purchase = mongoose.model('Purchase', purchaseSchema);
+// const User = mongoose.model('User', userSchema);
+// const Purchase = mongoose.model('Purchase', purchaseSchema);
+
 
 //book reading code start
 
@@ -800,21 +807,67 @@ app.get('/my-books/:userId', async (req, res) => {
         // PURCHASED BOOKS
         // ===============================
 
-        const purchases = await Purchase.find({
+        const Subscription = require('../models/Subscription');
 
-            userId
+exports.getMyBooks = async(req,res)=>{
 
-        });
+try{
 
-        const purchasedIds = purchases.map(p =>
-            p.bookId.toString()
-        );
+const userId=req.params.userId;
 
-        const userBooks = books.filter(book =>
-            purchasedIds.includes(book.id.toString())
-        );
+const purchases=await Purchase.find({
+userId
+});
 
-        res.json(userBooks);
+const purchasedIds=
+purchases.map(p=>p.bookId.toString());
+
+const subscription=
+await Subscription.findOne({
+
+userId,
+
+status:"active",
+
+expiryDate:{
+$gt:new Date()
+}
+
+});
+
+let userBooks=[];
+
+if(subscription){
+
+userBooks=books;
+
+}else{
+
+userBooks=books.filter(book=>
+
+purchasedIds.includes(book.id.toString())
+
+);
+
+}
+
+res.json(userBooks);
+
+}
+
+catch(err){
+
+console.log(err);
+
+res.status(500).json({
+
+message:"Error"
+
+});
+
+}
+
+}
 
     }
 
