@@ -293,6 +293,33 @@ exports.verifySubscriptionPayment = async (req, res) => {
 // GET ALL SUBSCRIPTIONS (ADMIN)
 // ======================================
 
+// exports.getAllSubscriptions = async (req, res) => {
+
+//     try {
+
+//         const subscriptions = await Subscription.find()
+//             .sort({ createdAt: -1 });
+
+//         res.json(subscriptions);
+
+//     }
+
+//     catch (err) {
+
+//         res.status(500).json({
+
+//             success: false,
+
+//             message: err.message
+
+//         });
+
+//     }
+
+// };
+
+const User = require('../models/User');
+
 exports.getAllSubscriptions = async (req, res) => {
 
     try {
@@ -300,11 +327,47 @@ exports.getAllSubscriptions = async (req, res) => {
         const subscriptions = await Subscription.find()
             .sort({ createdAt: -1 });
 
-        res.json(subscriptions);
+        const data = [];
+
+        for (const sub of subscriptions) {
+
+            const user = await User.findById(sub.userId);
+
+            data.push({
+
+                _id: sub._id,
+
+                userId: sub.userId,
+
+                userName: user ? user.name : "Deleted User",
+
+                phone: user ? user.phone : "-",
+
+                planName: sub.planName,
+
+                amount: sub.amount,
+
+                paymentId: sub.paymentId,
+
+                orderId: sub.orderId,
+
+                status: sub.status,
+
+                startDate: sub.startDate,
+
+                expiryDate: sub.expiryDate
+
+            });
+
+        }
+
+        res.json(data);
 
     }
 
     catch (err) {
+
+        console.log(err);
 
         res.status(500).json({
 

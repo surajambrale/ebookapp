@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.prod';
+import { CommonModule } from '@angular/common';
 
 declare var Razorpay:any;
 
 @Component({
   selector: 'app-subscription',
   standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.scss']
 })
@@ -83,7 +85,9 @@ export class SubscriptionComponent {
 
     const options={
 
-      key:"rzp_live_SWeBwjvwGx2bSP",
+      // key:"rzp_live_SWeBwjvwGx2bSP",
+
+      key : environment.razorpayKey,
 
       amount:order.amount,
 

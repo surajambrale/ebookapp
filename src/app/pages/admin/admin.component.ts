@@ -21,6 +21,7 @@ export class AdminComponent {
   users: any[] = [];
   purchases: any[] = [];
   books: any[] = [];
+  subscriptions: any[] = [];
 
   selectedUser = '';
   selectedBook = '';
@@ -36,108 +37,108 @@ export class AdminComponent {
   testimonials: any[] = [];
 
   // 🔥 LOAD TESTIMONIALS
-loadTestimonials() {
+  loadTestimonials() {
 
-  const headers = new HttpHeaders({
-    Authorization: this.token
-  });
-
-  this.http.get(`${this.api}/admin/testimonials`, { headers })
-
-    .subscribe({
-
-      next: (res: any) => {
-
-        this.testimonials = res;
-
-      },
-
-      error: (err) => {
-
-        console.log(err);
-
-      }
-
+    const headers = new HttpHeaders({
+      Authorization: this.token
     });
 
-}
+    this.http.get(`${this.api}/admin/testimonials`, { headers })
 
-// 🔥 DELETE TESTIMONIAL
-deleteTestimonial(id: string) {
+      .subscribe({
 
-  const headers = new HttpHeaders({
-    Authorization: this.token
-  });
+        next: (res: any) => {
 
-  this.http.delete(`${this.api}/admin/testimonial/${id}`, { headers })
+          this.testimonials = res;
 
-    .subscribe({
+        },
 
-      next: () => {
+        error: (err) => {
 
-        alert('Testimonial Deleted ✅');
+          console.log(err);
 
-        this.loadTestimonials();
+        }
 
-      },
+      });
 
-      error: () => {
+  }
 
-        alert('Delete Failed ❌');
+  // 🔥 DELETE TESTIMONIAL
+  deleteTestimonial(id: string) {
 
-      }
-
+    const headers = new HttpHeaders({
+      Authorization: this.token
     });
 
-}
+    this.http.delete(`${this.api}/admin/testimonial/${id}`, { headers })
 
-// 🔥 EXPORT TESTIMONIAL CSV
-exportTestimonialsCSV() {
+      .subscribe({
 
-  let csvRows = [];
+        next: () => {
 
-  csvRows.push([
-    'Name',
-    'Message',
-    'Rating',
-    'Date'
-  ]);
+          alert('Testimonial Deleted ✅');
 
-  this.testimonials.forEach((t: any) => {
+          this.loadTestimonials();
+
+        },
+
+        error: () => {
+
+          alert('Delete Failed ❌');
+
+        }
+
+      });
+
+  }
+
+  // 🔥 EXPORT TESTIMONIAL CSV
+  exportTestimonialsCSV() {
+
+    let csvRows = [];
 
     csvRows.push([
-
-      t.name || '',
-
-      t.message || '',
-
-      t.rating || '',
-
-      new Date(t.createdAt).toLocaleDateString()
-
+      'Name',
+      'Message',
+      'Rating',
+      'Date'
     ]);
 
-  });
+    this.testimonials.forEach((t: any) => {
 
-  const csvContent = csvRows
-    .map(e => e.join(','))
-    .join('\n');
+      csvRows.push([
 
-  const blob = new Blob([csvContent], {
-    type: 'text/csv;charset=utf-8;'
-  });
+        t.name || '',
 
-  const url = window.URL.createObjectURL(blob);
+        t.message || '',
 
-  const a = document.createElement('a');
+        t.rating || '',
 
-  a.href = url;
+        new Date(t.createdAt).toLocaleDateString()
 
-  a.download = 'testimonials.csv';
+      ]);
 
-  a.click();
+    });
 
-}
+    const csvContent = csvRows
+      .map(e => e.join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+
+    a.href = url;
+
+    a.download = 'testimonials.csv';
+
+    a.click();
+
+  }
   //testimonial code end
 
   // 🔥 ANALYTICS
@@ -151,7 +152,7 @@ exportTestimonialsCSV() {
 
   api = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // 🔐 LOGIN
   login() {
@@ -162,196 +163,205 @@ exportTestimonialsCSV() {
       password: cleanPassword
     })
 
-    .subscribe({
+      .subscribe({
 
-      next: (res: any) => {
+        next: (res: any) => {
 
-        this.token = res.token;
+          this.token = res.token;
 
-        this.isLoggedIn = true;
+          this.isLoggedIn = true;
 
-        this.loadData();
+          this.loadData();
 
-      },
+        },
 
-      error: () => {
+        error: () => {
 
-        alert('Wrong password ❌');
+          alert('Wrong password ❌');
 
-      }
+        }
 
-    });
+      });
 
   }
 
   // 🔥 LOAD DATA
   loadData() {
 
-  const headers = new HttpHeaders({
-    Authorization: this.token
-  });
-
-  // 🔥 USERS
-  this.http.get(`${this.api}/admin/users`, { headers })
-
-    .subscribe((res: any) => {
-
-      this.users = res;
-
+    const headers = new HttpHeaders({
+      Authorization: this.token
     });
 
-  // 🔥 BOOKS FIRST
-  this.http.get(`${this.api}/admin/books`, { headers })
+    // 🔥 USERS
+    this.http.get(`${this.api}/admin/users`, { headers })
 
-    .subscribe((booksRes: any) => {
+      .subscribe((res: any) => {
 
-      this.books = booksRes;
+        this.users = res;
 
-      // 🔥 PURCHASES AFTER BOOKS
-      this.http.get(`${this.api}/admin/purchases`, { headers })
+      });
 
-        .subscribe((purchaseRes: any) => {
+    // 🔥 BOOKS FIRST
+    this.http.get(`${this.api}/admin/books`, { headers })
 
-          this.purchases = purchaseRes;
+      .subscribe((booksRes: any) => {
 
-          // 🔥 NOW ANALYTICS
-          this.calculateAnalytics();
+        this.books = booksRes;
 
-          // 🔥 LOAD TESTIMONIALS
-          this.loadTestimonials();
+        // 🔥 PURCHASES AFTER BOOKS
+        this.http.get(`${this.api}/admin/purchases`, { headers })
 
-        });
+          .subscribe((purchaseRes: any) => {
 
-    });
+            this.purchases = purchaseRes;
 
-}
+            // 🔥 NOW ANALYTICS
+            this.calculateAnalytics();
 
-  // 🔥 ANALYTICS
-// 🔥 ANALYTICS
-calculateAnalytics() {
+            // 🔥 LOAD TESTIMONIALS
+            this.loadTestimonials();
 
-  this.totalRevenue = 0;
-  this.todayRevenue = 0;
-  this.weeklyRevenue = 0;
-  this.monthlyRevenue = 0;
+            // 🔥 LOAD SUBSCRIPTIONS
+            this.loadSubscriptions();
 
-  const today = new Date();
+          });
 
-  const topBooks: any = {};
 
-  this.purchases.forEach((p: any) => {
 
-    // 🔥 BOOK PRICE
-    const amount = this.getBookAmount(p.bookId);
 
-    // 🔥 TOTAL REVENUE
-    this.totalRevenue += amount;
 
-    // 🔥 PURCHASE DATE
-    const purchaseDate = new Date(p.createdAt);
+      });
 
-    // 🔥 INVALID DATE CHECK
-    if (isNaN(purchaseDate.getTime())) {
-      return;
-    }
 
-    // 🔥 TODAY REVENUE
-    const isToday =
-      purchaseDate.getDate() === today.getDate() &&
-      purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
-
-    if (isToday) {
-      this.todayRevenue += amount;
-    }
-
-    // 🔥 WEEKLY REVENUE
-    const diffTime =
-      today.getTime() - purchaseDate.getTime();
-
-    const diffDays =
-      diffTime / (1000 * 60 * 60 * 24);
-
-    if (diffDays >= 0 && diffDays <= 7) {
-      this.weeklyRevenue += amount;
-    }
-
-    // 🔥 MONTHLY REVENUE
-    const isCurrentMonth =
-      purchaseDate.getMonth() === today.getMonth() &&
-      purchaseDate.getFullYear() === today.getFullYear();
-
-    if (isCurrentMonth) {
-      this.monthlyRevenue += amount;
-    }
-
-    // 🔥 TOP SELLING
-    topBooks[p.bookId] =
-      (topBooks[p.bookId] || 0) + 1;
-
-  });
-
-  // 🔥 FIND TOP BOOK
-  let max = 0;
-  let topId: any = null;
-
-  for (const id in topBooks) {
-
-    if (topBooks[id] > max) {
-
-      max = topBooks[id];
-      topId = id;
-
-    }
 
   }
 
-  // 🔥 FIND BOOK
-  const book = this.books.find(
-    (b: any) =>
-      b.id.toString() === topId?.toString()
-  );
+  // 🔥 ANALYTICS
+  // 🔥 ANALYTICS
+  calculateAnalytics() {
 
-  this.topSellingBook =
-    book?.title ||
-    book?.name ||
-    'No Data';
+    this.totalRevenue = 0;
+    this.todayRevenue = 0;
+    this.weeklyRevenue = 0;
+    this.monthlyRevenue = 0;
 
-  this.topSellingCount = max;
+    const today = new Date();
 
-  // 🔥 DEBUG LOGS
-  console.log('TODAY:', this.todayRevenue);
-  console.log('WEEKLY:', this.weeklyRevenue);
-  console.log('MONTHLY:', this.monthlyRevenue);
+    const topBooks: any = {};
 
-}
+    this.purchases.forEach((p: any) => {
+
+      // 🔥 BOOK PRICE
+      const amount = this.getBookAmount(p.bookId);
+
+      // 🔥 TOTAL REVENUE
+      this.totalRevenue += amount;
+
+      // 🔥 PURCHASE DATE
+      const purchaseDate = new Date(p.createdAt);
+
+      // 🔥 INVALID DATE CHECK
+      if (isNaN(purchaseDate.getTime())) {
+        return;
+      }
+
+      // 🔥 TODAY REVENUE
+      const isToday =
+        purchaseDate.getDate() === today.getDate() &&
+        purchaseDate.getMonth() === today.getMonth() &&
+        purchaseDate.getFullYear() === today.getFullYear();
+
+      if (isToday) {
+        this.todayRevenue += amount;
+      }
+
+      // 🔥 WEEKLY REVENUE
+      const diffTime =
+        today.getTime() - purchaseDate.getTime();
+
+      const diffDays =
+        diffTime / (1000 * 60 * 60 * 24);
+
+      if (diffDays >= 0 && diffDays <= 7) {
+        this.weeklyRevenue += amount;
+      }
+
+      // 🔥 MONTHLY REVENUE
+      const isCurrentMonth =
+        purchaseDate.getMonth() === today.getMonth() &&
+        purchaseDate.getFullYear() === today.getFullYear();
+
+      if (isCurrentMonth) {
+        this.monthlyRevenue += amount;
+      }
+
+      // 🔥 TOP SELLING
+      topBooks[p.bookId] =
+        (topBooks[p.bookId] || 0) + 1;
+
+    });
+
+    // 🔥 FIND TOP BOOK
+    let max = 0;
+    let topId: any = null;
+
+    for (const id in topBooks) {
+
+      if (topBooks[id] > max) {
+
+        max = topBooks[id];
+        topId = id;
+
+      }
+
+    }
+
+    // 🔥 FIND BOOK
+    const book = this.books.find(
+      (b: any) =>
+        b.id.toString() === topId?.toString()
+    );
+
+    this.topSellingBook =
+      book?.title ||
+      book?.name ||
+      'No Data';
+
+    this.topSellingCount = max;
+
+    // 🔥 DEBUG LOGS
+    console.log('TODAY:', this.todayRevenue);
+    console.log('WEEKLY:', this.weeklyRevenue);
+    console.log('MONTHLY:', this.monthlyRevenue);
+
+  }
 
   // 🔥 GET BOOK NAME
   getBookName(id: string) {
 
-  const book = this.books.find(
-    b => b.id.toString() === id.toString()
-  );
+    const book = this.books.find(
+      b => b.id.toString() === id.toString()
+    );
 
-  return book
-    ? (book.title || book.name)
-    : 'Unknown';
+    return book
+      ? (book.title || book.name)
+      : 'Unknown';
 
-}
+  }
 
   // 🔥 GET BOOK AMOUNT
- getBookAmount(bookId: string) {
+  getBookAmount(bookId: string) {
 
-  const book = this.books.find(
-    b => b.id.toString() === bookId.toString()
-  );
+    const book = this.books.find(
+      b => b.id.toString() === bookId.toString()
+    );
 
-  if (!book) return 0;
+    if (!book) return 0;
 
-  // 🔥 ALWAYS TAKE ACTUAL BOOK PRICE
-  return Number(book.price || 0);
+    // 🔥 ALWAYS TAKE ACTUAL BOOK PRICE
+    return Number(book.price || 0);
 
-}
+  }
 
   // 🔥 SEARCH USER
   searchUser() {
@@ -463,23 +473,23 @@ calculateAnalytics() {
 
     }, { headers })
 
-    .subscribe({
+      .subscribe({
 
-      next: () => {
+        next: () => {
 
-        alert('Access Granted ✅');
+          alert('Access Granted ✅');
 
-        this.loadData();
+          this.loadData();
 
-      },
+        },
 
-      error: () => {
+        error: () => {
 
-        alert('Error ❌');
+          alert('Error ❌');
 
-      }
+        }
 
-    });
+      });
 
   }
 
@@ -524,6 +534,42 @@ calculateAnalytics() {
       });
 
   }
+
+  loadSubscriptions() {
+
+  const headers = new HttpHeaders({
+
+    Authorization: this.token
+
+  });
+
+  this.http.get<any[]>(
+
+    `${this.api}/subscription/all`,
+
+    { headers }
+
+  )
+
+  .subscribe({
+
+    next: (res) => {
+
+      this.subscriptions = res;
+
+      console.log("Subscriptions", res);
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+    }
+
+  });
+
+}
 
   // 🔓 LOGOUT
   logout() {

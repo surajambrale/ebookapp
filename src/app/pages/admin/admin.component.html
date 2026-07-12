@@ -5,11 +5,7 @@
 
     <h2>Admin Login</h2>
 
-    <input
-      type="password"
-      [(ngModel)]="password"
-      placeholder="Enter password"
-    >
+    <input type="password" [(ngModel)]="password" placeholder="Enter password">
 
     <button (click)="login()">
       Login
@@ -95,9 +91,13 @@
           Grant Access
         </option>
 
+        <option value="subscriptions">
+          Subscribers
+        </option>
+
         <option value="testimonials">
-  Testimonials
-</option>
+          Testimonials
+        </option>
 
       </select>
 
@@ -106,11 +106,7 @@
     <!-- 🔥 SEARCH -->
     <div class="search-area">
 
-      <input
-        type="text"
-        [(ngModel)]="searchPhone"
-        placeholder="Search by phone number..."
-      >
+      <input type="text" [(ngModel)]="searchPhone" placeholder="Search by phone number...">
 
       <button (click)="searchUser()">
         GO
@@ -125,10 +121,7 @@
         🔎 Search Result
       </h2>
 
-      <div
-        *ngFor="let p of searchedPurchases"
-        class="card"
-      >
+      <div *ngFor="let p of searchedPurchases" class="card">
 
         <p>
           <b>Name:</b>
@@ -162,18 +155,12 @@
     </div>
 
     <!-- 🔥 EXPORT -->
-    <button
-      class="export-btn"
-      (click)="exportCSV()"
-    >
+    <button class="export-btn" (click)="exportCSV()">
       Export Full CSV
     </button>
 
     <!-- 🔥 GRANT ACCESS -->
-    <div
-      *ngIf="selectedView === 'grant'"
-      class="card"
-    >
+    <div *ngIf="selectedView === 'grant'" class="card">
 
       <h3>Grant Book Access</h3>
 
@@ -183,10 +170,7 @@
           Select User
         </option>
 
-        <option
-          *ngFor="let u of users"
-          [value]="u._id"
-        >
+        <option *ngFor="let u of users" [value]="u._id">
           {{ u.name }} ({{ u.phone }})
         </option>
 
@@ -198,10 +182,7 @@
           Select Book
         </option>
 
-        <option
-          *ngFor="let b of books"
-          [value]="b.id"
-        >
+        <option *ngFor="let b of books" [value]="b.id">
           {{ b.name }}
         </option>
 
@@ -220,10 +201,7 @@
         👥 Users
       </h2>
 
-      <div
-        *ngFor="let user of users"
-        class="card"
-      >
+      <div *ngFor="let user of users" class="card">
 
         <p>
           <b>Name:</b>
@@ -235,10 +213,7 @@
           {{ user.phone }}
         </p>
 
-        <button
-          class="delete-btn"
-          (click)="deleteUser(user._id)"
-        >
+        <button class="delete-btn" (click)="deleteUser(user._id)">
           Delete User
         </button>
 
@@ -253,10 +228,7 @@
         💳 Purchases
       </h2>
 
-      <div
-        *ngFor="let p of purchases"
-        class="card"
-      >
+      <div *ngFor="let p of purchases" class="card">
 
         <p>
           <b>Name:</b>
@@ -281,7 +253,7 @@
         <p>
           <b>Amount:</b>
 
-         ₹{{ getBookAmount(p.bookId) }}
+          ₹{{ getBookAmount(p.bookId) }}
 
         </p>
 
@@ -290,12 +262,33 @@
           {{ p.paymentId }}
         </p>
 
-        <button
-          class="delete-btn"
-          (click)="deletePurchase(p._id)"
-        >
+        <button class="delete-btn" (click)="deletePurchase(p._id)">
           Delete Purchase
         </button>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="selectedView==='subscriptions'">
+
+      <h2 class="section-title">
+        💎 Subscribers
+      </h2>
+
+      <div class="card" *ngFor="let s of subscriptions">
+
+        <p><b>Name :</b> {{s.userName}}</p>
+
+        <p><b>Phone :</b> {{s.phone}}</p>
+
+        <p><b>Plan :</b> {{s.planName}}</p>
+
+        <p><b>Amount :</b> ₹{{s.amount}}</p>
+
+        <p><b>Status :</b> {{s.status}}</p>
+
+        <p><b>Expiry :</b> {{s.expiryDate | date:'dd MMM yyyy'}}</p>
 
       </div>
 
@@ -305,54 +298,45 @@
 
     <!-- 🔥 TESTIMONIALS -->
 
-<div *ngIf="selectedView === 'testimonials'">
+    <div *ngIf="selectedView === 'testimonials'">
 
-  <h2 class="section-title">
-    ⭐ Testimonials
-  </h2>
+      <h2 class="section-title">
+        ⭐ Testimonials
+      </h2>
 
-  <button
-    class="export-btn"
-    (click)="exportTestimonialsCSV()"
-  >
-    Export Testimonials CSV
-  </button>
+      <button class="export-btn" (click)="exportTestimonialsCSV()">
+        Export Testimonials CSV
+      </button>
 
-  <div
-    *ngFor="let t of testimonials"
-    class="card"
-  >
+      <div *ngFor="let t of testimonials" class="card">
 
-    <p>
-      <b>Name:</b>
-      {{ t.name }}
-    </p>
+        <p>
+          <b>Name:</b>
+          {{ t.name }}
+        </p>
 
-    <p>
-      <b>Message:</b>
-      {{ t.message }}
-    </p>
+        <p>
+          <b>Message:</b>
+          {{ t.message }}
+        </p>
 
-    <p>
-      <b>Rating:</b>
-      ⭐ {{ t.rating }}/5
-    </p>
+        <p>
+          <b>Rating:</b>
+          ⭐ {{ t.rating }}/5
+        </p>
 
-    <p>
-      <b>Date:</b>
-      {{ t.createdAt | date:'medium' }}
-    </p>
+        <p>
+          <b>Date:</b>
+          {{ t.createdAt | date:'medium' }}
+        </p>
 
-    <button
-      class="delete-btn"
-      (click)="deleteTestimonial(t._id)"
-    >
-      Delete Testimonial
-    </button>
+        <button class="delete-btn" (click)="deleteTestimonial(t._id)">
+          Delete Testimonial
+        </button>
 
-  </div>
+      </div>
 
-</div>
+    </div>
 
     <!-- testimonial code end -->
 
@@ -366,42 +350,25 @@
 <div class="bottom-navbar">
 
   <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-  
-  >
+  <div class="nav-item" routerLink="/" routerLinkActive="active">
     <span>🏠</span>
     <p>Home</p>
   </div>
 
   <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/explore" routerLinkActive="active">
     <span>🔍</span>
     <p>Explore</p>
   </div>
 
   <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/my-books" routerLinkActive="active">
     <span>📚</span>
     <p>My Books</p>
   </div>
 
   <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/profile" routerLinkActive="active">
     <span>👤</span>
     <p>Profile</p>
   </div>
