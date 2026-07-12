@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment.prod';
 
 declare var Razorpay:any;
 
@@ -12,7 +13,7 @@ declare var Razorpay:any;
 })
 export class SubscriptionComponent {
 
-  API="http://localhost:5000";
+  API = environment.apiUrl;
 
   constructor(
     private http:HttpClient,
