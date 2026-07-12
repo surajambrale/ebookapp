@@ -57,7 +57,14 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent
-  }
+  },
+
+  {
+   path:'subscription',
+   loadComponent:() =>
+   import('./pages/subscription/subscription.component')
+   .then(m=>m.SubscriptionComponent)
+}
 
 
 

@@ -10,6 +10,9 @@ const path = require('path');
 const axios = require('axios');
 
 const Testimonial = require('./models/Testimonial');
+
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const Subscription = require('./models/Subscription');
 //dns code start
 
 const dns = require('dns');
@@ -43,6 +46,8 @@ const nodemailer = require('nodemailer');
 //   ],
 //   credentials: true
 // }));
+
+app.use('/subscription', subscriptionRoutes);
 
 app.use(cors({
   origin: [
@@ -541,24 +546,104 @@ app.get('/ping', (req, res) => {
 //uptime robot
 
 app.get('/book/:userId/:bookId', async (req, res) => {
-  try {
-    const purchase = await Purchase.findOne({
-      userId: req.params.userId,
-      bookId: req.params.bookId
-    });
 
-    if (!purchase) return res.status(403).send("Access Denied ❌");
+    try {
 
-    const filePath = path.join(__dirname, 'books', `${req.params.bookId}.pdf`);
+        const { userId, bookId } = req.params;
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline');
+        // =====================================
+        // CHECK PURCHASE
+        // =====================================
 
-    res.sendFile(filePath);
+        const purchase = await Purchase.findOne({
 
-  } catch {
-    res.status(500).send("Error loading book");
-  }
+            userId,
+
+            bookId
+
+        });
+
+        let hasAccess = !!purchase;
+
+
+        // =====================================
+        // IF PURCHASE NOT FOUND
+        // CHECK SUBSCRIPTION
+        // =====================================
+
+        if (!hasAccess) {
+
+            const subscription = await Subscription.findOne({
+
+                userId,
+
+                status: "active",
+
+                expiryDate: {
+
+                    $gt: new Date()
+
+                }
+
+            });
+
+            if (subscription) {
+
+                hasAccess = true;
+
+            }
+
+        }
+
+
+        if (!hasAccess) {
+
+            return res
+                .status(403)
+                .send("Access Denied ❌");
+
+        }
+
+
+        const filePath = path.join(
+
+            __dirname,
+
+            "books",
+
+            `${bookId}.pdf`
+
+        );
+
+
+        res.setHeader(
+
+            "Content-Type",
+
+            "application/pdf"
+
+        );
+
+        res.setHeader(
+
+            "Content-Disposition",
+
+            "inline"
+
+        );
+
+        res.sendFile(filePath);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Server Error");
+
+    }
+
 });
 
 // 📚 BOOK LIST
@@ -678,38 +763,72 @@ async function sendTelegram(msg) {
 
 app.get('/my-books/:userId', async (req, res) => {
 
-  try {
+    try {
 
-    const purchases = await Purchase.find({
-      userId: req.params.userId
-    });
+        const { userId } = req.params;
 
-    console.log("Purchases:", purchases);
+        // ===============================
+        // CHECK ACTIVE SUBSCRIPTION
+        // ===============================
 
-    // 🔥 STRING + NUMBER BOTH HANDLE
-    const purchasedIds = purchases.map(
-      p => p.bookId.toString()
-    );
+        const subscription = await Subscription.findOne({
 
-    console.log("Purchased IDs:", purchasedIds);
+            userId,
 
-    const userBooks = books.filter(
-      book => purchasedIds.includes(book.id.toString())
-    );
+            status: "active",
 
-    console.log("User Books:", userBooks);
+            expiryDate: {
 
-    res.json(userBooks);
+                $gt: new Date()
 
-  } catch (err) {
+            }
 
-    console.log(err);
+        });
 
-    res.status(500).json({
-      message: 'Error loading books'
-    });
+        // ===============================
+        // IF SUBSCRIPTION ACTIVE
+        // RETURN ALL BOOKS
+        // ===============================
 
-  }
+        if (subscription) {
+
+            return res.json(books);
+
+        }
+
+        // ===============================
+        // PURCHASED BOOKS
+        // ===============================
+
+        const purchases = await Purchase.find({
+
+            userId
+
+        });
+
+        const purchasedIds = purchases.map(p =>
+            p.bookId.toString()
+        );
+
+        const userBooks = books.filter(book =>
+            purchasedIds.includes(book.id.toString())
+        );
+
+        res.json(userBooks);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            message: "Server Error"
+
+        });
+
+    }
 
 });
 

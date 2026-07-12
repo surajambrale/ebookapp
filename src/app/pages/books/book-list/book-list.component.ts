@@ -19,6 +19,24 @@ api = environment.apiUrl;
               private http: HttpClient
   ) {}
 
+
+  subscribeNow() {
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+
+        alert('Please login first.');
+
+        this.router.navigate(['/login']);
+
+        return;
+    }
+
+    this.router.navigate(['/subscription']);
+
+}
+
   books = [
     {
     id: 1,
