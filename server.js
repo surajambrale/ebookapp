@@ -536,8 +536,6 @@ await sendEmail({
 
 // ================= BOOK =================
 
-const Subscription = require('./models/Subscription');
-
 app.get('/check/:userId/:bookId', async (req, res) => {
 
     try {
