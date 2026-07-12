@@ -24,50 +24,6 @@
 
   </div>
 
-  <!-- Subscription code start -->
-
-<div
-  class="subscription-card"
-  *ngIf="subscription"
->
-
-  <h3>⭐ Premium Membership</h3>
-
-  <p>
-    Plan :
-    <b>{{subscription.plan}}</b>
-  </p>
-
-  <p>
-    Expiry :
-    <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
-  </p>
-
-  <p style="color:green;font-weight:bold;">
-    Active ✅
-  </p>
-
-</div>
-
-
-<div
-  class="subscription-card"
-  *ngIf="!subscription"
->
-
-  <h3>No Active Membership</h3>
-
-  <button
-    routerLink="/subscription"
-  >
-
-    Subscribe ₹99/month
-
-  </button>
-
-</div>
-
-<!-- subscription code end -->
 
   <!-- 🔥 USER SECTION -->
 
@@ -122,6 +78,52 @@
       </div>
 
       <!-- 🔥 MENU -->
+
+       <!-- Subscription code start -->
+
+<div
+  class="subscription-card"
+  *ngIf="subscription"
+>
+
+  <h3>⭐ Premium Membership</h3>
+
+  <p>
+    Plan :
+    <b>{{subscription.plan}}</b>
+  </p>
+
+  <p>
+    Expiry :
+    <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
+  </p>
+
+  <p style="color:green;font-weight:bold;">
+    Active ✅
+  </p>
+
+</div>
+
+
+<div
+  class="subscription-card"
+  *ngIf="!subscription"
+>
+
+  <h3>No Active Membership</h3>
+
+  <button
+    routerLink="/subscription"
+  >
+
+    Subscribe ₹99/month
+
+  </button>
+
+</div>
+
+<!-- subscription code end -->
+
 
       <!-- 🔥 QUICK STATS -->
 
