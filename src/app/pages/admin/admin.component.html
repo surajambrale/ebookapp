@@ -290,16 +290,17 @@
 
         <p><b>Expiry :</b> {{s.expiryDate | date:'dd MMM yyyy'}}</p>
 
+        <button class="delete-btn" (click)="deleteSubscription(s._id)">
+
+          🗑 Delete Subscription
+
+        </button>
+
       </div>
 
-
-      <button class="delete-btn" (click)="deleteSubscription(s._id)">
-
-        🗑 Delete Subscription
-
-      </button>
-
     </div>
+
+
 
     <!-- testimonial code start -->
 
