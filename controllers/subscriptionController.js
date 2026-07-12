@@ -59,7 +59,7 @@ exports.createSubscriptionOrder = async (req, res) => {
 
         // Create Razorpay Order
 
-        const order = await razorpayService.createOrder(99);
+        const order = await razorpayService.createOrder(1);
 
         res.json({
 
@@ -246,7 +246,7 @@ exports.verifySubscriptionPayment = async (req, res) => {
 
             orderId: razorpay_order_id,
 
-            amount: 99,
+            amount: 1,
 
             planName: "Monthly Premium",
 
