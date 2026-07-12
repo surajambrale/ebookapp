@@ -18,7 +18,7 @@ const bookRoutes = require('./routes/bookRoutes');
 const User = require('./models/User');
 const Purchase = require('./models/Purchase');
 
-app.use('/', bookRoutes);
+
 //dns code start
 
 const dns = require('dns');
@@ -65,6 +65,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use('/', bookRoutes);
 
 const SECRET = process.env.JWT_SECRET;
 // const ADMIN_PASSWORD = "admin123";
