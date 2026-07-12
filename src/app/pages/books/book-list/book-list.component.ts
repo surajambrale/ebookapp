@@ -19,21 +19,31 @@ api = environment.apiUrl;
               private http: HttpClient
   ) {}
 
+subscriptionActive = false;
 
-  subscribeNow() {
+ subscribeNow() {
 
-    const token = localStorage.getItem('token');
+  if (this.subscriptionActive) {
 
-    if (!token) {
+    alert("Your Subscription is Active ✅");
 
-        alert('Please login first.');
+    return;
 
-        this.router.navigate(['/login']);
+  }
 
-        return;
-    }
+  const token = localStorage.getItem('token');
 
-    this.router.navigate(['/subscription']);
+  if (!token) {
+
+    alert('Please login first.');
+
+    this.router.navigate(['/login']);
+
+    return;
+
+  }
+
+  this.router.navigate(['/subscription']);
 
 }
 
@@ -134,6 +144,10 @@ api = environment.apiUrl;
 
     // 🔥 LOAD TESTIMONIALS
   this.loadTestimonials();
+
+
+  this.checkSubscription();
+  
   }
 
 
@@ -161,6 +175,33 @@ api = environment.apiUrl;
     this.filteredBooks = this.books;
   }
 
+  checkSubscription() {
+
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+  if (!user) return;
+
+  this.http.get<any>(
+    `${this.api}/subscription/status/${user._id}`
+  ).subscribe({
+
+    next: (res) => {
+
+      this.subscriptionActive = res.subscribed;
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+    }
+
+  });
+
+}
+
+  
 
   //testimonial code start
 

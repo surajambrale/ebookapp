@@ -54,13 +54,14 @@
         Read all books without purchasing individually.
     </p>
 
-    <button
-        class="subscribe-btn"
-        (click)="subscribeNow()">
+   <button
+  class="subscribe-btn"
+  (click)="subscribeNow()"
+  [disabled]="subscriptionActive">
 
-        Subscribe Now
+  {{ subscriptionActive ? 'Active Subscription ✅' : 'Subscribe Now' }}
 
-    </button>
+</button>
 
 </div>
 

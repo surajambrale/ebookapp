@@ -7,6 +7,7 @@ import {
 
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -33,6 +34,8 @@ export class ProfileComponent implements OnInit {
 
   payments: any[] = [];
 
+  subscription: any = null;
+
   // 🔥 NEW FEATURES
   purchasedBooksCount = 0;
 
@@ -42,6 +45,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private http: HttpClient
   ) {}
+
+  
 
   ngOnInit(): void {
 
@@ -57,9 +62,47 @@ export class ProfileComponent implements OnInit {
 
       this.loadPayments();
 
+      this.loadSubscription();
+
     }
 
+  
+
   }
+
+  loadSubscription() {
+
+  if (!this.user?._id) return;
+
+  this.http.get<any>(
+    `${environment.apiUrl}/subscription/status/${this.user._id}`
+  ).subscribe({
+
+    next: (res) => {
+
+      if (res.subscribed) {
+
+        this.subscription = res;
+
+      } else {
+
+        this.subscription = null;
+
+      }
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+    }
+
+  });
+
+}
+
+  
 
   // 🔥 LOAD PAYMENTS
 
@@ -68,7 +111,7 @@ export class ProfileComponent implements OnInit {
     if (!this.user?._id) return;
 
     this.http.get<any[]>(
-      `https://ebookapp.onrender.com/payments/${this.user._id}`
+      `${environment.apiUrl}/payments/${this.user._id}`
     )
     .subscribe({
 
@@ -141,7 +184,7 @@ continueReading() {
   adminLogin() {
 
     this.http.post<any>(
-      'https://ebookapp.onrender.com/admin-login',
+       `${environment.apiUrl}/admin-login`,
       {
         password: this.adminPassword
       }
