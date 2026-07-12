@@ -415,3 +415,37 @@ exports.getUserSubscription = async (req, res) => {
     }
 
 };
+
+// ======================================
+// DELETE SUBSCRIPTION
+// ======================================
+
+exports.deleteSubscription = async (req, res) => {
+
+    try {
+
+        await Subscription.findByIdAndDelete(req.params.id);
+
+        res.json({
+
+            success: true,
+
+            message: "Subscription Deleted"
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

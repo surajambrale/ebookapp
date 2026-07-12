@@ -44,5 +44,13 @@ router.post(
     subscriptionController.verifySubscriptionPayment
 );
 
+router.delete(
+
+    '/delete/:id',
+
+    subscriptionController.deleteSubscription
+
+);
+
 
 module.exports = router;

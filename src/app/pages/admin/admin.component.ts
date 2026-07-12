@@ -582,4 +582,44 @@ export class AdminComponent {
 
   }
 
+  deleteSubscription(id: string) {
+
+  if (!confirm("Delete Subscription?")) return;
+
+  const headers = new HttpHeaders({
+
+    Authorization: this.token
+
+  });
+
+  this.http.delete(
+
+    `${this.api}/subscription/delete/${id}`,
+
+    { headers }
+
+  )
+
+  .subscribe({
+
+    next: () => {
+
+      alert("Subscription Deleted ✅");
+
+      this.loadSubscriptions();
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert("Delete Failed");
+
+    }
+
+  });
+
+}
+
 }
