@@ -536,13 +536,64 @@ await sendEmail({
 
 // ================= BOOK =================
 
-app.get('/check/:userId/:bookId', async (req, res) => {
-  const purchase = await Purchase.findOne({
-    userId: req.params.userId,
-    bookId: req.params.bookId
-  });
+const Subscription = require('./models/Subscription');
 
-  res.json({ access: !!purchase });
+app.get('/check/:userId/:bookId', async (req, res) => {
+
+    try {
+
+        const purchase = await Purchase.findOne({
+
+            userId: req.params.userId,
+
+            bookId: req.params.bookId
+
+        });
+
+        if (purchase) {
+
+            return res.json({
+                access: true
+            });
+
+        }
+
+        const subscription = await Subscription.findOne({
+
+            userId: req.params.userId,
+
+            status: "active",
+
+            expiryDate: {
+                $gt: new Date()
+            }
+
+        });
+
+        if (subscription) {
+
+            return res.json({
+                access: true
+            });
+
+        }
+
+        res.json({
+            access: false
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            access: false
+        });
+
+    }
+
 });
 
 //uptime robot
