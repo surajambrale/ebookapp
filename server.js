@@ -53,7 +53,7 @@ const nodemailer = require('nodemailer');
 //   credentials: true
 // }));
 
-app.use('/subscription', subscriptionRoutes);
+
 
 app.use(cors({
   origin: [
@@ -66,6 +66,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/', bookRoutes);
+app.use('/subscription', subscriptionRoutes);
 
 const SECRET = process.env.JWT_SECRET;
 // const ADMIN_PASSWORD = "admin123";
