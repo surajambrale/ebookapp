@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
+import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-my-books',
@@ -15,9 +17,10 @@ export class MyBooksComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
 
   purchasedBooks: any[] = [];
+  api = environment.apiUrl;
 
   user: any;
 
@@ -46,57 +49,55 @@ export class MyBooksComponent implements OnInit {
   loadBooks() {
 
     this.http.get<any[]>(
-      `https://ebookapp.onrender.com/my-books/${this.user._id}`
+      `${this.api}/my-books/${this.user._id}`
     )
-    .subscribe({
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        console.log("Purchased Books:", res);
+          console.log("Purchased Books:", res);
 
-        // 🔥 ADD READING PROGRESS
-        this.purchasedBooks = res.map((book: any) => {
+          // 🔥 ADD READING PROGRESS
+          this.purchasedBooks = res.map((book: any) => {
 
-          const progress =
-            localStorage.getItem(
-              `progress_${this.user._id}_${book.id}`
+            const bookId = book._id || book.id;
+
+            const progress = localStorage.getItem(
+              `progress_${this.user._id}_${bookId}`
             );
 
-          return {
+            return {
+              ...book,
+              progress: progress ? Number(progress) : 0
+            };
 
-            ...book,
+          });
 
-            progress: progress
-              ? Number(progress)
-              : 0
+        },
 
-          };
+        error: (err) => {
 
-        });
+          console.log("Books Error:", err);
 
-      },
+        }
 
-      error: (err) => {
-
-        console.log("Books Error:", err);
-
-      }
-
-    });
+      });
 
   }
 
   // 🔥 READ BOOK
-  readBook(bookId: any) {
+ // 🔥 READ BOOK
+readBook(book: any) {
 
-    // 🔥 SAVE LAST OPEN BOOK
-    localStorage.setItem(
-      `lastBook_${this.user._id}`,
-      bookId
-    );
+  const id = book._id || book.id;
 
-    this.router.navigate(['/read', bookId]);
+  localStorage.setItem(
+    `lastBook_${this.user._id}`,
+    id
+  );
 
-  }
+  this.router.navigate(['/read', id]);
+
+}
 
 }

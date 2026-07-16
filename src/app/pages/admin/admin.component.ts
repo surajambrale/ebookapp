@@ -35,6 +35,7 @@ export class AdminComponent {
 
   //testimonial code start
   testimonials: any[] = [];
+  dynamicBooks:any[]=[];
 
   // book upload code start
 
@@ -350,6 +351,12 @@ selectedPdf!: File;
             // 🔥 LOAD SUBSCRIPTIONS
             this.loadSubscriptions();
 
+            this.loadDynamicBooks();
+
+            
+
+            
+
           });
 
 
@@ -582,6 +589,36 @@ selectedPdf!: File;
 
   }
 
+  deleteBook(id:string){
+
+if(!confirm("Delete this book?")){
+
+return;
+
+}
+
+this.http.delete(`${this.api}/admin/books/delete/${id}`)
+
+.subscribe({
+
+next:()=>{
+
+alert("Book Deleted Successfully");
+
+this.loadDynamicBooks();
+
+},
+
+error:(err)=>{
+
+console.log(err);
+
+}
+
+});
+
+}
+
   // 🔥 GRANT ACCESS
   grantAccess() {
 
@@ -618,6 +655,27 @@ selectedPdf!: File;
       });
 
   }
+
+  loadDynamicBooks(){
+
+this.http.get<any[]>(`${this.api}/books/all`)
+.subscribe({
+
+next:(res)=>{
+
+this.dynamicBooks=res;
+
+},
+
+error:(err)=>{
+
+console.log(err);
+
+}
+
+});
+
+}
 
   // 🔥 DELETE USER
   deleteUser(id: string) {

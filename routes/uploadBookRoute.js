@@ -22,4 +22,34 @@ router.post(
     uploadBook
 );
 
+const DynamicBook = require('../models/DynamicBook');
+
+router.delete('/delete/:id', async (req, res) => {
+
+    try {
+
+        await DynamicBook.findByIdAndDelete(req.params.id);
+
+        res.json({
+
+            success: true,
+            message: "Book Deleted"
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
+
+});
+
 module.exports = router;

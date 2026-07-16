@@ -14,7 +14,7 @@ const dynamicBookSchema = new mongoose.Schema({
 
     originalPrice:Number,
 
-    coverUrl:String,
+    coverImage: String,
 
     pdfUrl:String
 

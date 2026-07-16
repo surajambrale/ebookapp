@@ -2,6 +2,7 @@ const Purchase = require('../models/Purchase');
 const Subscription = require('../models/Subscription');
 const books = require('../data/books');
 const path = require('path');
+const DynamicBook = require('../models/DynamicBook');
 
 // ======================
 // MY BOOKS
@@ -13,12 +14,12 @@ exports.getMyBooks = async (req, res) => {
 
         const userId = req.params.userId;
 
-        // Purchased books
+        // Purchased Books
         const purchases = await Purchase.find({ userId });
 
         const purchasedIds = purchases.map(p => p.bookId.toString());
 
-        // Active subscription
+        // Subscription
         const subscription = await Subscription.findOne({
 
             userId,
@@ -31,21 +32,46 @@ exports.getMyBooks = async (req, res) => {
 
         });
 
-        let userBooks = [];
+        // Hardcoded Books
+        let hardcodedBooks = [];
 
         if (subscription) {
 
-            userBooks = books;
+            hardcodedBooks = books;
 
         } else {
 
-            userBooks = books.filter(book =>
+            hardcodedBooks = books.filter(book =>
                 purchasedIds.includes(book.id.toString())
             );
 
         }
 
-        res.json(userBooks);
+        // Dynamic Books
+        let dynamicBooks = [];
+
+        if (subscription) {
+
+            dynamicBooks = await DynamicBook.find();
+
+        } else {
+
+            dynamicBooks = await DynamicBook.find({
+
+                _id: { $in: purchasedIds }
+
+            });
+
+        }
+
+        // Merge both
+        res.json([
+
+            ...hardcodedBooks,
+
+            ...dynamicBooks
+
+        ]);
 
     }
 
@@ -54,7 +80,9 @@ exports.getMyBooks = async (req, res) => {
         console.log(err);
 
         res.status(500).json({
-            message: "Error loading books"
+
+            message: err.message
+
         });
 
     }
