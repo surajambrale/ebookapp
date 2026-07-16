@@ -18,7 +18,7 @@ const bookRoutes = require('./routes/bookRoutes');
 const User = require('./models/User');
 const Purchase = require('./models/Purchase');
 const uploadBookRoute = require('./routes/uploadBookRoute');
-const dynamicBookRoute = require('./routes/bookRoute');
+const dynamicBookRoute = require('./routes/bookRoutes');
 
 //dns code start
 
