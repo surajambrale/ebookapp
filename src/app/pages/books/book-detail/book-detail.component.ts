@@ -206,27 +206,9 @@ export class BookDetailComponent {
 
   ngOnInit() {
 
-    this.loadDynamicBooks();
+  this.loadDynamicBooks();
 
-    if (!this.book) {
-      alert('Book not found ❌');
-      this.router.navigate(['/']);
-      return;
-    }
-
-    const user = this.auth.getUser();
-
-    // 🔐 CHECK ACCESS
-    if (user && user._id) {
-      this.http.get(`${this.apiUrl}/check/${user._id}/${this.book.id}`)
-        .subscribe({
-          next: (res: any) => {
-            this.hasAccess = res.access;
-          },
-          error: () => console.log('Access check failed')
-        });
-    }
-  }
+}
 
   //slider function start
 

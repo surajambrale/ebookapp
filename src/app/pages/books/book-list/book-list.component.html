@@ -70,7 +70,7 @@
   <h2 class="title">New Releases in Store</h2>
 
   <div class="book-grid">
-    <div class="book-card" *ngFor="let book of filteredBooks" (click)="openBook(book.id)">
+    <div class="book-card" *ngFor="let book of filteredBooks" (click)="openBook(book._id || book.id)">
       
       <div class="image">
         <img [src]="book.image" alt="book" />

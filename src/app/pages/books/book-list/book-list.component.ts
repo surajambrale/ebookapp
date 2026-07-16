@@ -190,7 +190,7 @@ export class BookListComponent {
 
 
   // 🔥 OPEN BOOK
-  openBook(id: number) {
+  openBook(id: any) {
     this.router.navigate(['/book', id]);
   }
 
