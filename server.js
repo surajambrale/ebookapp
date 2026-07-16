@@ -17,7 +17,8 @@ const bookRoutes = require('./routes/bookRoutes');
 
 const User = require('./models/User');
 const Purchase = require('./models/Purchase');
-
+const uploadBookRoute = require('./routes/uploadBookRoute');
+const dynamicBookRoute = require('./routes/bookRoute');
 
 //dns code start
 
@@ -67,6 +68,9 @@ app.use(cors({
 app.use(express.json());
 app.use('/', bookRoutes);
 app.use('/subscription', subscriptionRoutes);
+app.use('/api/books', uploadBookRoute);
+app.use('/admin/books', uploadBookRoute);
+app.use('/books', dynamicBookRoute);
 
 const SECRET = process.env.JWT_SECRET;
 // const ADMIN_PASSWORD = "admin123";
@@ -332,7 +336,7 @@ app.get('/admin/purchases', verifyAdmin, async (req, res) => {
 
           amount: p.amount,
 
-  createdAt: p.createdAt,
+          createdAt: p.createdAt,
 
           userName: user ? user.name : "Unknown",
           userPhone: user ? user.phone : "N/A"
@@ -375,7 +379,7 @@ app.post('/register', async (req, res) => {
   try {
     const { name, phone } = req.body;
 
-     // 🔴 VALIDATE PHONE
+    // 🔴 VALIDATE PHONE
     if (!/^[0-9]{10}$/.test(phone)) {
       return res.status(400).json({ message: 'Invalid phone number' });
     }
@@ -440,7 +444,7 @@ app.post('/login', async (req, res) => {
 // });
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID ,
+  key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET
 });
 
@@ -498,22 +502,22 @@ app.post('/verify-payment', async (req, res) => {
       createdAt: new Date()
     });
 
-     //gmail send code start
+    //gmail send code start
 
     // user name nikal
-let user = await User.findById(userId);
+    let user = await User.findById(userId);
 
-// 🔥 EMAIL SEND
-await sendEmail({
-  userName: user ? user.name : "Unknown",
-  paymentId: razorpay_payment_id,
-  bookId: bookId
-});
+    // 🔥 EMAIL SEND
+    await sendEmail({
+      userName: user ? user.name : "Unknown",
+      paymentId: razorpay_payment_id,
+      bookId: bookId
+    });
     //gmail send code end
 
-      //notification bot code start
+    //notification bot code start
 
-  await sendTelegram(`
+    await sendTelegram(`
 📚 New Book Purchase 🚀
 
 👤 User: ${user ? user.name : "Unknown"}
@@ -522,7 +526,7 @@ await sendEmail({
 💳 Payment: ${razorpay_payment_id}
 `);
 
-  //notification bot code end
+    //notification bot code end
 
     res.json({ success: true });
 
@@ -538,59 +542,59 @@ await sendEmail({
 
 app.get('/check/:userId/:bookId', async (req, res) => {
 
-    try {
+  try {
 
-        const purchase = await Purchase.findOne({
+    const purchase = await Purchase.findOne({
 
-            userId: req.params.userId,
+      userId: req.params.userId,
 
-            bookId: req.params.bookId
+      bookId: req.params.bookId
 
-        });
+    });
 
-        if (purchase) {
+    if (purchase) {
 
-            return res.json({
-                access: true
-            });
-
-        }
-
-        const subscription = await Subscription.findOne({
-
-            userId: req.params.userId,
-
-            status: "active",
-
-            expiryDate: {
-                $gt: new Date()
-            }
-
-        });
-
-        if (subscription) {
-
-            return res.json({
-                access: true
-            });
-
-        }
-
-        res.json({
-            access: false
-        });
+      return res.json({
+        access: true
+      });
 
     }
 
-    catch (err) {
+    const subscription = await Subscription.findOne({
 
-        console.log(err);
+      userId: req.params.userId,
 
-        res.status(500).json({
-            access: false
-        });
+      status: "active",
+
+      expiryDate: {
+        $gt: new Date()
+      }
+
+    });
+
+    if (subscription) {
+
+      return res.json({
+        access: true
+      });
 
     }
+
+    res.json({
+      access: false
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      access: false
+    });
+
+  }
 
 });
 
@@ -605,102 +609,102 @@ app.get('/ping', (req, res) => {
 
 app.get('/book/:userId/:bookId', async (req, res) => {
 
-    try {
+  try {
 
-        const { userId, bookId } = req.params;
+    const { userId, bookId } = req.params;
 
-        // =====================================
-        // CHECK PURCHASE
-        // =====================================
+    // =====================================
+    // CHECK PURCHASE
+    // =====================================
 
-        const purchase = await Purchase.findOne({
+    const purchase = await Purchase.findOne({
 
-            userId,
+      userId,
 
-            bookId
+      bookId
 
-        });
+    });
 
-        let hasAccess = !!purchase;
+    let hasAccess = !!purchase;
 
 
-        // =====================================
-        // IF PURCHASE NOT FOUND
-        // CHECK SUBSCRIPTION
-        // =====================================
+    // =====================================
+    // IF PURCHASE NOT FOUND
+    // CHECK SUBSCRIPTION
+    // =====================================
 
-        if (!hasAccess) {
+    if (!hasAccess) {
 
-            const subscription = await Subscription.findOne({
+      const subscription = await Subscription.findOne({
 
-                userId,
+        userId,
 
-                status: "active",
+        status: "active",
 
-                expiryDate: {
+        expiryDate: {
 
-                    $gt: new Date()
-
-                }
-
-            });
-
-            if (subscription) {
-
-                hasAccess = true;
-
-            }
+          $gt: new Date()
 
         }
 
+      });
 
-        if (!hasAccess) {
+      if (subscription) {
 
-            return res
-                .status(403)
-                .send("Access Denied ❌");
+        hasAccess = true;
 
-        }
-
-
-        const filePath = path.join(
-
-            __dirname,
-
-            "books",
-
-            `${bookId}.pdf`
-
-        );
-
-
-        res.setHeader(
-
-            "Content-Type",
-
-            "application/pdf"
-
-        );
-
-        res.setHeader(
-
-            "Content-Disposition",
-
-            "inline"
-
-        );
-
-        res.sendFile(filePath);
+      }
 
     }
 
-    catch (err) {
 
-        console.log(err);
+    if (!hasAccess) {
 
-        res.status(500).send("Server Error");
+      return res
+        .status(403)
+        .send("Access Denied ❌");
 
     }
+
+
+    const filePath = path.join(
+
+      __dirname,
+
+      "books",
+
+      `${bookId}.pdf`
+
+    );
+
+
+    res.setHeader(
+
+      "Content-Type",
+
+      "application/pdf"
+
+    );
+
+    res.setHeader(
+
+      "Content-Disposition",
+
+      "inline"
+
+    );
+
+    res.sendFile(filePath);
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).send("Server Error");
+
+  }
 
 });
 
@@ -821,118 +825,118 @@ async function sendTelegram(msg) {
 
 app.get('/my-books/:userId', async (req, res) => {
 
-    try {
+  try {
 
-        const { userId } = req.params;
+    const { userId } = req.params;
 
-        // ===============================
-        // CHECK ACTIVE SUBSCRIPTION
-        // ===============================
+    // ===============================
+    // CHECK ACTIVE SUBSCRIPTION
+    // ===============================
 
-        const subscription = await Subscription.findOne({
+    const subscription = await Subscription.findOne({
+
+      userId,
+
+      status: "active",
+
+      expiryDate: {
+
+        $gt: new Date()
+
+      }
+
+    });
+
+    // ===============================
+    // IF SUBSCRIPTION ACTIVE
+    // RETURN ALL BOOKS
+    // ===============================
+
+    if (subscription) {
+
+      return res.json(books);
+
+    }
+
+    // ===============================
+    // PURCHASED BOOKS
+    // ===============================
+
+    const Subscription = require('../models/Subscription');
+
+    exports.getMyBooks = async (req, res) => {
+
+      try {
+
+        const userId = req.params.userId;
+
+        const purchases = await Purchase.find({
+          userId
+        });
+
+        const purchasedIds =
+          purchases.map(p => p.bookId.toString());
+
+        const subscription =
+          await Subscription.findOne({
 
             userId,
 
             status: "active",
 
             expiryDate: {
-
-                $gt: new Date()
-
+              $gt: new Date()
             }
 
-        });
+          });
 
-        // ===============================
-        // IF SUBSCRIPTION ACTIVE
-        // RETURN ALL BOOKS
-        // ===============================
+        let userBooks = [];
 
         if (subscription) {
 
-            return res.json(books);
+          userBooks = books;
+
+        } else {
+
+          userBooks = books.filter(book =>
+
+            purchasedIds.includes(book.id.toString())
+
+          );
 
         }
 
-        // ===============================
-        // PURCHASED BOOKS
-        // ===============================
+        res.json(userBooks);
 
-        const Subscription = require('../models/Subscription');
+      }
 
-exports.getMyBooks = async(req,res)=>{
-
-try{
-
-const userId=req.params.userId;
-
-const purchases=await Purchase.find({
-userId
-});
-
-const purchasedIds=
-purchases.map(p=>p.bookId.toString());
-
-const subscription=
-await Subscription.findOne({
-
-userId,
-
-status:"active",
-
-expiryDate:{
-$gt:new Date()
-}
-
-});
-
-let userBooks=[];
-
-if(subscription){
-
-userBooks=books;
-
-}else{
-
-userBooks=books.filter(book=>
-
-purchasedIds.includes(book.id.toString())
-
-);
-
-}
-
-res.json(userBooks);
-
-}
-
-catch(err){
-
-console.log(err);
-
-res.status(500).json({
-
-message:"Error"
-
-});
-
-}
-
-}
-
-    }
-
-    catch (err) {
+      catch (err) {
 
         console.log(err);
 
         res.status(500).json({
 
-            message: "Server Error"
+          message: "Error"
 
         });
 
+      }
+
     }
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message: "Server Error"
+
+    });
+
+  }
 
 });
 
@@ -1057,8 +1061,8 @@ app.get('/admin/stats', verifyAdmin, async (req, res) => {
     // 🔥 RECENT PURCHASES
     const recentPurchases =
       await Purchase.find()
-      .sort({ _id: -1 })
-      .limit(5);
+        .sort({ _id: -1 })
+        .limit(5);
 
     const recentData =
       await Promise.all(
@@ -1071,27 +1075,27 @@ app.get('/admin/stats', verifyAdmin, async (req, res) => {
           const book =
             books.find(
               b =>
-              b.id.toString()
-              ===
-              p.bookId.toString()
+                b.id.toString()
+                ===
+                p.bookId.toString()
             );
 
           return {
 
             userName:
               user
-              ? user.name
-              : 'Unknown',
+                ? user.name
+                : 'Unknown',
 
             phone:
               user
-              ? user.phone
-              : 'N/A',
+                ? user.phone
+                : 'N/A',
 
             bookName:
               book
-              ? book.name
-              : 'Unknown Book',
+                ? book.name
+                : 'Unknown Book',
 
             paymentId:
               p.paymentId
@@ -1290,7 +1294,7 @@ app.get('/admin/dashboard-stats', async (req, res) => {
 
     const today = new Date();
 
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
 
     const todayRevenue =
       purchases
@@ -1588,7 +1592,7 @@ app.get('/testimonials', async (req, res) => {
 
     const testimonials =
       await Testimonial.find()
-      .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 });
 
     res.json(testimonials);
 

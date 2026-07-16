@@ -99,6 +99,10 @@
           Testimonials
         </option>
 
+        <option value="uploadBook">
+          Upload Book
+        </option>
+
       </select>
 
     </div>
@@ -299,6 +303,43 @@
       </div>
 
     </div>
+
+    <!-- upload book code start -->
+
+    <div *ngIf="selectedView==='uploadBook'" class="card">
+
+      <h2>📚 Upload New Book</h2>
+
+      <input type="text" placeholder="Book Title" [(ngModel)]="newBook.title">
+
+      <input type="text" placeholder="Author" [(ngModel)]="newBook.author">
+
+      <input type="text" placeholder="Category" [(ngModel)]="newBook.category">
+
+      <textarea placeholder="Description" [(ngModel)]="newBook.description">
+    </textarea>
+
+      <input type="number" placeholder="Price" [(ngModel)]="newBook.price">
+
+      <input type="number" placeholder="Original Price" [(ngModel)]="newBook.originalPrice">
+
+      <label>Cover Image</label>
+
+      <input type="file" (change)="onCoverSelected($event)">
+
+      <label>PDF File</label>
+
+      <input type="file" (change)="onPdfSelected($event)">
+
+      <button (click)="uploadBook()">
+
+        Upload Book
+
+      </button>
+
+    </div>
+
+    <!-- upload book code end -->
 
 
 

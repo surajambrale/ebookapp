@@ -36,6 +36,132 @@ export class AdminComponent {
   //testimonial code start
   testimonials: any[] = [];
 
+  // book upload code start
+
+  // =============================
+  // DYNAMIC BOOK UPLOAD
+  // =============================
+
+  newBook = {
+
+  title: '',
+
+  author: '',
+
+  category: '',
+
+  description: '',
+
+  price: 0,
+
+  originalPrice: 0
+
+};
+
+selectedCover!: File;
+
+selectedPdf!: File;
+
+  // =============================
+  // COVER IMAGE SELECT
+  // =============================
+
+ onCoverSelected(event: any) {
+
+  this.selectedCover = event.target.files[0];
+
+}
+
+
+
+  // =============================
+  // PDF SELECT
+  // =============================
+
+  onPdfSelected(event: any) {
+
+  this.selectedPdf = event.target.files[0];
+
+}
+
+  // =============================
+  // UPLOAD BOOK
+  // =============================
+
+  uploadBook() {
+
+  const formData = new FormData();
+
+  formData.append('title', this.newBook.title);
+
+  formData.append('author', this.newBook.author);
+
+  formData.append('category', this.newBook.category);
+
+  formData.append('description', this.newBook.description);
+
+  formData.append('price', this.newBook.price.toString());
+
+  formData.append('originalPrice', this.newBook.originalPrice.toString());
+
+  formData.append('cover', this.selectedCover);
+
+  formData.append('pdf', this.selectedPdf);
+
+  const headers = new HttpHeaders({
+
+    Authorization: this.token
+
+  });
+
+  this.http.post(
+
+    `${this.api}/admin/books/upload`,
+
+    formData,
+
+    { headers }
+
+  ).subscribe({
+
+    next: () => {
+
+      alert('Book Uploaded Successfully ✅');
+
+      this.loadData();
+
+      this.newBook = {
+
+        title: '',
+
+        author: '',
+
+        category: '',
+
+        description: '',
+
+        price: 0,
+
+        originalPrice: 0
+
+      };
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert('Upload Failed ❌');
+
+    }
+
+  });
+
+}
+
+  // book upload code end
+
   // 🔥 LOAD TESTIMONIALS
   loadTestimonials() {
 
@@ -537,39 +663,39 @@ export class AdminComponent {
 
   loadSubscriptions() {
 
-  const headers = new HttpHeaders({
+    const headers = new HttpHeaders({
 
-    Authorization: this.token
+      Authorization: this.token
 
-  });
+    });
 
-  this.http.get<any[]>(
+    this.http.get<any[]>(
 
-    `${this.api}/subscription/all`,
+      `${this.api}/subscription/all`,
 
-    { headers }
+      { headers }
 
-  )
+    )
 
-  .subscribe({
+      .subscribe({
 
-    next: (res) => {
+        next: (res) => {
 
-      this.subscriptions = res;
+          this.subscriptions = res;
 
-      console.log("Subscriptions", res);
+          console.log("Subscriptions", res);
 
-    },
+        },
 
-    error: (err) => {
+        error: (err) => {
 
-      console.log(err);
+          console.log(err);
 
-    }
+        }
 
-  });
+      });
 
-}
+  }
 
   // 🔓 LOGOUT
   logout() {
@@ -584,42 +710,42 @@ export class AdminComponent {
 
   deleteSubscription(id: string) {
 
-  if (!confirm("Delete Subscription?")) return;
+    if (!confirm("Delete Subscription?")) return;
 
-  const headers = new HttpHeaders({
+    const headers = new HttpHeaders({
 
-    Authorization: this.token
+      Authorization: this.token
 
-  });
+    });
 
-  this.http.delete(
+    this.http.delete(
 
-    `${this.api}/subscription/delete/${id}`,
+      `${this.api}/subscription/delete/${id}`,
 
-    { headers }
+      { headers }
 
-  )
+    )
 
-  .subscribe({
+      .subscribe({
 
-    next: () => {
+        next: () => {
 
-      alert("Subscription Deleted ✅");
+          alert("Subscription Deleted ✅");
 
-      this.loadSubscriptions();
+          this.loadSubscriptions();
 
-    },
+        },
 
-    error: (err) => {
+        error: (err) => {
 
-      console.log(err);
+          console.log(err);
 
-      alert("Delete Failed");
+          alert("Delete Failed");
 
-    }
+        }
 
-  });
+      });
 
-}
+  }
 
 }
