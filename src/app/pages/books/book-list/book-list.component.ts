@@ -133,29 +133,35 @@ export class BookListComponent {
   // }
 
   //  dynamic book code start
-  loadBooks() {
+ loadBooks() {
 
-    this.http.get<any[]>(`${this.api}/books/all`)
+  // Hardcoded books ka backup
+  const staticBooks = [...this.books];
 
-      .subscribe({
+  this.http.get<any[]>(`${this.api}/books/all`)
+    .subscribe({
 
-        next: (res) => {
+      next: (res) => {
 
-          this.books = res;
+        // Hardcoded + Dynamic books merge
+        this.books = [
+          ...staticBooks,
+          ...res
+        ];
 
-          this.filteredBooks = res;
+        this.filteredBooks = this.books;
 
-        },
+      },
 
-        error: (err) => {
+      error: (err) => {
 
-          console.log(err);
+        console.log(err);
 
-        }
+      }
 
-      });
+    });
 
-  }
+}
 
   // dynamic book code end
 

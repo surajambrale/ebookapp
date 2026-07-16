@@ -19,6 +19,7 @@ const User = require('./models/User');
 const Purchase = require('./models/Purchase');
 const uploadBookRoute = require('./routes/uploadBookRoute');
 const dynamicBookRoute = require('./routes/bookRoutes');
+const DynamicBook = require('./models/DynamicBook');
 
 //dns code start
 
@@ -667,34 +668,49 @@ app.get('/book/:userId/:bookId', async (req, res) => {
     }
 
 
-    const filePath = path.join(
+// =====================================
+// CHECK DYNAMIC BOOK FIRST
+// =====================================
 
-      __dirname,
+const dynamicBook = await DynamicBook.findById(bookId);
 
-      "books",
+if (dynamicBook) {
 
-      `${bookId}.pdf`
+  return res.redirect(dynamicBook.pdfUrl);
 
-    );
+}
 
+// =====================================
+// OTHERWISE LOAD HARDCODED PDF
+// =====================================
 
-    res.setHeader(
+const filePath = path.join(
 
-      "Content-Type",
+  __dirname,
 
-      "application/pdf"
+  "books",
 
-    );
+  `${bookId}.pdf`
 
-    res.setHeader(
+);
 
-      "Content-Disposition",
+res.setHeader(
 
-      "inline"
+  "Content-Type",
 
-    );
+  "application/pdf"
 
-    res.sendFile(filePath);
+);
+
+res.setHeader(
+
+  "Content-Disposition",
+
+  "inline"
+
+);
+
+res.sendFile(filePath);
 
   }
 

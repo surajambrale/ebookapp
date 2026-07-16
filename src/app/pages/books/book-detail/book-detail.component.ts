@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-book-detail',
   standalone: true,
-  imports: [CommonModule,  RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
@@ -21,10 +21,12 @@ export class BookDetailComponent {
   isLoading: boolean = false; // 🔥 single loader use
   apiUrl = environment.apiUrl;
 
-   // 🔥 SLIDER
+  // 🔥 SLIDER
   currentImageIndex = 0;
 
-  
+  dynamicBooks: any[] = [];
+
+
   books = [
     {
       id: 1,
@@ -33,7 +35,7 @@ export class BookDetailComponent {
       price: 49,
       reviews: 24,
       image: "assets/images/fatloss-book.jpeg",
-       previewImages: [
+      previewImages: [
         "assets/preview-img/fatloss1.jpeg",
         "assets/preview-img/fatloss2.jpeg",
         "assets/preview-img/fatloss3.jpeg"
@@ -54,7 +56,7 @@ export class BookDetailComponent {
       ],
       description: "Healthy Diet Plan for Regular People Who Want to Stay Fit. Struggling to stay fit because of a busy lifestyle, irregular meals, or confusion about what to eat? This ebook is designed especially for you. This is not a complicated or extreme diet plan. It’s a simple, practical, and realistic guide that helps you stay fit using everyday foods. Whether you are a working professional, student, or someone who just wants to feel better and look healthier—this plan is easy to follow and sustainable. Inside this ebook, you will discover: A clear understanding of what a healthy diet actually means. Simple explanation of Low GI & Low GL foods. A ready-to-follow 1500 calorie diet plan using Indian foods. Benefits like fat loss, stable energy, and better digestion. Easy tips for long-term results without stress. This ebook focuses on consistency, not perfection. No fancy foods, no strict rules—just real results with real food. If you follow this plan regularly, you will feel lighter, more energetic, and more in control of your health.  "
     },
-     {
+    {
       id: 3,
       title: "Habits That Change Your Life",
       author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
@@ -117,18 +119,94 @@ export class BookDetailComponent {
       description: "Admin Testing Book, don't buy this book."
     }
   ];
-  
+
+  loadDynamicBooks() {
+
+    this.http.get<any[]>(`${this.apiUrl}/books/all`)
+      .subscribe({
+
+        next: (res) => {
+
+          this.dynamicBooks = res;
+
+          this.loadBook();
+
+        },
+
+        error: () => {
+
+          this.loadBook();
+
+        }
+
+      });
+
+  }
+
+  loadBook() {
+
+    const id = this.route.snapshot.params['id'];
+
+    // First check dynamic books
+    this.book = this.dynamicBooks.find(
+      (b: any) => b._id == id
+    );
+
+    // Otherwise hardcoded books
+    if (!this.book) {
+
+      this.book = this.books.find(
+        b => b.id == id
+      );
+
+    }
+
+    if (!this.book) {
+
+      alert("Book not found");
+
+      this.router.navigate(['/']);
+
+      return;
+
+    }
+
+    const user = this.auth.getUser();
+
+    if (user && user._id) {
+
+      const bookId = this.book._id || this.book.id;
+
+      this.http.get(
+        `${this.apiUrl}/check/${user._id}/${bookId}`
+      )
+
+        .subscribe({
+
+          next: (res: any) => {
+
+            this.hasAccess = res.access;
+
+          }
+
+        });
+
+    }
+
+  }
+
+
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private auth: AuthService,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit() {
 
-    const id = this.route.snapshot.params['id'];
-    this.book = this.books.find(b => b.id == id);
+    this.loadDynamicBooks();
 
     if (!this.book) {
       alert('Book not found ❌');
@@ -171,31 +249,31 @@ export class BookDetailComponent {
   }
 
   // 🔥 SWIPE VARIABLES
-touchStartX: number = 0;
-touchEndX: number = 0;
+  touchStartX: number = 0;
+  touchEndX: number = 0;
 
-// 👉 swipe start
-onTouchStart(event: TouchEvent) {
-  this.touchStartX = event.changedTouches[0].screenX;
-}
-
-// 👉 swipe end
-onTouchEnd(event: TouchEvent) {
-  this.touchEndX = event.changedTouches[0].screenX;
-  this.handleSwipe();
-}
-
-// 👉 detect direction
-handleSwipe() {
-  const swipeDistance = this.touchEndX - this.touchStartX;
-
-  // 👉 sensitivity (50px swipe required)
-  if (swipeDistance > 50) {
-    this.prevImage(); // swipe right → previous
-  } else if (swipeDistance < -50) {
-    this.nextImage(); // swipe left → next
+  // 👉 swipe start
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].screenX;
   }
-}
+
+  // 👉 swipe end
+  onTouchEnd(event: TouchEvent) {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.handleSwipe();
+  }
+
+  // 👉 detect direction
+  handleSwipe() {
+    const swipeDistance = this.touchEndX - this.touchStartX;
+
+    // 👉 sensitivity (50px swipe required)
+    if (swipeDistance > 50) {
+      this.prevImage(); // swipe right → previous
+    } else if (swipeDistance < -50) {
+      this.nextImage(); // swipe left → next
+    }
+  }
 
   //slider function end
 
@@ -246,8 +324,8 @@ handleSwipe() {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               userId: user._id,
-              bookId: this.book.id.toString(),
-               amount: this.book.price
+              bookId: (this.book._id || this.book.id).toString(),
+              amount: this.book.price
             }).subscribe({
 
               next: () => {
@@ -258,7 +336,10 @@ handleSwipe() {
 
                 this.hasAccess = true;
 
-                this.router.navigate(['/read', this.book.id]);
+                this.router.navigate([
+                  '/read',
+                  this.book._id || this.book.id
+                ]);
               },
 
               error: () => {
@@ -297,6 +378,12 @@ handleSwipe() {
     });
   }
 
+  // dynamic book code start
+
+
+
+  // dynamic book code end
+
   // 📖 READ BOOK
   readBook() {
 
@@ -305,6 +392,9 @@ handleSwipe() {
       return;
     }
 
-    this.router.navigate(['/read', this.book.id]);
+    this.router.navigate([
+      '/read',
+      this.book._id || this.book.id
+    ]);
   }
 }
