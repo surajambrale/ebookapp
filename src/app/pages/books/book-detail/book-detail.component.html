@@ -3,7 +3,7 @@
   <div class="top-section">
 
     <div class="image">
-      <img [src]="book.image" />
+      <img [src]="book.image || book.coverImage">
     </div>
 
     <div class="details">
