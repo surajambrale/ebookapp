@@ -319,9 +319,13 @@
       <textarea placeholder="Description" [(ngModel)]="newBook.description">
     </textarea>
 
-      <input type="number" placeholder="Price" [(ngModel)]="newBook.price">
+      <label><b>Selling Price</b></label>
 
-      <input type="number" placeholder="Original Price" [(ngModel)]="newBook.originalPrice">
+      <input type="number" placeholder="Enter Selling Price" [(ngModel)]="newBook.price">
+
+      <label><b>Offer Price</b></label>
+
+      <input type="number" placeholder="Enter Offer Price" [(ngModel)]="newBook.originalPrice">
 
       <label>Cover Image</label>
 
