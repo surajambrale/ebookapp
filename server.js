@@ -672,11 +672,19 @@ app.get('/book/:userId/:bookId', async (req, res) => {
 // CHECK DYNAMIC BOOK FIRST
 // =====================================
 
-const dynamicBook = await DynamicBook.findById(bookId);
+// =====================================
+// CHECK DYNAMIC BOOK FIRST
+// =====================================
 
-if (dynamicBook) {
+if (mongoose.Types.ObjectId.isValid(bookId)) {
 
-  return res.redirect(dynamicBook.pdfUrl);
+    const dynamicBook = await DynamicBook.findById(bookId);
+
+    if (dynamicBook) {
+
+        return res.redirect(dynamicBook.pdfUrl);
+
+    }
 
 }
 
