@@ -136,46 +136,38 @@ export class BookListComponent {
   //  dynamic book code start
   loadBooks() {
 
-    // Hardcoded books ka backup
-    const staticBooks = [...this.books];
+  const staticBooks = [...this.books];
 
-    this.http.get<any[]>(`${this.api}/books/all`)
-      .subscribe({
+  this.http.get<any[]>(`${this.api}/books/all`)
+    .subscribe({
 
-        next: (res) => {
+      next: (res) => {
 
-          // 🔥 Dynamic Categories
-          this.dynamicCategories = [
-            ...new Set(
-              res
-                .map(book => book.category)
-                .filter(category =>
-                  category &&
-                  !['Fat Loss', 'Diet', 'Workout', 'Muscle Gain'].includes(category)
-                )
-            )
-          ];
+        this.books = [
+          ...staticBooks,
+          ...res
+        ];
 
-          // Hardcoded + Dynamic books merge
-          this.books = [
-            ...staticBooks,
-            ...res
-          ];
+        this.filteredBooks = this.books;
 
-          this.filteredBooks = this.books;
+        // Dynamic Categories
+        this.dynamicCategories = [
+          ...new Set(
+            this.books
+              .map(book => book.category)
+              .filter(category => category)
+          )
+        ];
 
-        },
+      },
 
+      error: (err) => {
+        console.log(err);
+      }
 
-        error: (err) => {
+    });
 
-          console.log(err);
-
-        }
-
-      });
-
-  }
+}
 
 
 

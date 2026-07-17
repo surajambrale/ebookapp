@@ -8,42 +8,21 @@
   <div class="category-list">
 
     <div class="category-card" (click)="showAllBooks()">
-
-      <div class="category-icon">
-        📚
-      </div>
-
+      <div class="category-icon">📚</div>
       <p>View All</p>
-
     </div>
 
-    <div class="category-card" (click)="filterCategory('Fat Loss')">
-      <div class="category-icon">🔥</div>
-      <p>Fat Loss</p>
-    </div>
-
-    <div class="category-card" (click)="filterCategory('Diet')">
-      <div class="category-icon">🥗</div>
-      <p>Diet Plans</p>
-    </div>
-
-    <div class="category-card" (click)="filterCategory('Workout')">
-      <div class="category-icon">🏋️</div>
-      <p>Workouts</p>
-    </div>
-
-    <div class="category-card" (click)="filterCategory('Muscle Gain')">
-      <div class="category-icon">💪</div>
-      <p>Muscle Gain</p>
-    </div>
-
-    <!-- 🔥 Dynamic Categories -->
-    <div class="category-card" *ngFor="let category of dynamicCategories" (click)="filterCategory(category)">
+    <div
+      class="category-card"
+      *ngFor="let category of dynamicCategories"
+      (click)="filterCategory(category)"
+    >
       <div class="category-icon">📖</div>
       <p>{{ category }}</p>
     </div>
 
   </div>
+
 </div>
 
 <!-- category section end -->
