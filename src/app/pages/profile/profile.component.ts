@@ -34,6 +34,8 @@ export class ProfileComponent implements OnInit {
 
   payments: any[] = [];
 
+  books: any[] = [];
+
   subscription: any = null;
 
   // 🔥 NEW FEATURES
@@ -45,6 +47,44 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private http: HttpClient
   ) {}
+
+  loadBooks() {
+
+  // Hardcoded books
+  this.books = [
+    {
+      id: 1,
+      title: 'Complete Fat Loss Guide'
+    },
+    {
+      id: 2,
+      title: '1500-Calorie Diet Plan'
+    },
+    {
+      id: 3,
+      title: 'Habits That Change Your Life'
+    },
+    {
+      id: 4,
+      title: 'PCOD / PCOS Guide'
+    },
+    {
+      id: 5,
+      title: 'Diabetes Control'
+    }
+  ];
+
+  this.http.get<any[]>(`${environment.apiUrl}/books/all`)
+    .subscribe(res => {
+
+      this.books = [
+        ...this.books,
+        ...res
+      ];
+
+    });
+
+}
 
   
 
@@ -63,6 +103,8 @@ export class ProfileComponent implements OnInit {
       this.loadPayments();
 
       this.loadSubscription();
+
+      this.loadBooks();
 
     }
 
@@ -101,6 +143,24 @@ export class ProfileComponent implements OnInit {
   });
 
 }
+
+getBookName(bookId: any) {
+
+  const book = this.books.find(
+
+    (b: any) =>
+
+      b.id?.toString() === bookId?.toString() ||
+
+      b._id?.toString() === bookId?.toString()
+
+  );
+
+  return book?.title || book?.name || 'Unknown';
+
+}
+
+
 
   
 

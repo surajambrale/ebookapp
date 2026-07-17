@@ -214,7 +214,7 @@
         >
 
           <h4>
-            {{ payment.bookTitle }}
+            {{ payment.bookTitle || getBookName(payment.bookId) }}
           </h4>
 
           <p>
