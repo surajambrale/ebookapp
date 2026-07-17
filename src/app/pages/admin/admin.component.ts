@@ -356,22 +356,26 @@ export class AdminComponent {
 
             this.purchases = purchaseRes;
 
-            // 🔥 NOW ANALYTICS
-            this.calculateAnalytics();
-
-            // 🔥 LOAD TESTIMONIALS
+            // Testimonials
             this.loadTestimonials();
 
-            // 🔥 LOAD SUBSCRIPTIONS
+            // Subscription
             this.loadSubscriptions();
 
+            // Dynamic Books
             this.http.get<any[]>(`${this.api}/books/all`)
               .subscribe(dynamicRes => {
 
                 this.dynamicBooks = dynamicRes;
 
-                // merge hardcoded + dynamic
-                this.books = [...this.books, ...dynamicRes];
+                // Merge
+                this.books = [
+                  ...this.books,
+                  ...dynamicRes
+                ];
+
+                // ✅ Ab analytics chalao
+                this.calculateAnalytics();
 
               });
 
