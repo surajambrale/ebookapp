@@ -14,6 +14,7 @@ import { environment } from '../../../../environments/environment.prod';
 })
 export class BookListComponent {
   api = environment.apiUrl;
+  dynamicCategories: string[] = [];
 
   constructor(private router: Router,
     private http: HttpClient
@@ -133,35 +134,50 @@ export class BookListComponent {
   // }
 
   //  dynamic book code start
- loadBooks() {
+  loadBooks() {
 
-  // Hardcoded books ka backup
-  const staticBooks = [...this.books];
+    // Hardcoded books ka backup
+    const staticBooks = [...this.books];
 
-  this.http.get<any[]>(`${this.api}/books/all`)
-    .subscribe({
+    this.http.get<any[]>(`${this.api}/books/all`)
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        // Hardcoded + Dynamic books merge
-        this.books = [
-          ...staticBooks,
-          ...res
-        ];
+          // 🔥 Dynamic Categories
+          this.dynamicCategories = [
+            ...new Set(
+              res
+                .map(book => book.category)
+                .filter(category =>
+                  category &&
+                  !['Fat Loss', 'Diet', 'Workout', 'Muscle Gain'].includes(category)
+                )
+            )
+          ];
 
-        this.filteredBooks = this.books;
+          // Hardcoded + Dynamic books merge
+          this.books = [
+            ...staticBooks,
+            ...res
+          ];
 
-      },
+          this.filteredBooks = this.books;
 
-      error: (err) => {
+        },
 
-        console.log(err);
 
-      }
+        error: (err) => {
 
-    });
+          console.log(err);
 
-}
+        }
+
+      });
+
+  }
+
+
 
   // dynamic book code end
 
@@ -176,7 +192,7 @@ export class BookListComponent {
     this.filteredBooks = this.books;
 
     this.loadBooks();
-   
+
 
 
     // 🔥 LOAD TESTIMONIALS

@@ -6,16 +6,16 @@
   </div>
 
   <div class="category-list">
-    
+
     <div class="category-card" (click)="showAllBooks()">
 
-  <div class="category-icon">
-    📚
-  </div>
+      <div class="category-icon">
+        📚
+      </div>
 
-  <p>View All</p>
+      <p>View All</p>
 
-</div>
+    </div>
 
     <div class="category-card" (click)="filterCategory('Fat Loss')">
       <div class="category-icon">🔥</div>
@@ -37,6 +37,12 @@
       <p>Muscle Gain</p>
     </div>
 
+    <!-- 🔥 Dynamic Categories -->
+    <div class="category-card" *ngFor="let category of dynamicCategories" (click)="filterCategory(category)">
+      <div class="category-icon">📖</div>
+      <p>{{ category }}</p>
+    </div>
+
   </div>
 </div>
 
@@ -44,24 +50,21 @@
 
 <div class="subscription-card">
 
-    <h2>📚 Unlimited Access</h2>
+  <h2>📚 Unlimited Access</h2>
 
-    <p>Access all premium ebooks</p>
+  <p>Access all premium ebooks</p>
 
-    <h1>₹99 / Month</h1>
+  <h1>₹99 / Month</h1>
 
-    <p>
-        Read all books without purchasing individually.
-    </p>
+  <p>
+    Read all books without purchasing individually.
+  </p>
 
-   <button
-  class="subscribe-btn"
-  (click)="subscribeNow()"
-  [disabled]="subscriptionActive">
+  <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="subscriptionActive">
 
-  {{ subscriptionActive ? 'Active Subscription ✅' : 'Subscribe Now' }}
+    {{ subscriptionActive ? 'Active Subscription ✅' : 'Subscribe Now' }}
 
-</button>
+  </button>
 
 </div>
 
@@ -71,7 +74,7 @@
 
   <div class="book-grid">
     <div class="book-card" *ngFor="let book of filteredBooks" (click)="openBook(book._id || book.id)">
-      
+
       <div class="image">
         <img [src]="book.image || book.coverImage" alt="book">
       </div>
@@ -85,11 +88,11 @@
         </div>
 
         <!-- <p class="price">₹{{ book.price }}</p> -->
-         <p class="price">
-  ₹{{ book.price }}
-  <span class="original-price">₹{{ book.originalPrice }}</span>
-  <!-- <span class="discount">60% OFF</span> -->
-</p>
+        <p class="price">
+          ₹{{ book.price }}
+          <span class="original-price">₹{{ book.originalPrice }}</span>
+          <!-- <span class="discount">60% OFF</span> -->
+        </p>
       </div>
 
     </div>
@@ -109,16 +112,9 @@
 
   <div class="testimonial-form">
 
-    <input
-      type="text"
-      [(ngModel)]="testimonialName"
-      placeholder="Enter your name"
-    >
+    <input type="text" [(ngModel)]="testimonialName" placeholder="Enter your name">
 
-    <textarea
-      [(ngModel)]="testimonialMessage"
-      placeholder="Write your feedback"
-    ></textarea>
+    <textarea [(ngModel)]="testimonialMessage" placeholder="Write your feedback"></textarea>
 
     <select [(ngModel)]="testimonialRating">
 
@@ -155,240 +151,187 @@
 
 </div> -->
 
-<!-- 🔥 TESTIMONIAL SECTION -->
+  <!-- 🔥 TESTIMONIAL SECTION -->
 
-<div class="testimonial-wrapper"
-id="testimonial-section"
->
+  <div class="testimonial-wrapper" id="testimonial-section">
 
-  <div
-    class="testimonial-card"
-    *ngFor="let t of testimonials"
-  >
+    <div class="testimonial-card" *ngFor="let t of testimonials">
 
-    <div class="testimonial-top">
+      <div class="testimonial-top">
 
-      <h3>{{ t.name }}</h3>
+        <h3>{{ t.name }}</h3>
 
-      <!-- <span>
+        <!-- <span>
         ⭐ {{ t.rating }}/5
       </span> -->
-      <div class="stars">
+        <div class="stars">
 
-  <span *ngFor="let star of [1,2,3,4,5]">
+          <span *ngFor="let star of [1,2,3,4,5]">
 
-    {{ star <= t.rating ? '⭐' : '☆' }}
+            {{ star <= t.rating ? '⭐' : '☆' }} </span>
 
-  </span>
+        </div>
 
-</div>
+      </div>
+
+      <p class="testimonial-message">
+        "{{ t.message }}"
+      </p>
 
     </div>
 
-    <p class="testimonial-message">
-      "{{ t.message }}"
+  </div>
+
+  <!-- testimonial section end -->
+
+  <!-- feedback robot start -->
+
+  <!-- 🔥 FEEDBACK ROBOT -->
+
+  <!-- 🔥 FEEDBACK ROBOT -->
+
+  <div class="feedback-wrapper" (click)="scrollToTestimonial()">
+
+    <div class="feedback-robot">
+
+      💬
+
+    </div>
+
+    <p class="feedback-text">
+
+      Give Feedback
+
     </p>
 
   </div>
 
-</div>
+  <!-- feedback robot end -->
 
-<!-- testimonial section end -->
+  <!-- Ai bot start -->
 
-<!-- feedback robot start -->
+  <!-- FITNESS BOT ICON -->
+  <!-- 🔥 FITNESS BOT ICON -->
 
-<!-- 🔥 FEEDBACK ROBOT -->
-
-<!-- 🔥 FEEDBACK ROBOT -->
-
-<div
-  class="feedback-wrapper"
-  (click)="scrollToTestimonial()"
->
-
-  <div class="feedback-robot">
-
-    💬
-
+  <div class="fitness-bot-icon" (click)="toggleBot()">
+    🤖
   </div>
 
-  <p class="feedback-text">
+  <!-- 🔥 OVERLAY -->
 
-    Give Feedback
-
-  </p>
-
-</div>
-
-<!-- feedback robot end -->
-
-<!-- Ai bot start -->
-
-<!-- FITNESS BOT ICON -->
-<!-- 🔥 FITNESS BOT ICON -->
-
-<div
-  class="fitness-bot-icon"
-  (click)="toggleBot()"
->
-  🤖
-</div>
-
-<!-- 🔥 OVERLAY -->
-
-<div
-  class="chat-overlay"
-  *ngIf="isBotOpen"
-  (click)="isBotOpen = false"
->
-</div>
-
-<!-- 🔥 BOT CHAT -->
-
-<div
-  class="fitness-chat"
-  *ngIf="isBotOpen"
->
-
-  <!-- HEADER -->
-
-  <div class="chat-header">
-
-    <span>
-      Fitness Assistant
-    </span>
-
-    <!-- CLOSE -->
-
-    <span
-      class="close-btn"
-      (click)="isBotOpen = false"
-    >
-      ×
-    </span>
-
+  <div class="chat-overlay" *ngIf="isBotOpen" (click)="isBotOpen = false">
   </div>
 
-  <!-- BODY -->
+  <!-- 🔥 BOT CHAT -->
 
-  <div class="chat-body">
+  <div class="fitness-chat" *ngIf="isBotOpen">
 
-    <div
-      *ngFor="let msg of messages"
-      [ngClass]="
+    <!-- HEADER -->
+
+    <div class="chat-header">
+
+      <span>
+        Fitness Assistant
+      </span>
+
+      <!-- CLOSE -->
+
+      <span class="close-btn" (click)="isBotOpen = false">
+        ×
+      </span>
+
+    </div>
+
+    <!-- BODY -->
+
+    <div class="chat-body">
+
+      <div *ngFor="let msg of messages" [ngClass]="
         msg.type === 'bot'
         ? 'bot-msg'
         : 'user-msg'
-      "
-    >
+      ">
 
-      {{ msg.text }}
+        {{ msg.text }}
+
+      </div>
+
+    </div>
+
+    <!-- INPUT -->
+
+    <div class="chat-input">
+
+      <!-- NORMAL INPUT -->
+
+      <input *ngIf="step !== 5" [(ngModel)]="userInput" placeholder="Type here..." />
+
+      <!-- GOAL SELECT -->
+
+      <select *ngIf="step === 5" [(ngModel)]="goal">
+
+        <option value="fatloss">
+          Fat Loss
+        </option>
+
+        <option value="musclegain">
+          Muscle Gain
+        </option>
+
+        <option value="fitness">
+          Normal Fitness
+        </option>
+
+      </select>
+
+      <!-- SEND -->
+
+      <button (click)="nextStep()">
+        Send
+      </button>
 
     </div>
 
   </div>
 
-  <!-- INPUT -->
+  <!-- 🔥 AI BOT END -->
 
-  <div class="chat-input">
+  <!-- Ai bot end -->
 
-    <!-- NORMAL INPUT -->
+  <!-- navbar start -->
+  <!-- 🔥 BOTTOM NAVBAR -->
 
-    <input
-      *ngIf="step !== 5"
-      [(ngModel)]="userInput"
-      placeholder="Type here..."
-    />
+  <div class="bottom-navbar">
 
-    <!-- GOAL SELECT -->
+    <!-- HOME -->
+    <div class="nav-item" routerLink="/" routerLinkActive="active">
+      <span>🏠</span>
+      <p>Home</p>
+    </div>
 
-    <select
-      *ngIf="step === 5"
-      [(ngModel)]="goal"
-    >
+    <!-- EXPLORE -->
+    <div class="nav-item" routerLink="/explore" routerLinkActive="active">
+      <span>🔍</span>
+      <p>Explore</p>
+    </div>
 
-      <option value="fatloss">
-        Fat Loss
-      </option>
+    <!-- MY BOOKS -->
+    <div class="nav-item" routerLink="/my-books" routerLinkActive="active">
+      <span>📚</span>
+      <p>My Books</p>
+    </div>
 
-      <option value="musclegain">
-        Muscle Gain
-      </option>
-
-      <option value="fitness">
-        Normal Fitness
-      </option>
-
-    </select>
-
-    <!-- SEND -->
-
-    <button (click)="nextStep()">
-      Send
-    </button>
+    <!-- PROFILE -->
+    <div class="nav-item" routerLink="/profile" routerLinkActive="active">
+      <span>👤</span>
+      <p>Profile</p>
+    </div>
 
   </div>
+  <!-- navbar end -->
 
-</div>
-
-<!-- 🔥 AI BOT END -->
-
-<!-- Ai bot end -->
-
-<!-- navbar start -->
-<!-- 🔥 BOTTOM NAVBAR -->
-
-<div class="bottom-navbar">
-
-  <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-  
-  >
-    <span>🏠</span>
-    <p>Home</p>
-  </div>
-
-  <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
-    <span>🔍</span>
-    <p>Explore</p>
-  </div>
-
-  <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
-    <span>📚</span>
-    <p>My Books</p>
-  </div>
-
-  <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
-    <span>👤</span>
-    <p>Profile</p>
-  </div>
-
-</div>
-<!-- navbar end -->
-
-<!-- WhatsApp Floating Button -->
-<a 
-  href="https://wa.me/919372336433?text=Hello%20I%20am%20interested%20in%20your%20ebooks" 
-  class="whatsapp-float" 
-  target="_blank"
->
-  <img src="assets/images/whatsapp.png" alt="WhatsApp" />
-</a>
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/919372336433?text=Hello%20I%20am%20interested%20in%20your%20ebooks" class="whatsapp-float"
+    target="_blank">
+    <img src="assets/images/whatsapp.png" alt="WhatsApp" />
+  </a>
