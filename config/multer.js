@@ -14,7 +14,19 @@ const storage = new CloudinaryStorage({
 
                 folder: 'ebook-covers',
 
-                allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
+                allowed_formats: ['jpg','jpeg','png','webp']
+
+            };
+
+        }
+
+        if (file.fieldname === 'preview') {
+
+            return {
+
+                folder: 'ebook-preview',
+
+                allowed_formats: ['jpg','jpeg','png','webp']
 
             };
 

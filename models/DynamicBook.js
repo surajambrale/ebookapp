@@ -2,30 +2,36 @@ const mongoose = require('mongoose');
 
 const dynamicBookSchema = new mongoose.Schema({
 
-    title:String,
+    title: String,
 
-    author:String,
+    author: String,
 
-    category:String,
+    category: String,
 
-    description:String,
+    description: String,
 
-    price:Number,
+    price: Number,
 
-    originalPrice:Number,
+    originalPrice: Number,
 
     coverImage: String,
 
-    pdfUrl:String,
-    
-    previewImages:[String]
+    pdfUrl: String,
 
-},{
-    timestamps:true
+    previewImages: {
+
+        type: [String],
+
+        default: []
+
+    }
+
+}, {
+    timestamps: true
 });
 
-module.exports=
-mongoose.model(
-"DynamicBook",
-dynamicBookSchema
-);
+module.exports =
+    mongoose.model(
+        "DynamicBook",
+        dynamicBookSchema
+    );
