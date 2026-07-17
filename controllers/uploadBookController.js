@@ -19,6 +19,8 @@ exports.uploadBook = async (req, res) => {
 
         const pdfUrl = req.files.pdf[0].path;
 
+        console.log(req.files);
+
         const previewImages = req.files.preview
             ? req.files.preview.map(file => file.path)
             : [];

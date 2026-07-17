@@ -77,10 +77,10 @@ export class AdminComponent {
 
   onPreviewSelected(event: any) {
 
-  this.selectedPreviewImages =
-    Array.from(event.target.files);
+    this.selectedPreviewImages =
+      Array.from(event.target.files);
 
-}
+  }
 
 
   // =============================
@@ -119,9 +119,9 @@ export class AdminComponent {
 
     this.selectedPreviewImages.forEach(image => {
 
-  formData.append('previewImages', image);
+      formData.append('preview', image);
 
-});
+    });
 
     const headers = new HttpHeaders({
 
