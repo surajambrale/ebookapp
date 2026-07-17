@@ -972,27 +972,40 @@ app.get('/payments/:userId', async (req, res) => {
 
   try {
 
-    // 🔥 USER PURCHASES
     const purchases = await Purchase.find({
       userId: req.params.userId
     });
 
-    // 🔥 BOOKS + PAYMENT MERGE
+    const dynamicBooks = await DynamicBook.find();
+
     const paymentData = purchases.map((p) => {
 
-      const book = books.find(
-        b => b.id.toString() === p.bookId.toString()
+      // Hardcoded Book
+      let book = books.find(
+        b => b.id?.toString() === p.bookId?.toString()
       );
+
+      // Dynamic Book
+      if (!book) {
+
+        book = dynamicBooks.find(
+          b => b._id?.toString() === p.bookId?.toString()
+        );
+
+      }
 
       return {
 
         paymentId: p.paymentId,
 
-        bookTitle: book
-          ? book.name
-          : 'Unknown Book',
+        bookTitle:
+          book?.title ||
+          book?.name ||
+          "Unknown Book",
 
-        amount: 49
+        amount:
+          book?.price ||
+          p.amount
 
       };
 
@@ -1000,12 +1013,14 @@ app.get('/payments/:userId', async (req, res) => {
 
     res.json(paymentData);
 
-  } catch (err) {
+  }
+
+  catch (err) {
 
     console.log(err);
 
     res.status(500).json({
-      message: 'Error loading payments'
+      message: "Error loading payments"
     });
 
   }
