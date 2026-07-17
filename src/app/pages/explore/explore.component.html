@@ -27,7 +27,7 @@
     <div
       class="book-card"
       *ngFor="let book of filteredBooks"
-      (click)="openBook(book.id)"
+      (click)="openBook(book)"
     >
 
       <img [src]="book.image" />

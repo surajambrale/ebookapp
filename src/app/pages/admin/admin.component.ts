@@ -35,8 +35,9 @@ export class AdminComponent {
 
   //testimonial code start
   testimonials: any[] = [];
-  dynamicBooks:any[]=[];
+  dynamicBooks: any[] = [];
 
+  selectedPreviewImages: File[] = [];
   // book upload code start
 
   // =============================
@@ -45,34 +46,41 @@ export class AdminComponent {
 
   newBook = {
 
-  title: '',
+    title: '',
 
-  author: '',
+    author: '',
 
-  category: '',
+    category: '',
 
-  description: '',
+    description: '',
 
-  price: 0,
+    price: 0,
 
-  originalPrice: 0
+    originalPrice: 0
 
-};
+  };
 
-selectedCover!: File;
+  selectedCover!: File;
 
-selectedPdf!: File;
+  selectedPdf!: File;
 
   // =============================
   // COVER IMAGE SELECT
   // =============================
 
- onCoverSelected(event: any) {
+  onCoverSelected(event: any) {
 
-  this.selectedCover = event.target.files[0];
+    this.selectedCover = event.target.files[0];
+
+  }
+
+
+  onPreviewSelected(event: any) {
+
+  this.selectedPreviewImages =
+    Array.from(event.target.files);
 
 }
-
 
 
   // =============================
@@ -81,9 +89,9 @@ selectedPdf!: File;
 
   onPdfSelected(event: any) {
 
-  this.selectedPdf = event.target.files[0];
+    this.selectedPdf = event.target.files[0];
 
-}
+  }
 
   // =============================
   // UPLOAD BOOK
@@ -91,75 +99,81 @@ selectedPdf!: File;
 
   uploadBook() {
 
-  const formData = new FormData();
+    const formData = new FormData();
 
-  formData.append('title', this.newBook.title);
+    formData.append('title', this.newBook.title);
 
-  formData.append('author', this.newBook.author);
+    formData.append('author', this.newBook.author);
 
-  formData.append('category', this.newBook.category);
+    formData.append('category', this.newBook.category);
 
-  formData.append('description', this.newBook.description);
+    formData.append('description', this.newBook.description);
 
-  formData.append('price', this.newBook.price.toString());
+    formData.append('price', this.newBook.price.toString());
 
-  formData.append('originalPrice', this.newBook.originalPrice.toString());
+    formData.append('originalPrice', this.newBook.originalPrice.toString());
 
-  formData.append('cover', this.selectedCover);
+    formData.append('cover', this.selectedCover);
 
-  formData.append('pdf', this.selectedPdf);
+    formData.append('pdf', this.selectedPdf);
 
-  const headers = new HttpHeaders({
+    this.selectedPreviewImages.forEach(image => {
 
-    Authorization: this.token
+  formData.append('previewImages', image);
 
-  });
+});
 
-  this.http.post(
+    const headers = new HttpHeaders({
 
-    `${this.api}/admin/books/upload`,
+      Authorization: this.token
 
-    formData,
+    });
 
-    { headers }
+    this.http.post(
 
-  ).subscribe({
+      `${this.api}/admin/books/upload`,
 
-    next: () => {
+      formData,
 
-      alert('Book Uploaded Successfully ✅');
+      { headers }
 
-      this.loadData();
+    ).subscribe({
 
-      this.newBook = {
+      next: () => {
 
-        title: '',
+        alert('Book Uploaded Successfully ✅');
 
-        author: '',
+        this.loadData();
 
-        category: '',
+        this.newBook = {
 
-        description: '',
+          title: '',
 
-        price: 0,
+          author: '',
 
-        originalPrice: 0
+          category: '',
 
-      };
+          description: '',
 
-    },
+          price: 0,
 
-    error: (err) => {
+          originalPrice: 0
 
-      console.log(err);
+        };
 
-      alert('Upload Failed ❌');
+      },
 
-    }
+      error: (err) => {
 
-  });
+        console.log(err);
 
-}
+        alert('Upload Failed ❌');
+
+      }
+
+    });
+
+  }
 
   // book upload code end
 
@@ -351,11 +365,19 @@ selectedPdf!: File;
             // 🔥 LOAD SUBSCRIPTIONS
             this.loadSubscriptions();
 
-            this.loadDynamicBooks();
+            this.http.get<any[]>(`${this.api}/books/all`)
+              .subscribe(dynamicRes => {
 
-            
+                this.dynamicBooks = dynamicRes;
 
-            
+                // merge hardcoded + dynamic
+                this.books = [...this.books, ...dynamicRes];
+
+              });
+
+
+
+
 
           });
 
@@ -451,8 +473,13 @@ selectedPdf!: File;
 
     // 🔥 FIND BOOK
     const book = this.books.find(
+
       (b: any) =>
-        b.id.toString() === topId?.toString()
+
+        (b.id?.toString() === topId?.toString()) ||
+
+        (b._id?.toString() === topId?.toString())
+
     );
 
     this.topSellingBook =
@@ -473,26 +500,33 @@ selectedPdf!: File;
   getBookName(id: string) {
 
     const book = this.books.find(
-      b => b.id.toString() === id.toString()
+
+      (b: any) =>
+
+        (b.id?.toString() === id.toString()) ||
+
+        (b._id?.toString() === id.toString())
+
     );
 
-    return book
-      ? (book.title || book.name)
-      : 'Unknown';
+    return book?.title || book?.name || "Unknown";
 
   }
 
   // 🔥 GET BOOK AMOUNT
-  getBookAmount(bookId: string) {
+  getBookAmount(id: string) {
 
     const book = this.books.find(
-      b => b.id.toString() === bookId.toString()
+
+      (b: any) =>
+
+        (b.id?.toString() === id.toString()) ||
+
+        (b._id?.toString() === id.toString())
+
     );
 
-    if (!book) return 0;
-
-    // 🔥 ALWAYS TAKE ACTUAL BOOK PRICE
-    return Number(book.price || 0);
+    return Number(book?.price || 0);
 
   }
 
@@ -589,35 +623,35 @@ selectedPdf!: File;
 
   }
 
-  deleteBook(id:string){
+  deleteBook(id: string) {
 
-if(!confirm("Delete this book?")){
+    if (!confirm("Delete this book?")) {
 
-return;
+      return;
 
-}
+    }
 
-this.http.delete(`${this.api}/admin/books/delete/${id}`)
+    this.http.delete(`${this.api}/admin/books/delete/${id}`)
 
-.subscribe({
+      .subscribe({
 
-next:()=>{
+        next: () => {
 
-alert("Book Deleted Successfully");
+          alert("Book Deleted Successfully");
 
-this.loadDynamicBooks();
+          this.loadDynamicBooks();
 
-},
+        },
 
-error:(err)=>{
+        error: (err) => {
 
-console.log(err);
+          console.log(err);
 
-}
+        }
 
-});
+      });
 
-}
+  }
 
   // 🔥 GRANT ACCESS
   grantAccess() {
@@ -656,26 +690,26 @@ console.log(err);
 
   }
 
-  loadDynamicBooks(){
+  loadDynamicBooks() {
 
-this.http.get<any[]>(`${this.api}/books/all`)
-.subscribe({
+    this.http.get<any[]>(`${this.api}/books/all`)
+      .subscribe({
 
-next:(res)=>{
+        next: (res) => {
 
-this.dynamicBooks=res;
+          this.dynamicBooks = res;
 
-},
+        },
 
-error:(err)=>{
+        error: (err) => {
 
-console.log(err);
+          console.log(err);
 
-}
+        }
 
-});
+      });
 
-}
+  }
 
   // 🔥 DELETE USER
   deleteUser(id: string) {

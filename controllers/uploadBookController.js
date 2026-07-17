@@ -19,6 +19,12 @@ exports.uploadBook = async (req, res) => {
 
         const pdfUrl = req.files.pdf[0].path;
 
+        let previewImages = [];
+
+        if (req.files.preview) {
+            previewImages = req.files.preview.map(file => file.path);
+        }
+
         const book = new DynamicBook({
 
             title,
@@ -32,7 +38,9 @@ exports.uploadBook = async (req, res) => {
 
             coverImage,
 
-            pdfUrl
+            pdfUrl,
+
+            previewImages
 
         });
 

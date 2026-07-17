@@ -16,7 +16,9 @@ const dynamicBookSchema = new mongoose.Schema({
 
     coverImage: String,
 
-    pdfUrl:String
+    pdfUrl:String,
+    
+    previewImages:[String]
 
 },{
     timestamps:true

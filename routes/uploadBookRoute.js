@@ -16,7 +16,8 @@ router.post(
         {
             name: 'pdf',
             maxCount: 1
-        }
+        },
+        { name: "preview", maxCount: 5 }
     ]),
 
     uploadBook

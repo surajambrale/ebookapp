@@ -335,6 +335,10 @@
 
       <input type="file" (change)="onPdfSelected($event)">
 
+      <label>Preview Images</label>
+
+      <input type="file" multiple accept="image/*" (change)="onPreviewSelected($event)">
+
       <button (click)="uploadBook()">
 
         Upload Book
