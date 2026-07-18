@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.prod';
@@ -13,14 +13,32 @@ declare var Razorpay:any;
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.scss']
 })
-export class SubscriptionComponent {
+export class SubscriptionComponent implements OnInit {
 
   API = environment.apiUrl;
+
+  subscriptionSetting = {
+
+  planName: "Premium Membership",
+
+  price: 99,
+
+  duration: 30,
+
+  active: true
+
+};
 
   constructor(
     private http:HttpClient,
     private router:Router
   ){}
+
+  ngOnInit() {
+
+  this.loadSubscriptionSetting();
+
+}
 
   subscribe(){
 
@@ -162,5 +180,33 @@ export class SubscriptionComponent {
     });
 
   }
+
+  loadSubscriptionSetting() {
+
+  this.http.get<any>(
+
+    `${this.API}/subscription-setting`
+
+  ).subscribe({
+
+    next: (res) => {
+
+      if (res) {
+
+        this.subscriptionSetting = res;
+
+      }
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+    }
+
+  });
+
+}
 
 }

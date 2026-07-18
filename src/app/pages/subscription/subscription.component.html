@@ -1,34 +1,38 @@
 <div class="subscription-container">
 
-    <h1>Unlimited Ebook Membership</h1>
+  <h1>{{subscriptionSetting.planName}}</h1>
 
-    <p class="price">
+  <p class="price">
 
-        ₹1 <span>/ Month</span>
+    ₹{{subscriptionSetting.price}}
 
-    </p>
+    <span>
 
-    <ul>
+      / {{subscriptionSetting.duration}} Days
 
-        <li>✅ Unlimited Books</li>
+    </span>
 
-        <li>✅ New Books Every Month</li>
+  </p>
 
-        <li>✅ Read Anytime</li>
+  <ul>
 
-        <li>✅ Mobile Friendly</li>
+    <li>✅ Unlimited Books</li>
 
-        <li>✅ Cancel Anytime</li>
+    <li>✅ New Books Every Month</li>
 
-    </ul>
+    <li>✅ Read Anytime</li>
 
-    <button
-        class="subscribe-btn"
-        (click)="subscribe()">
+    <li>✅ Mobile Friendly</li>
 
-        Subscribe Now
+    <li>✅ Cancel Anytime</li>
 
-    </button>
+  </ul>
+
+  <button class="subscribe-btn" (click)="subscribe()" [disabled]="!subscriptionSetting.active">
+
+    {{ subscriptionSetting.active ? 'Subscribe Now' : 'Subscription Closed' }}
+
+  </button>
 
 </div>
 
@@ -38,42 +42,25 @@
 <div class="bottom-navbar">
 
   <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
+  <div class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
     <span>🏠</span>
     <p>Home</p>
   </div>
 
   <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/explore" routerLinkActive="active">
     <span>🔍</span>
     <p>Explore</p>
   </div>
 
   <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/my-books" routerLinkActive="active">
     <span>📚</span>
     <p>My Books</p>
   </div>
 
   <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/profile" routerLinkActive="active">
     <span>👤</span>
     <p>Profile</p>
   </div>
