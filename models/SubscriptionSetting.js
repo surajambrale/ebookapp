@@ -27,6 +27,11 @@ const SubscriptionSettingSchema = new mongoose.Schema({
         default: "Most Popular"
     },
 
+    active: {
+        type: Boolean,
+        default: true
+    },
+
     features: [{
         type: String
     }]
