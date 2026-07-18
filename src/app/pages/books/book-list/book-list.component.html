@@ -12,11 +12,7 @@
       <p>View All</p>
     </div>
 
-    <div
-      class="category-card"
-      *ngFor="let category of dynamicCategories"
-      (click)="filterCategory(category)"
-    >
+    <div class="category-card" *ngFor="let category of dynamicCategories" (click)="filterCategory(category)">
       <div class="category-icon">📖</div>
       <p>{{ category }}</p>
     </div>
@@ -29,19 +25,39 @@
 
 <div class="subscription-card">
 
-  <h2>📚 Unlimited Access</h2>
+  <h2>{{subscriptionSetting.planName}}</h2>
 
-  <p>Access all premium ebooks</p>
+  <p>Unlimited Premium Access</p>
 
-  <h1>₹99 / Month</h1>
+  <h1>
+
+    ₹{{subscriptionSetting.price}}
+
+    <span>
+
+      / {{subscriptionSetting.duration}} Days
+
+    </span>
+
+  </h1>
 
   <p>
-    Read all books without purchasing individually.
+
+    Read Unlimited Premium Books
+
   </p>
 
-  <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="subscriptionActive">
+  <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="!subscriptionSetting.active">
 
-    {{ subscriptionActive ? 'Active Subscription ✅' : 'Subscribe Now' }}
+    {{
+
+    subscriptionSetting.active
+
+    ? 'Subscribe Now'
+
+    : 'Subscription Closed'
+
+    }}
 
   </button>
 

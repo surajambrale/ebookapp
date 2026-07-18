@@ -22,6 +22,13 @@ export class BookListComponent {
 
   subscriptionActive = false;
 
+  subscriptionSetting: any = {
+  planName: '',
+  price: 99,
+  duration: 30,
+  active: true
+};
+
   subscribeNow() {
 
     if (this.subscriptionActive) {
@@ -193,8 +200,35 @@ export class BookListComponent {
 
     this.checkSubscription();
 
+    this.loadSubscriptionSetting();
+
   }
 
+
+  loadSubscriptionSetting() {
+
+  this.http.get<any>(`${this.api}/subscription-setting`)
+    .subscribe({
+
+      next: (res) => {
+
+        if (res) {
+
+          this.subscriptionSetting = res;
+
+        }
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+}
 
 
   // 🔥 OPEN BOOK
