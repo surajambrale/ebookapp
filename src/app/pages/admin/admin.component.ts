@@ -476,22 +476,33 @@ export class AdminComponent {
     }
 
     // 🔥 FIND BOOK
-    const book = this.books.find(
+    // 🔥 NO SALES
+if (!topId || max === 0) {
 
-      (b: any) =>
+  this.topSellingBook = 'No Data';
 
-        (b.id?.toString() === topId?.toString()) ||
+  this.topSellingCount = 0;
 
-        (b._id?.toString() === topId?.toString())
+} else {
 
-    );
+  const book = this.books.find(
 
-    this.topSellingBook =
-      book?.title ||
-      book?.name ||
-      'No Data';
+    (b: any) =>
 
-    this.topSellingCount = max;
+      (b.id?.toString() === topId.toString()) ||
+
+      (b._id?.toString() === topId.toString())
+
+  );
+
+  this.topSellingBook =
+    book?.title ||
+    book?.name ||
+    'No Data';
+
+  this.topSellingCount = max;
+
+}
 
     // 🔥 DEBUG LOGS
     console.log('TODAY:', this.todayRevenue);
