@@ -20,6 +20,7 @@ const Purchase = require('./models/Purchase');
 const uploadBookRoute = require('./routes/uploadBookRoute');
 const dynamicBookRoute = require('./routes/bookRoutes');
 const DynamicBook = require('./models/DynamicBook');
+const SubscriptionSetting = require('./models/SubscriptionSetting');
 
 //dns code start
 
@@ -167,6 +168,179 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected ✅"))
   .catch(err => console.log(err));
 
+
+
+//subcription setting code start
+async function createDefaultSubscription() {
+
+  const exist = await SubscriptionSetting.findOne();
+
+  if (!exist) {
+
+    await SubscriptionSetting.create({
+
+      planName: "Premium",
+
+      price: 99,
+
+      duration: 30,
+
+      active: true
+
+    });
+
+    console.log("Default Subscription Created ✅");
+
+  }
+
+}
+
+createDefaultSubscription();
+
+// ===============================
+// GET SUBSCRIPTION SETTINGS
+// ===============================
+
+app.get('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOne();
+
+    res.json(setting);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  }
+
+});
+
+// ===============================
+// UPDATE SUBSCRIPTION SETTINGS
+// ===============================
+
+app.put('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const {
+
+      planName,
+
+      price,
+
+      duration,
+
+      active
+
+    } = req.body;
+
+    const setting = await SubscriptionSetting.findOne();
+
+    setting.planName = planName;
+    setting.price = price;
+    setting.duration = duration;
+    setting.active = active;
+
+    await setting.save();
+
+    res.json({
+
+      success: true,
+
+      message: "Subscription Updated"
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false
+
+    });
+
+  }
+
+});
+
+app.get('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOne();
+
+    res.json(setting);
+
+  }
+
+  catch(err){
+
+    console.log(err);
+
+    res.status(500).json({
+      success:false
+    });
+
+  }
+
+});
+
+app.put('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOneAndUpdate(
+
+      {},
+
+      req.body,
+
+      {
+
+        new:true,
+
+        upsert:true
+
+      }
+
+    );
+
+    res.json({
+
+      success:true,
+
+      setting
+
+    });
+
+  }
+
+  catch(err){
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success:false
+
+    });
+
+  }
+
+});
+
+//subcription setting code end
 
 // 📦 SCHEMA
 // const userSchema = new mongoose.Schema({

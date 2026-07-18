@@ -38,6 +38,20 @@ export class AdminComponent {
   dynamicBooks: any[] = [];
 
   selectedPreviewImages: File[] = [];
+
+
+  subscriptionSetting = {
+
+    planName: '',
+
+    price: 0,
+
+    duration: 30,
+
+    active: true
+
+  };
+
   // book upload code start
 
   // =============================
@@ -377,6 +391,9 @@ export class AdminComponent {
                 // ✅ Ab analytics chalao
                 this.calculateAnalytics();
 
+                //subscription setting code
+                this.loadSubscriptionSetting();
+
               });
 
 
@@ -477,32 +494,32 @@ export class AdminComponent {
 
     // 🔥 FIND BOOK
     // 🔥 NO SALES
-if (!topId || max === 0) {
+    if (!topId || max === 0) {
 
-  this.topSellingBook = 'No Data';
+      this.topSellingBook = 'No Data';
 
-  this.topSellingCount = 0;
+      this.topSellingCount = 0;
 
-} else {
+    } else {
 
-  const book = this.books.find(
+      const book = this.books.find(
 
-    (b: any) =>
+        (b: any) =>
 
-      (b.id?.toString() === topId.toString()) ||
+          (b.id?.toString() === topId.toString()) ||
 
-      (b._id?.toString() === topId.toString())
+          (b._id?.toString() === topId.toString())
 
-  );
+      );
 
-  this.topSellingBook =
-    book?.title ||
-    book?.name ||
-    'No Data';
+      this.topSellingBook =
+        book?.title ||
+        book?.name ||
+        'No Data';
 
-  this.topSellingCount = max;
+      this.topSellingCount = max;
 
-}
+    }
 
     // 🔥 DEBUG LOGS
     console.log('TODAY:', this.todayRevenue);
@@ -803,6 +820,66 @@ if (!topId || max === 0) {
       });
 
   }
+
+  // subscription setting code start
+
+  loadSubscriptionSetting() {
+
+    this.http.get<any>(
+
+      `${this.api}/subscription-setting`
+
+    ).subscribe({
+
+      next: (res) => {
+
+        if (res) {
+
+          this.subscriptionSetting = res;
+
+        }
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+  }
+
+
+  updateSubscriptionSetting() {
+
+  this.http.put(
+
+    `${this.api}/subscription-setting`,
+
+    this.subscriptionSetting
+
+  ).subscribe({
+
+    next: () => {
+
+      alert('Subscription Settings Updated Successfully ✅');
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert('Update Failed ❌');
+
+    }
+
+  });
+
+}
+  //subscription setting code end
 
   // 🔓 LOGOUT
   logout() {

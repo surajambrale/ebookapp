@@ -103,6 +103,10 @@
           Upload Book
         </option>
 
+        <option value="subscriptionSetting">
+          ⚙️ Subscription Settings
+        </option>
+
       </select>
 
     </div>
@@ -369,6 +373,43 @@
     </div>
 
     <!-- upload book code end -->
+
+    <!-- subscription setting code start -->
+
+    <!-- =========================
+     SUBSCRIPTION SETTINGS
+========================= -->
+
+    <div *ngIf="selectedView==='subscriptionSetting'" class="card">
+
+      <h2>💎 Subscription Settings</h2>
+
+      <label>Plan Name</label>
+      <input type="text" [(ngModel)]="subscriptionSetting.planName">
+
+      <label>Price (₹)</label>
+      <input type="number" [(ngModel)]="subscriptionSetting.price">
+
+      <label>Duration (Days)</label>
+      <input type="number" [(ngModel)]="subscriptionSetting.duration">
+
+      <label style="display:flex;align-items:center;gap:10px;">
+
+        <input type="checkbox" [(ngModel)]="subscriptionSetting.active" style="width:auto;">
+
+        Subscription Active
+
+      </label>
+
+      <button (click)="updateSubscriptionSetting()">
+
+        💾 Save Settings
+
+      </button>
+
+    </div>
+
+    <!-- subscription setting code end -->
 
 
 
