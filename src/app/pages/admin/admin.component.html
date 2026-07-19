@@ -388,6 +388,16 @@
 
       <input type="text" [(ngModel)]="appSetting.appName">
 
+      <label><b>Application Logo</b></label>
+
+      <input type="file" (change)="onLogoSelected($event)">
+
+      <button (click)="uploadLogo()">
+
+        Upload Logo
+
+      </button>
+
       <label>Support Phone</label>
 
       <input type="text" [(ngModel)]="appSetting.phone">

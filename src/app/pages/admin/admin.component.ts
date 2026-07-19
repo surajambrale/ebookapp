@@ -38,6 +38,7 @@ export class AdminComponent {
   dynamicBooks: any[] = [];
 
   selectedPreviewImages: File[] = [];
+  selectedLogo: File | null = null;
 
 
   subscriptionSetting = {
@@ -54,25 +55,25 @@ export class AdminComponent {
 
   appSetting: any = {
 
-  appName: '',
+    appName: '',
 
-  phone: '',
+    phone: '',
 
-  whatsapp: '',
+    whatsapp: '',
 
-  email: '',
+    email: '',
 
-  instagram: '',
+    instagram: '',
 
-  facebook: '',
+    facebook: '',
 
-  youtube: '',
+    youtube: '',
 
-  website: '',
+    website: '',
 
-  version: ''
+    version: ''
 
-};
+  };
 
   // book upload code start
 
@@ -99,6 +100,62 @@ export class AdminComponent {
   selectedCover!: File;
 
   selectedPdf!: File;
+
+  // =============================
+  // logo code start
+  // =============================
+
+  onLogoSelected(event: any) {
+
+    if (event.target.files.length > 0) {
+
+      this.selectedLogo = event.target.files[0];
+
+    }
+
+  }
+
+  uploadLogo() {
+
+    if (!this.selectedLogo) {
+
+      alert("Please Select Logo");
+
+      return;
+
+    }
+
+    const formData = new FormData();
+
+    formData.append("image", this.selectedLogo);
+
+    this.http.post<any>(
+
+      `${this.api}/admin/upload-image`,
+
+      formData
+
+    ).subscribe({
+
+      next: (res) => {
+
+        this.appSetting.logo = res.image;
+
+        alert("Logo Uploaded Successfully ✅");
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+  }
+
+
 
   // =============================
   // COVER IMAGE SELECT
@@ -713,12 +770,42 @@ export class AdminComponent {
 
   loadAppSetting() {
 
-  this.http.get<any>(`${this.api}/app-setting`)
-    .subscribe({
+    this.http.get<any>(`${this.api}/app-setting`)
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        this.appSetting = res;
+          this.appSetting = res;
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+        }
+
+
+
+      });
+
+  }
+
+
+
+  saveAppSetting() {
+
+    this.http.put(
+
+      `${this.api}/app-setting`,
+
+      this.appSetting
+
+    ).subscribe({
+
+      next: () => {
+
+        alert("App Settings Updated ✅");
 
       },
 
@@ -730,35 +817,11 @@ export class AdminComponent {
 
     });
 
-}
+  }
 
-saveAppSetting() {
 
-  this.http.put(
 
-    `${this.api}/app-setting`,
-
-    this.appSetting
-
-  ).subscribe({
-
-    next: () => {
-
-      alert("App Settings Updated ✅");
-
-    },
-
-    error: (err) => {
-
-      console.log(err);
-
-    }
-
-  });
-
-}
-
-//app setting code end
+  //app setting code end
 
   // 🔥 GRANT ACCESS
   grantAccess() {
@@ -929,31 +992,31 @@ saveAppSetting() {
 
   updateSubscriptionSetting() {
 
-  this.http.put(
+    this.http.put(
 
-    `${this.api}/subscription-setting`,
+      `${this.api}/subscription-setting`,
 
-    this.subscriptionSetting
+      this.subscriptionSetting
 
-  ).subscribe({
+    ).subscribe({
 
-    next: () => {
+      next: () => {
 
-      alert('Subscription Settings Updated Successfully ✅');
+        alert('Subscription Settings Updated Successfully ✅');
 
-    },
+      },
 
-    error: (err) => {
+      error: (err) => {
 
-      console.log(err);
+        console.log(err);
 
-      alert('Update Failed ❌');
+        alert('Update Failed ❌');
 
-    }
+      }
 
-  });
+    });
 
-}
+  }
   //subscription setting code end
 
   // 🔓 LOGOUT

@@ -1569,6 +1569,48 @@ app.get('/admin/books-full', async (req, res) => {
 
 });
 
+// ==========================
+// UPLOAD IMAGE (Logo/Banner)
+// ==========================
+
+app.post(
+
+  "/admin/upload-image",
+
+  upload.single("image"),
+
+  (req, res) => {
+
+    try {
+
+      res.json({
+
+        success: true,
+
+        image:
+
+          req.file.filename
+
+      });
+
+    }
+
+    catch(err){
+
+      console.log(err);
+
+      res.status(500).json({
+
+        success:false
+
+      });
+
+    }
+
+  }
+
+);
+
 
 // ==========================
 // 🔥 DASHBOARD ANALYTICS
