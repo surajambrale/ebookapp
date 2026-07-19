@@ -2,7 +2,6 @@ import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './component/header/header.component';
 import { SidebarComponent } from './component/sidebar/sidebar.component';
-import { FooterComponent } from './component/footer/footer.component';
 import { LoaderComponent } from './pages/loader/loader/loader.component';
 import { CommonModule } from '@angular/common';
 
@@ -10,7 +9,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent,SidebarComponent,FooterComponent,CommonModule],
+  imports: [RouterOutlet, HeaderComponent,SidebarComponent,CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
