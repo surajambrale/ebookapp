@@ -50,6 +50,11 @@ const AppSettingSchema = new mongoose.Schema({
     version: {
         type: String,
         default: "1.0.0"
+    },
+
+      password:{
+        type:String,
+        default:"123456"
     }
 
 }, { timestamps: true });

@@ -124,43 +124,198 @@ async function sendEmail({ userName, paymentId, bookId }) {
 
 // ================= ADMIN =================
 
-// 🔐 LOGIN
-app.post('/admin-login', (req, res) => {
-  const { password } = req.body;
+// ===============================
+// 🔐 ADMIN LOGIN (Dynamic Password)
+// ===============================
 
-  if (password === ADMIN_PASSWORD) {
-    const token = jwt.sign({ role: 'admin' }, SECRET, { expiresIn: '1h' }); // 🔥 expiry add
-    return res.json({ token });
+app.post('/admin-login', async (req, res) => {
+
+  try {
+
+    const { password } = req.body;
+
+    // App Setting fetch karo
+    const setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      return res.status(404).json({
+        message: "App Settings Not Found"
+      });
+
+    }
+
+    // Password match
+    if (password === setting.password) {
+
+      const token = jwt.sign(
+        { role: 'admin' },
+        SECRET,
+        { expiresIn: '1h' }
+      );
+
+      return res.json({ token });
+
+    }
+
+    return res.status(401).json({
+      message: "Invalid Password"
+    });
+
   }
 
-  res.status(401).json({ message: "Invalid password" });
+  catch (err) {
+
+    console.log(err);
+
+    return res.status(500).json({
+      message: "Server Error"
+    });
+
+  }
+
 });
 
+// ===============================
 // 🔐 VERIFY TOKEN
+// ===============================
+
 const verifyAdmin = (req, res, next) => {
 
   const token = req.headers.authorization;
 
   if (!token) {
-    return res.status(401).json({ message: "No token" });
+
+    return res.status(401).json({
+      message: "No token"
+    });
+
   }
 
   try {
+
     const decoded = jwt.verify(token, SECRET);
 
-    if (decoded.role !== 'admin') {
-      return res.status(403).json({ message: "Access denied" });
+    if (decoded.role !== "admin") {
+
+      return res.status(403).json({
+        message: "Access denied"
+      });
+
     }
 
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+
   }
+
+  catch (err) {
+
+    return res.status(401).json({
+      message: "Invalid token"
+    });
+
+  }
+
 };
 
+// ===============================
 // 🔐 VERIFY API
+// ===============================
+
 app.get('/admin-verify', verifyAdmin, (req, res) => {
-  res.json({ success: true });
+
+  res.json({
+
+    success: true
+
+  });
+
+});
+
+// ===============================
+// 🔐 CHANGE ADMIN PASSWORD
+// ===============================
+
+app.put('/admin/change-password', verifyAdmin, async (req, res) => {
+
+  try {
+
+    const {
+
+      currentPassword,
+
+      newPassword,
+
+      confirmPassword
+
+    } = req.body;
+
+    const setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      return res.status(404).json({
+
+        success: false,
+
+        message: "App Setting Not Found"
+
+      });
+
+    }
+
+    if (setting.password !== currentPassword) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "Current Password is Incorrect"
+
+      });
+
+    }
+
+    if (newPassword !== confirmPassword) {
+
+      return res.status(400).json({
+
+        success: false,
+
+        message: "Passwords do not match"
+
+      });
+
+    }
+
+    setting.password = newPassword;
+
+    await setting.save();
+
+    res.json({
+
+      success: true,
+
+      message: "Password Updated Successfully"
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+
+      message: "Server Error"
+
+    });
+
+  }
+
 });
 
 
@@ -372,12 +527,12 @@ app.get('/subscription-setting', async (req, res) => {
 
   }
 
-  catch(err){
+  catch (err) {
 
     console.log(err);
 
     res.status(500).json({
-      success:false
+      success: false
     });
 
   }
@@ -396,9 +551,9 @@ app.put('/subscription-setting', async (req, res) => {
 
       {
 
-        new:true,
+        new: true,
 
-        upsert:true
+        upsert: true
 
       }
 
@@ -406,7 +561,7 @@ app.put('/subscription-setting', async (req, res) => {
 
     res.json({
 
-      success:true,
+      success: true,
 
       setting
 
@@ -414,13 +569,13 @@ app.put('/subscription-setting', async (req, res) => {
 
   }
 
-  catch(err){
+  catch (err) {
 
     console.log(err);
 
     res.status(500).json({
 
-      success:false
+      success: false
 
     });
 
@@ -930,57 +1085,57 @@ app.get('/book/:userId/:bookId', async (req, res) => {
     }
 
 
-// =====================================
-// CHECK DYNAMIC BOOK FIRST
-// =====================================
+    // =====================================
+    // CHECK DYNAMIC BOOK FIRST
+    // =====================================
 
-// =====================================
-// CHECK DYNAMIC BOOK FIRST
-// =====================================
+    // =====================================
+    // CHECK DYNAMIC BOOK FIRST
+    // =====================================
 
-if (mongoose.Types.ObjectId.isValid(bookId)) {
+    if (mongoose.Types.ObjectId.isValid(bookId)) {
 
-    const dynamicBook = await DynamicBook.findById(bookId);
+      const dynamicBook = await DynamicBook.findById(bookId);
 
-    if (dynamicBook) {
+      if (dynamicBook) {
 
         return res.redirect(dynamicBook.pdfUrl);
 
+      }
+
     }
 
-}
+    // =====================================
+    // OTHERWISE LOAD HARDCODED PDF
+    // =====================================
 
-// =====================================
-// OTHERWISE LOAD HARDCODED PDF
-// =====================================
+    const filePath = path.join(
 
-const filePath = path.join(
+      __dirname,
 
-  __dirname,
+      "books",
 
-  "books",
+      `${bookId}.pdf`
 
-  `${bookId}.pdf`
+    );
 
-);
+    res.setHeader(
 
-res.setHeader(
+      "Content-Type",
 
-  "Content-Type",
+      "application/pdf"
 
-  "application/pdf"
+    );
 
-);
+    res.setHeader(
 
-res.setHeader(
+      "Content-Disposition",
 
-  "Content-Disposition",
+      "inline"
 
-  "inline"
+    );
 
-);
-
-res.sendFile(filePath);
+    res.sendFile(filePath);
 
   }
 
@@ -1606,15 +1761,15 @@ app.post(
 
     }
 
-    catch(err){
+    catch (err) {
 
       console.log(err);
 
       res.status(500).json({
 
-        success:false,
+        success: false,
 
-        message:err.message
+        message: err.message
 
       });
 

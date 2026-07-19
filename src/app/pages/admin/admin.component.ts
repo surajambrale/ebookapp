@@ -40,6 +40,12 @@ export class AdminComponent {
   selectedPreviewImages: File[] = [];
   selectedLogo: File | null = null;
 
+  currentPassword = '';
+
+  newPassword = '';
+
+  confirmPassword = '';
+
 
   subscriptionSetting = {
 
@@ -269,6 +275,61 @@ export class AdminComponent {
   }
 
   // book upload code end
+
+// admin password change code start
+
+changePassword() {
+
+  const headers = new HttpHeaders({
+
+    Authorization: this.token
+
+  });
+
+  this.http.put(
+
+    `${this.api}/admin/change-password`,
+
+    {
+
+      currentPassword: this.currentPassword,
+
+      newPassword: this.newPassword,
+
+      confirmPassword: this.confirmPassword
+
+    },
+
+    { headers }
+
+  )
+
+  .subscribe({
+
+    next: (res: any) => {
+
+      alert(res.message);
+
+      this.currentPassword = '';
+
+      this.newPassword = '';
+
+      this.confirmPassword = '';
+
+    },
+
+    error: (err) => {
+
+      alert(err.error.message);
+
+    }
+
+  });
+
+}
+
+// admin password change code end
+
 
   // 🔥 LOAD TESTIMONIALS
   loadTestimonials() {

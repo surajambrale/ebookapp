@@ -441,6 +441,29 @@
 
     <!-- app settings code end -->
 
+    <!-- change admin passeword code start -->
+
+    <div class="card">
+
+      <h2>🔐 Change Admin Password</h2>
+
+      <input type="password" placeholder="Current Password" [(ngModel)]="currentPassword">
+
+      <input type="password" placeholder="New Password" [(ngModel)]="newPassword">
+
+      <input type="password" placeholder="Confirm Password" [(ngModel)]="confirmPassword">
+
+      <button (click)="changePassword()">
+
+        Update Password
+
+      </button>
+
+    </div>
+
+
+    <!-- change admin password code end -->
+
 
     <!-- subscription setting code start -->
 
