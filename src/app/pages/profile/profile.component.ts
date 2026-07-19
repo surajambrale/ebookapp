@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
+
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -37,6 +39,13 @@ export class ProfileComponent implements OnInit {
   books: any[] = [];
 
   subscription: any = null;
+
+   subscriptionSetting: any = {
+  planName: '',
+  price: 99,
+  duration: 30,
+  active: true
+};
 
   // 🔥 NEW FEATURES
   purchasedBooksCount = 0;
@@ -106,6 +115,8 @@ export class ProfileComponent implements OnInit {
 
       this.loadBooks();
 
+      this.loadSubscriptionSetting();
+
     }
 
   
@@ -142,6 +153,17 @@ export class ProfileComponent implements OnInit {
 
   });
 
+}
+
+loadSubscriptionSetting() {
+  this.http
+    .get<any>(`${environment.apiUrl}/subscription-setting`)
+    .subscribe({
+      next: (res) => {
+        this.subscriptionSetting = res;
+      },
+      error: (err) => console.log(err)
+    });
 }
 
 getBookName(bookId: any) {
@@ -230,6 +252,8 @@ continueReading() {
   }
 
 }
+
+
 
   // 🔥 GO LOGIN
 
