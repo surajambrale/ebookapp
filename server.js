@@ -22,6 +22,7 @@ const dynamicBookRoute = require('./routes/bookRoutes');
 const DynamicBook = require('./models/DynamicBook');
 const SubscriptionSetting = require('./models/SubscriptionSetting');
 const AppSetting = require("./models/AppSetting");
+const upload = require('./config/multer');
 
 //dns code start
 
@@ -1444,57 +1445,57 @@ app.get('/admin/stats', verifyAdmin, async (req, res) => {
 // 🔥 MULTER STORAGE
 // ==========================
 
-const storage = multer.diskStorage({
+// const storage = multer.diskStorage({
 
-  destination: function (req, file, cb) {
+//   destination: function (req, file, cb) {
 
-    if (file.fieldname === 'image') {
+//     if (file.fieldname === 'image') {
 
-      cb(null, 'uploads/images');
+//       cb(null, 'uploads/images');
 
-    } else {
+//     } else {
 
-      cb(null, 'uploads/pdfs');
+//       cb(null, 'uploads/pdfs');
 
-    }
+//     }
 
-  },
+//   },
 
-  filename: function (req, file, cb) {
+//   filename: function (req, file, cb) {
 
-    cb(
-      null,
-      Date.now() + '-' + file.originalname
-    );
+//     cb(
+//       null,
+//       Date.now() + '-' + file.originalname
+//     );
 
-  }
+//   }
 
-});
+// });
 
-const upload = multer({ storage });
+// const upload = multer({ storage });
 
 
-// ==========================
-// 🔥 BOOK MODEL
-// ==========================
+// // ==========================
+// // 🔥 BOOK MODEL
+// // ==========================
 
-const BookSchema = new mongoose.Schema({
+// const BookSchema = new mongoose.Schema({
 
-  name: String,
-  price: Number,
-  category: String,
+//   name: String,
+//   price: Number,
+//   category: String,
 
-  image: String,
-  pdf: String,
+//   image: String,
+//   pdf: String,
 
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+//   createdAt: {
+//     type: Date,
+//     default: Date.now
+//   }
 
-});
+// });
 
-const Book = mongoose.model('Book', BookSchema);
+// const Book = mongoose.model('Book', BookSchema);
 
 
 // ==========================
