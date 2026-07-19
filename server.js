@@ -439,6 +439,11 @@ app.put("/app-setting", async (req, res) => {
     setting.website = req.body.website;
     setting.version = req.body.version;
 
+    // 👇 Ye line add karo
+if (!setting.password) {
+  setting.password = "123456";
+}
+
     await setting.save();
 
     res.json({
