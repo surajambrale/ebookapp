@@ -1,14 +1,23 @@
-.admin {
+.admin{
 
-  min-height: 100vh;
+    width:100%;
 
-  background: #0f0f0f;
+    min-height:100vh;
 
-  color: white;
+    background:#0f0f0f;
 
-  padding: 20px;
+    color:white;
 
-  font-family: Arial, sans-serif;
+    padding:20px;
+
+    padding-bottom:40px;
+
+    font-family:Arial,sans-serif;
+
+    box-sizing:border-box;
+
+    overflow-x:hidden;
+
 }
 
 /* LOGIN */
@@ -84,17 +93,23 @@
 
 .top-bar {
 
-  display: flex;
+  .top-bar{
 
-  justify-content: space-between;
+display:flex;
 
-  align-items: center;
+justify-content:space-between;
 
-  margin-bottom: 25px;
+align-items:center;
 
-  flex-wrap: wrap;
+gap:15px;
 
-  gap: 10px;
+flex-wrap:wrap;
+
+margin-bottom:25px;
+
+width:100%;
+
+}
 
   h2 {
 
@@ -122,15 +137,17 @@
 
 .stats-grid {
 
-  display: grid;
+ display:grid;
 
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 
-  gap: 16px;
+gap:20px;
 
-  margin-bottom: 25px;
+margin-bottom:30px;
+
+width:100%;
+
 }
-
 .stat-card {
 
   background: #1d1d1d;
@@ -266,15 +283,17 @@
 
 .card {
 
-  background: #1b1b1b;
+  background:#1b1b1b;
 
-  padding: 20px;
+padding:22px;
 
-  border-radius: 16px;
+border-radius:18px;
 
-  margin-bottom: 18px;
+width:100%;
 
-  border: 1px solid #2d2d2d;
+box-sizing:border-box;
+
+overflow:hidden;
 
   p {
 
@@ -477,12 +496,23 @@ UPLOADED BOOK
 .uploaded-book-card{
 
 display:flex;
+
 align-items:center;
+
+justify-content:space-between;
+
 gap:20px;
+
+flex-wrap:wrap;
+
 background:#232323;
+
 padding:18px;
+
 border-radius:15px;
-margin-bottom:18px;
+
+margin-bottom:20px;
+
 
 }
 
