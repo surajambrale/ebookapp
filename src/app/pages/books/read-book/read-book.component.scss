@@ -2,256 +2,258 @@
    PREMIUM BOOK READER
 ================================ */
 
-.reader{
+.reader {
 
-min-height:100vh;
+  min-height: 100vh;
 
-background:#0d0d0d;
+  background: #0d0d0d;
 
-padding:25px;
+  padding: 25px;
 
-color:white;
+  color: white;
 
-position:relative;
+  position: relative;
 
-overflow:hidden;
+  overflow: hidden;
 
 }
 
 /* Header */
 
-.reader-header{
+.reader-header {
 
-display:flex;
+  display: flex;
 
-justify-content:space-between;
+  justify-content: space-between;
 
-align-items:center;
+  align-items: center;
 
-margin-bottom:25px;
+  margin-bottom: 25px;
 
-flex-wrap:wrap;
+  flex-wrap: wrap;
 
-gap:15px;
+  gap: 15px;
 
 }
 
-.reader-header h2{
+.reader-header h2 {
 
-font-size:28px;
+  font-size: 28px;
 
-color:#FFD54F;
+  color: #FFD54F;
 
-font-weight:700;
+  font-weight: 700;
 
-letter-spacing:1px;
+  letter-spacing: 1px;
 
 }
 
 /* Buttons */
 
-.actions{
+.actions {
 
-display:flex;
+  display: flex;
 
-gap:12px;
-
-}
-
-.actions button{
-
-padding:12px 22px;
-
-border:none;
-
-border-radius:12px;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:.3s;
+  gap: 12px;
 
 }
 
-.back-btn{
+.actions button {
 
-background:#FFD54F;
+  padding: 12px 22px;
 
-color:#111;
+  border: none;
 
-}
+  border-radius: 12px;
 
-.back-btn:hover{
+  font-weight: 600;
 
-transform:translateY(-2px);
+  cursor: pointer;
 
-box-shadow:0 8px 20px rgba(255,213,79,.35);
-
-}
-
-.logout-btn{
-
-background:#ef4444;
-
-color:white;
+  transition: .3s;
 
 }
 
-.logout-btn:hover{
+.back-btn {
 
-transform:translateY(-2px);
+  background: #FFD54F;
 
-box-shadow:0 8px 20px rgba(239,68,68,.35);
+  color: #111;
+
+}
+
+.back-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(255, 213, 79, .35);
+
+}
+
+.logout-btn {
+
+  background: #ef4444;
+
+  color: white;
+
+}
+
+.logout-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(239, 68, 68, .35);
 
 }
 
 /* PDF Container */
 
-.pdf-container{
+.pdf-container {
 
-background:#181818;
+  background: #181818;
 
-padding:20px;
+  padding: 20px;
 
-border-radius:20px;
+  border-radius: 20px;
 
-border:1px solid #2d2d2d;
+  border: 1px solid #2d2d2d;
 
-box-shadow:0 20px 60px rgba(0,0,0,.45);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
 
-overflow:hidden;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
 
 }
 
 /* Watermark */
 
-.watermark{
+.watermark {
 
-position:absolute;
+  position: fixed;
 
-top:50%;
+  top: 50%;
 
-left:50%;
+  left: 50%;
 
-transform:translate(-50%,-50%) rotate(-30deg);
+  transform: translate(-50%, -50%) rotate(-30deg);
 
-font-size:48px;
+  font-size: 42px;
 
-font-weight:700;
+  font-weight: bold;
 
-color:rgba(255,255,255,.06);
+  color: rgba(255, 255, 255, .08);
 
-pointer-events:none;
+  text-align: center;
 
-z-index:999;
+  white-space: nowrap;
 
-text-align:center;
+  pointer-events: none;
 
-line-height:1.5;
+  user-select: none;
 
-white-space:nowrap;
+  z-index: 999999;
 
-user-select:none;
+  mix-blend-mode: difference;
 
 }
 
 /* Loading */
 
-.loading{
+.loading {
 
-display:flex;
+  display: flex;
 
-flex-direction:column;
+  flex-direction: column;
 
-justify-content:center;
+  justify-content: center;
 
-align-items:center;
+  align-items: center;
 
-height:100vh;
+  height: 100vh;
 
-background:#0d0d0d;
+  background: #0d0d0d;
 
-color:white;
-
-}
-
-.loader{
-
-width:60px;
-
-height:60px;
-
-border:6px solid #333;
-
-border-top:6px solid gold;
-
-border-radius:50%;
-
-animation:spin 1s linear infinite;
-
-margin-bottom:20px;
+  color: white;
 
 }
 
-@keyframes spin{
+.loader {
 
-100%{
+  width: 60px;
 
-transform:rotate(360deg);
+  height: 60px;
+
+  border: 6px solid #333;
+
+  border-top: 6px solid gold;
+
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+
+  margin-bottom: 20px;
 
 }
+
+@keyframes spin {
+
+  100% {
+
+    transform: rotate(360deg);
+
+  }
 
 }
 
 /* Mobile */
 
-@media(max-width:768px){
+@media(max-width:768px) {
 
-.reader{
+  .reader {
 
-padding:15px;
+    padding: 15px;
 
-}
+  }
 
-.reader-header{
+  .reader-header {
 
-flex-direction:column;
+    flex-direction: column;
 
-align-items:flex-start;
+    align-items: flex-start;
 
-}
+  }
 
-.reader-header h2{
+  .reader-header h2 {
 
-font-size:22px;
+    font-size: 22px;
 
-}
+  }
 
-.actions{
+  .actions {
 
-width:100%;
+    width: 100%;
 
-display:flex;
+    display: flex;
 
-}
+  }
 
-.actions button{
+  .actions button {
 
-flex:1;
+    flex: 1;
 
-}
+  }
 
-.watermark{
+  .watermark {
 
-font-size:28px;
+    font-size: 28px;
 
-}
+  }
 
-.pdf-container{
+  .pdf-container {
 
-padding:10px;
+    padding: 10px;
 
-}
+  }
 
 }
