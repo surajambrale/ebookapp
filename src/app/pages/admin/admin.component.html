@@ -111,6 +111,10 @@
           App Settings
         </option>
 
+        <option value="changePassword">
+          Change Admin Password
+        </option>
+
       </select>
 
     </div>
@@ -443,7 +447,7 @@
 
     <!-- change admin passeword code start -->
 
-    <div class="card">
+    <div class="card" *ngIf="selectedView === 'changePassword'">
 
       <h2>🔐 Change Admin Password</h2>
 
