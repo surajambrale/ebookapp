@@ -1,30 +1,63 @@
 <div *ngIf="allowed; else loading" class="reader" (contextmenu)="$event.preventDefault()">
 
-  <h2>📖 Book Reading</h2>
+    <div class="reader-header">
 
-  <!-- 🔥 WATERMARK -->
-  <div class="watermark">
-    {{ user?.name }} - {{ user?.phone }}
-  </div>
+        <h2>📖 Premium Book Reader</h2>
 
-  <!-- 🔥 PDF VIEWER (NO DOWNLOAD BUTTON) -->
-  <pdf-viewer 
-    [src]="pdfUrl"
-    [render-text]="true"
-    [original-size]="false"
-    style="display: block; height: 80vh;">
-  </pdf-viewer>
+        <div class="actions">
 
-  <br>
+            <button class="back-btn" (click)="goBackToBooks()">
+                ← Library
+            </button>
 
-  <button (click)="goBackToBooks()">
-  ← Go Back
-</button>
+            <button class="logout-btn" (click)="logout()">
+                Logout
+            </button>
 
-  <button (click)="logout()">Logout</button>
+        </div>
+
+    </div>
+
+    <!-- Watermark -->
+
+    <div class="watermark">
+
+        {{ user?.name }}
+
+        <br>
+
+        {{ user?.phone }}
+
+    </div>
+
+    <!-- PDF -->
+
+    <div class="pdf-container">
+
+        <pdf-viewer
+
+            [src]="pdfUrl"
+
+            [render-text]="true"
+
+            [original-size]="false"
+
+            style="display:block;height:80vh;">
+
+        </pdf-viewer>
+
+    </div>
 
 </div>
 
 <ng-template #loading>
-  <h3>Checking access...</h3>
+
+<div class="loading">
+
+    <div class="loader"></div>
+
+    <h3>Checking Access...</h3>
+
+</div>
+
 </ng-template>
