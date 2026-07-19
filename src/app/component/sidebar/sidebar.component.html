@@ -1,13 +1,13 @@
 <div class="sidebar-backdrop" *ngIf="isOpen" (click)="closeSidebar()"></div>
 
 <div class="sidebar" [class.open]="isOpen">
-    <div class="close-btn" (click)="closeSidebar()">X</div>
-    <!-- <nav class="sidebar-links">
+  <div class="close-btn" (click)="closeSidebar()">X</div>
+  <!-- <nav class="sidebar-links">
         <a href="#home" (click)="closeSidebar()">Home</a>
         <a routerLink="/admin-login" (click)="closeSidebar()">Admin</a>
 
     </nav> -->
-    <h2>
+  <h2>
     Support Center
   </h2>
 
@@ -17,7 +17,7 @@
 
     <span>📞</span>
 
-    <a href="tel:9372336433">
+    <a [href]="'tel:' + appSetting.phone">
       Call Support
     </a>
 
@@ -29,11 +29,10 @@
 
     <span>💬</span>
 
-    <a
-      href="https://wa.me/919372336433"
-      target="_blank"
-    >
+    <a [href]="'https://wa.me/' + appSetting.whatsapp" target="_blank">
+
       WhatsApp Support
+
     </a>
 
   </div>
@@ -44,9 +43,7 @@
 
     <span>📧</span>
 
-    <a
-      href="mailto:suraj@example.com"
-    >
+    <a [href]="'mailto:' + appSetting.email">
       Email Support
     </a>
 
@@ -58,10 +55,7 @@
 
     <span>🐞</span>
 
-    <a
-      href="https://wa.me/919372336433?text=I%20found%20a%20bug%20in%20your%20application"
-      target="_blank"
-    >
+    <a [href]="'https://wa.me/' + appSetting.whatsapp + '?text=I found a bug in your application'" target="_blank">
       Report Issue
     </a>
 
@@ -73,20 +67,81 @@
 
     <span>💡</span>
 
-    <a
-      href="https://wa.me/919372336433?text=I%20want%20to%20suggest%20a%20feature"
-      target="_blank"
-    >
+    <a [href]="'https://wa.me/' + appSetting.whatsapp + '?text=I want to suggest a feature'" target="_blank">
       Suggest Feature
     </a>
 
   </div>
 
+  <!-- WEBSITE -->
+
+<div class="menu-item">
+
+  <span>🌐</span>
+
+  <a
+    [href]="appSetting.website"
+    target="_blank">
+
+    Website
+
+  </a>
+
+</div>
+
+<!-- INSTAGRAM -->
+
+<div class="menu-item">
+
+  <span>📸</span>
+
+  <a
+    [href]="appSetting.instagram"
+    target="_blank">
+
+    Instagram
+
+  </a>
+
+</div>
+
+<!-- FACEBOOK -->
+
+<div class="menu-item">
+
+  <span>👍</span>
+
+  <a
+    [href]="appSetting.facebook"
+    target="_blank">
+
+    Facebook
+
+  </a>
+
+</div>
+
+<!-- YOUTUBE -->
+
+<div class="menu-item">
+
+  <span>▶️</span>
+
+  <a
+    [href]="appSetting.youtube"
+    target="_blank">
+
+    YouTube
+
+  </a>
+
+</div>
+
   <!-- 🔥 VERSION -->
 
   <div class="version">
 
-    Version 1.0.0
+    Version {{ appSetting.version }}
 
   </div>
 </div>
