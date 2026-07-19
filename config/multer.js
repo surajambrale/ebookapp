@@ -8,6 +8,18 @@ const storage = new CloudinaryStorage({
 
     params: async (req, file) => {
 
+        if (file.fieldname === 'image') {
+
+        return {
+
+            folder: 'ebook-app',
+
+            allowed_formats: ['jpg','jpeg','png','webp']
+
+        };
+
+    }
+
         if (file.fieldname === 'cover') {
 
             return {

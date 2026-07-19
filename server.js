@@ -1583,13 +1583,23 @@ app.post(
 
     try {
 
+      if (!req.file) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message: "No Image Uploaded"
+
+        });
+
+      }
+
       res.json({
 
         success: true,
 
-        image:
-
-          req.file.filename
+        image: req.file.path
 
       });
 
@@ -1601,7 +1611,9 @@ app.post(
 
       res.status(500).json({
 
-        success:false
+        success:false,
+
+        message:err.message
 
       });
 
