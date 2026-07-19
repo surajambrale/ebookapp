@@ -52,6 +52,28 @@ export class AdminComponent {
 
   };
 
+  appSetting: any = {
+
+  appName: '',
+
+  phone: '',
+
+  whatsapp: '',
+
+  email: '',
+
+  instagram: '',
+
+  facebook: '',
+
+  youtube: '',
+
+  website: '',
+
+  version: ''
+
+};
+
   // book upload code start
 
   // =============================
@@ -394,6 +416,8 @@ export class AdminComponent {
                 //subscription setting code
                 this.loadSubscriptionSetting();
 
+                this.loadAppSetting();
+
               });
 
 
@@ -684,6 +708,57 @@ export class AdminComponent {
       });
 
   }
+
+  // app setting code start
+
+  loadAppSetting() {
+
+  this.http.get<any>(`${this.api}/app-setting`)
+    .subscribe({
+
+      next: (res) => {
+
+        this.appSetting = res;
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+}
+
+saveAppSetting() {
+
+  this.http.put(
+
+    `${this.api}/app-setting`,
+
+    this.appSetting
+
+  ).subscribe({
+
+    next: () => {
+
+      alert("App Settings Updated ✅");
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+    }
+
+  });
+
+}
+
+//app setting code end
 
   // 🔥 GRANT ACCESS
   grantAccess() {

@@ -104,7 +104,11 @@
         </option>
 
         <option value="subscriptionSetting">
-          ⚙️ Subscription Settings
+          Subscription Settings
+        </option>
+
+        <option value="appSetting">
+          App Settings
         </option>
 
       </select>
@@ -374,6 +378,60 @@
 
     <!-- upload book code end -->
 
+    <!-- app settings code start -->
+
+    <div *ngIf="selectedView==='appSetting'" class="card">
+
+      <h2>⚙️ App Settings</h2>
+
+      <label>Application Name</label>
+
+      <input type="text" [(ngModel)]="appSetting.appName">
+
+      <label>Support Phone</label>
+
+      <input type="text" [(ngModel)]="appSetting.phone">
+
+      <label>WhatsApp Number</label>
+
+      <input type="text" [(ngModel)]="appSetting.whatsapp">
+
+      <label>Email</label>
+
+      <input type="text" [(ngModel)]="appSetting.email">
+
+      <label>Instagram</label>
+
+      <input type="text" [(ngModel)]="appSetting.instagram">
+
+      <label>Facebook</label>
+
+      <input type="text" [(ngModel)]="appSetting.facebook">
+
+      <label>Youtube</label>
+
+      <input type="text" [(ngModel)]="appSetting.youtube">
+
+      <label>Website</label>
+
+      <input type="text" [(ngModel)]="appSetting.website">
+
+      <label>Version</label>
+
+      <input type="text" [(ngModel)]="appSetting.version">
+
+      <button (click)="saveAppSetting()">
+
+        Save Settings
+
+      </button>
+
+    </div>
+
+
+    <!-- app settings code end -->
+
+
     <!-- subscription setting code start -->
 
     <!-- =========================
@@ -400,7 +458,7 @@
         Subscription Active
 
       </label>
-      
+
 
       <button (click)="updateSubscriptionSetting()">
 

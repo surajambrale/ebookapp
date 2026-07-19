@@ -21,6 +21,7 @@ const uploadBookRoute = require('./routes/uploadBookRoute');
 const dynamicBookRoute = require('./routes/bookRoutes');
 const DynamicBook = require('./models/DynamicBook');
 const SubscriptionSetting = require('./models/SubscriptionSetting');
+const AppSetting = require("./models/AppSetting");
 
 //dns code start
 
@@ -215,6 +216,92 @@ app.get('/subscription-setting', async (req, res) => {
 
     res.status(500).json({
       success: false
+    });
+
+  }
+
+});
+
+
+// ===============================
+// GET APP SETTINGS
+// ===============================
+
+app.get("/app-setting", async (req, res) => {
+
+  try {
+
+    let setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      setting = await AppSetting.create({});
+
+    }
+
+    res.json(setting);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+
+  }
+
+});
+
+
+// put api
+
+app.put("/app-setting", async (req, res) => {
+
+  try {
+
+    let setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      setting = new AppSetting();
+
+    }
+
+    setting.appName = req.body.appName;
+    setting.logo = req.body.logo;
+
+    setting.phone = req.body.phone;
+    setting.whatsapp = req.body.whatsapp;
+    setting.email = req.body.email;
+
+    setting.instagram = req.body.instagram;
+    setting.facebook = req.body.facebook;
+    setting.youtube = req.body.youtube;
+
+    setting.website = req.body.website;
+    setting.version = req.body.version;
+
+    await setting.save();
+
+    res.json({
+
+      success: true,
+      message: "Updated Successfully",
+      setting
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+      message: "Server Error"
+
     });
 
   }
