@@ -40,6 +40,8 @@ export class ProfileComponent implements OnInit {
 
   subscription: any = null;
 
+  subscriptionActive = false;
+
    subscriptionSetting: any = {
   planName: '',
   price: 99,
@@ -183,6 +185,32 @@ getBookName(bookId: any) {
 }
 
 
+
+subscribeNow() {
+
+    if (this.subscriptionActive) {
+
+      alert("Your Subscription is Active ✅");
+
+      return;
+
+    }
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+
+      alert('Please login first.');
+
+      this.router.navigate(['/login']);
+
+      return;
+
+    }
+
+    this.router.navigate(['/subscription']);
+
+  }
 
   
 
