@@ -2253,6 +2253,5 @@ app.delete('/admin/testimonial/:id', verifyAdmin, async (req, res) => {
 
 // ================= START =================
 
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server running 🚀"));
