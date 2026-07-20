@@ -31,19 +31,13 @@
 
     <!-- 🔥 LOGIN -->
 
-    <div
-      class="login-box"
-      *ngIf="!isLoggedIn"
-    >
+    <div class="login-box" *ngIf="!isLoggedIn">
 
       <h3>
         Login to Continue
       </h3>
 
-      <button
-        class="login-btn"
-        (click)="goLogin()"
-      >
+      <button class="login-btn" (click)="goLogin()">
         Login
       </button>
 
@@ -79,122 +73,107 @@
 
       <!-- 🔥 MENU -->
 
-       <!-- Subscription code start -->
+      <!-- Subscription code start -->
 
-<div
-  class="subscription-card"
-  *ngIf="subscription"
->
+      <div class="subscription-card" *ngIf="subscription">
 
-  <h3>⭐ Premium Membership</h3>
+        <h3>⭐ Premium Membership</h3>
 
-  <p>
-    Plan :
-    <b>{{subscription.plan}}</b>
-  </p>
+        <p>
+          Plan :
+          <b>{{subscription.plan}}</b>
+        </p>
 
-  <p>
-    Expiry :
-    <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
-  </p>
+        <p>
+          Expiry :
+          <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
+        </p>
 
-  <p class="active">
-    ✅ Active Membership
-</p>
+        <p class="active">
+          ✅ Active Membership
+        </p>
 
-</div>
+      </div>
 
 
-<div
-  class="subscription-card"
-  *ngIf="!subscription"
->
+      <div class="subscription-card" *ngIf="!subscription">
 
-  <h3>No Active Membership</h3>
+        <h3>No Active Membership</h3>
 
-  <button>
-  Subscribe ₹{{ subscriptionSetting?.price }}/month
-</button>
+        <button (click)="subscribeNow()">
+          Subscribe ₹{{ subscriptionSetting?.price }}/month
+        </button>
 
-</div>
+      </div>
 
-<!-- subscription code end -->
+      <!-- subscription code end -->
 
 
       <!-- 🔥 QUICK STATS -->
 
-<div class="menu-card">
+      <div class="menu-card">
 
-  <!-- MY BOOKS -->
+        <!-- MY BOOKS -->
 
-  <div
-    class="menu-item"
-    routerLink="/my-books"
-  >
+        <div class="menu-item" routerLink="/my-books">
 
-  <!-- addedd start -->
+          <!-- addedd start -->
 
-  <!-- PURCHASE COUNT -->
+          <!-- PURCHASE COUNT -->
 
-<div class="menu-item">
+          <div class="menu-item">
 
-  <span>🛒</span>
+            <span>🛒</span>
 
-  <p>
-    Purchased:
-    {{ purchasedBooksCount }}
-  </p>
+            <p>
+              Purchased:
+              {{ purchasedBooksCount }}
+            </p>
 
-</div>
+          </div>
 
-<!-- CONTINUE READING -->
+          <!-- CONTINUE READING -->
 
-<div
-  class="menu-item"
-  (click)="continueReading()"
->
+          <div class="menu-item" (click)="continueReading()">
 
-  <span>📖</span>
+            <span>📖</span>
 
-  <p>Continue Reading</p>
+            <p>Continue Reading</p>
 
-</div>
+          </div>
 
-  <!-- addedd end -->
+          <!-- addedd end -->
 
-    <span>📚</span>
+          <span>📚</span>
 
-    <p>My Books</p>
+          <p>My Books</p>
 
-  </div>
+        </div>
 
-  <!-- PURCHASE COUNT -->
+        <!-- PURCHASE COUNT -->
 
-  <div class="menu-item">
+        <div class="menu-item">
 
-    <span>🛒</span>
+          <span>🛒</span>
 
-    <p>
-      Purchased:
-      {{ purchasedBooksCount }}
-    </p>
+          <p>
+            Purchased:
+            {{ purchasedBooksCount }}
+          </p>
 
-  </div>
+        </div>
 
-  <!-- CONTINUE READING -->
+        <!-- CONTINUE READING -->
 
-  <div
-    class="menu-item"
-    (click)="continueReading()"
-  >
+        <div class="menu-item" (click)="continueReading()">
 
-    <span>📖</span>
+          <span>📖</span>
 
-    <p>Continue Reading</p>
+          <p>Continue Reading</p>
 
-  </div>
+        </div>
 
-</div>
+      </div>
 
       <!-- 🔥 PAYMENTS -->
 
@@ -204,10 +183,7 @@
           💳 Payment History
         </h3>
 
-        <div
-          class="payment-card"
-          *ngFor="let payment of payments"
-        >
+        <div class="payment-card" *ngFor="let payment of payments">
 
           <h4>
             {{ payment.bookTitle || getBookName(payment.bookId) }}
@@ -219,10 +195,7 @@
 
         </div>
 
-        <div
-          class="empty-payment"
-          *ngIf="payments.length === 0"
-        >
+        <div class="empty-payment" *ngIf="payments.length === 0">
 
           No Payments Found
 
@@ -230,14 +203,11 @@
 
       </div>
 
- 
+
 
       <!-- 🔥 LOGOUT -->
 
-      <button
-        class="logout-btn"
-        (click)="logout()"
-      >
+      <button class="logout-btn" (click)="logout()">
         Logout
       </button>
 
@@ -251,11 +221,7 @@
 
     <div class="admin-login">
 
-      <input
-        type="password"
-        placeholder="Enter Admin Password"
-        [(ngModel)]="adminPassword"
-      />
+      <input type="password" placeholder="Enter Admin Password" [(ngModel)]="adminPassword" />
 
       <button (click)="adminLogin()">
         Login Admin
@@ -275,42 +241,25 @@
 <div class="bottom-navbar">
 
   <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
+  <div class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
     <span>🏠</span>
     <p>Home</p>
   </div>
 
   <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/explore" routerLinkActive="active">
     <span>🔍</span>
     <p>Explore</p>
   </div>
 
   <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/my-books" routerLinkActive="active">
     <span>📚</span>
     <p>My Books</p>
   </div>
 
   <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/profile" routerLinkActive="active">
     <span>👤</span>
     <p>Profile</p>
   </div>
