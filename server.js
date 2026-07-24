@@ -76,6 +76,11 @@ app.use('/api/books', uploadBookRoute);
 app.use('/admin/books', uploadBookRoute);
 app.use('/books', dynamicBookRoute);
 
+app.use('/books', bookRoutes);
+
+app.use('/admin', adminRoutes);
+
+
 const SECRET = process.env.JWT_SECRET;
 // const ADMIN_PASSWORD = "admin123";
 // const ADMIN_PASSWORD = "swami-sai-(],1403()/,";

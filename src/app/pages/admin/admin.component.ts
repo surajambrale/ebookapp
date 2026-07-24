@@ -46,6 +46,11 @@ export class AdminComponent {
 
   confirmPassword = '';
 
+  isEditMode = false;
+
+  editingBookId = '';
+
+
 
   subscriptionSetting = {
 
@@ -276,59 +281,191 @@ export class AdminComponent {
 
   // book upload code end
 
-// admin password change code start
+  cancelEdit() {
 
-changePassword() {
+    this.isEditMode = false;
 
-  const headers = new HttpHeaders({
+    this.editingBookId = '';
 
-    Authorization: this.token
+    this.newBook = {
 
-  });
+      title: '',
 
-  this.http.put(
+      author: '',
 
-    `${this.api}/admin/change-password`,
+      category: '',
 
-    {
+      description: '',
 
-      currentPassword: this.currentPassword,
+      price: 0,
 
-      newPassword: this.newPassword,
+      originalPrice: 0
 
-      confirmPassword: this.confirmPassword
+    };
 
-    },
+    this.selectedCover = undefined as any;
 
-    { headers }
+    this.selectedPdf = undefined as any;
 
-  )
+    this.selectedPreviewImages = [];
 
-  .subscribe({
+  }
 
-    next: (res: any) => {
 
-      alert(res.message);
+  //edit book code start 
 
-      this.currentPassword = '';
+  editBook(book: any) {
 
-      this.newPassword = '';
+    this.isEditMode = true;
 
-      this.confirmPassword = '';
+    this.editingBookId = book._id;
 
-    },
+    this.newBook = {
 
-    error: (err) => {
+      title: book.title,
+      author: book.author,
+      category: book.category,
+      description: book.description,
+      price: book.price,
+      originalPrice: book.originalPrice
 
-      alert(err.error.message);
+    };
+
+  }
+
+  //edit book code end 
+
+  //update book code start
+
+  updateBook() {
+
+    const formData = new FormData();
+
+    formData.append('title', this.newBook.title);
+
+    formData.append('author', this.newBook.author);
+
+    formData.append('category', this.newBook.category);
+
+    formData.append('description', this.newBook.description);
+
+    formData.append('price', this.newBook.price.toString());
+
+    formData.append('originalPrice', this.newBook.originalPrice.toString());
+
+    if (this.selectedCover) {
+
+      formData.append('cover', this.selectedCover);
 
     }
 
-  });
+    if (this.selectedPdf) {
 
-}
+      formData.append('pdf', this.selectedPdf);
 
-// admin password change code end
+    }
+
+    this.selectedPreviewImages.forEach(image => {
+
+      formData.append('preview', image);
+
+    });
+
+    const headers = new HttpHeaders({
+
+      Authorization: this.token
+
+    });
+
+    this.http.put(
+
+      `${this.api}/admin/books/update/${this.editingBookId}`,
+
+      formData,
+
+      { headers }
+
+    ).subscribe({
+
+      next: () => {
+
+        alert('Book Updated Successfully ✅');
+
+        this.isEditMode = false;
+
+        this.editingBookId = '';
+
+        this.loadData();
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        alert('Update Failed ❌');
+
+      }
+
+    });
+
+  }
+
+  //update book code end
+
+  // admin password change code start
+
+  changePassword() {
+
+    const headers = new HttpHeaders({
+
+      Authorization: this.token
+
+    });
+
+    this.http.put(
+
+      `${this.api}/admin/change-password`,
+
+      {
+
+        currentPassword: this.currentPassword,
+
+        newPassword: this.newPassword,
+
+        confirmPassword: this.confirmPassword
+
+      },
+
+      { headers }
+
+    )
+
+      .subscribe({
+
+        next: (res: any) => {
+
+          alert(res.message);
+
+          this.currentPassword = '';
+
+          this.newPassword = '';
+
+          this.confirmPassword = '';
+
+        },
+
+        error: (err) => {
+
+          alert(err.error.message);
+
+        }
+
+      });
+
+  }
+
+  // admin password change code end
 
 
   // 🔥 LOAD TESTIMONIALS

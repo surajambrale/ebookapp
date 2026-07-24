@@ -351,9 +351,21 @@
 
       <input type="file" multiple accept="image/*" (change)="onPreviewSelected($event)">
 
-      <button (click)="uploadBook()">
+      <button *ngIf="!isEditMode" (click)="uploadBook()">
 
-        Upload Book
+        📤 Upload Book
+
+      </button>
+
+      <button *ngIf="isEditMode" (click)="updateBook()">
+
+        💾 Update Book
+
+      </button>
+
+      <button *ngIf="isEditMode" (click)="cancelEdit()">
+
+        Cancel
 
       </button>
 

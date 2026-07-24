@@ -1,4 +1,5 @@
 const DynamicBook = require('../models/DynamicBook');
+const { updateBook } = require('../controllers/updateBookController');
 
 exports.uploadBook = async (req, res) => {
 
