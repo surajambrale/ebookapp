@@ -78,7 +78,6 @@ app.use('/books', dynamicBookRoute);
 
 app.use('/books', bookRoutes);
 
-app.use('/admin', adminRoutes);
 
 
 const SECRET = process.env.JWT_SECRET;
