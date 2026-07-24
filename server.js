@@ -14,7 +14,7 @@ const Testimonial = require('./models/Testimonial');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const Subscription = require('./models/Subscription');
 const bookRoutes = require('./routes/bookRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+
 const User = require('./models/User');
 const Purchase = require('./models/Purchase');
 const uploadBookRoute = require('./routes/uploadBookRoute');
