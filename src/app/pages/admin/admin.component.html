@@ -384,8 +384,16 @@
 
         <p>₹{{ book.price }}</p>
 
+        <button style="margin-bottom:10px;background:#2196f3;color:white;" (click)="editBook(book)">
+
+          ✏️ Edit Book
+
+        </button>
+
         <button class="delete-btn" (click)="deleteBook(book._id)">
+
           🗑 Delete Book
+
         </button>
 
       </div>
