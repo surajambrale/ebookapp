@@ -4,6 +4,7 @@ const router = express.Router();
 const upload = require('../config/multer');
 
 const { uploadBook } = require('../controllers/uploadBookController');
+const { updateBook } = require('../controllers/updateBookController');
 
 router.post(
     '/upload',
