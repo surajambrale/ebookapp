@@ -23,11 +23,13 @@ export class BookListComponent {
   subscriptionActive = false;
 
   subscriptionSetting: any = {
-  planName: '',
-  price: 99,
-  duration: 30,
-  active: true
-};
+    planName: '',
+    price: 99,
+    duration: 30,
+    active: true
+  };
+
+  books: any[] = [];
 
   subscribeNow() {
 
@@ -55,60 +57,44 @@ export class BookListComponent {
 
   }
 
-  books = [
-    {
-      id: 7,
-      title: "Admin Testing Book",
-      category: "Muscle Gain",
-      author: "Admin",
-      price: 1,
-      originalPrice: 0,
-      reviews: 0,
-      image: "assets/images/admin-testing-book.jpg",
-      description: "A Complete Guide for Women to Balance Hormones Naturally."
-    }
-
-  ];
-
-  // openBook(id: number) {
-  //   this.router.navigate(['/book', id]);
-  // }
 
   //  dynamic book code start
   loadBooks() {
 
-  const staticBooks = [...this.books];
+    this.http.get<any[]>(`${this.api}/books/all`)
+      .subscribe({
 
-  this.http.get<any[]>(`${this.api}/books/all`)
-    .subscribe({
+        next: (res) => {
 
-      next: (res) => {
+          this.books = res;
 
-        this.books = [
-          ...staticBooks,
-          ...res
-        ];
+          this.filteredBooks = res;
 
-        this.filteredBooks = this.books;
+          this.dynamicCategories = [
 
-        // Dynamic Categories
-        this.dynamicCategories = [
-          ...new Set(
-            this.books
-              .map(book => book.category)
-              .filter(category => category)
-          )
-        ];
+            ...new Set(
 
-      },
+              res
 
-      error: (err) => {
-        console.log(err);
-      }
+                .map(book => book.category)
 
-    });
+                .filter(category => category)
 
-}
+            )
+
+          ];
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+        }
+
+      });
+
+  }
 
 
 
@@ -141,28 +127,28 @@ export class BookListComponent {
 
   loadSubscriptionSetting() {
 
-  this.http.get<any>(`${this.api}/subscription-setting`)
-    .subscribe({
+    this.http.get<any>(`${this.api}/subscription-setting`)
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        if (res) {
+          if (res) {
 
-          this.subscriptionSetting = res;
+            this.subscriptionSetting = res;
+
+          }
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
 
         }
 
-      },
+      });
 
-      error: (err) => {
-
-        console.log(err);
-
-      }
-
-    });
-
-}
+  }
 
 
   // 🔥 OPEN BOOK

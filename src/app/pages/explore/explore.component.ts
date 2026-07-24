@@ -25,9 +25,9 @@ export class ExploreComponent implements OnInit {
 
   dynamicBooks: any[] = [];
 
-  ngOnInit() {
+  books: any[] = [];
 
-    this.filteredBooks = [...this.books];
+  ngOnInit() {
 
     this.loadDynamicBooks();
 
@@ -40,9 +40,7 @@ export class ExploreComponent implements OnInit {
 
         next: (res) => {
 
-          this.dynamicBooks = res;
-
-          const formattedBooks = res.map(book => ({
+          this.books = res.map(book => ({
 
             id: book._id,
 
@@ -56,17 +54,11 @@ export class ExploreComponent implements OnInit {
 
             originalPrice: book.originalPrice,
 
-            dynamic: true
+            previewImages: book.previewImages,
+
+            description: book.description
 
           }));
-
-          this.books = [
-
-            ...this.books,
-
-            ...formattedBooks
-
-          ];
 
           this.filteredBooks = [...this.books];
 
@@ -82,41 +74,8 @@ export class ExploreComponent implements OnInit {
 
   }
 
-  books = [
 
-    {
-      id: 1,
-      title: 'Complete Fat Loss Guide',
-      image: 'assets/images/fatloss-book.jpeg'
-    },
-
-    {
-      id: 2,
-      title: '1500-Calorie Diet Plan',
-      image: 'assets/images/1500-cal-diet.jpg'
-    },
-
-    {
-      id: 3,
-      title: 'Habits That Change Your Life',
-      image: 'assets/images/habits.jpg'
-    },
-
-    {
-      id: 4,
-      title: 'PCOD / PCOS Guide',
-      image: 'assets/images/pcod.jpg'
-    },
-
-    {
-      id: 5,
-      title: 'Diabetes Control',
-      image: 'assets/images/diabetes-control.jpg'
-    }
-
-  ];
-
-  filteredBooks = [...this.books];
+  filteredBooks: any[] = [];
 
   searchBooks() {
 

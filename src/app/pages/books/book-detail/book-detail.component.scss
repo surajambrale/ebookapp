@@ -1,5 +1,6 @@
 .book-detail {
   padding: 20px;
+   padding-bottom: 100px;
 
   .top-section {
     display: flex;
@@ -276,7 +277,14 @@
 }
 
 .preview-img {
-  touch-action: pan-y; // 🔥 smooth swipe
+  width: 240px;
+  height: auto;
+  border-radius: 15px;
+  border: 3px solid #f1f1f1;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+
+  touch-action: auto;   // 👈 pan-y ki jagah auto
   user-select: none;
 }
 

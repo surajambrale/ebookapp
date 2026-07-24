@@ -26,33 +26,10 @@ export class BookDetailComponent {
 
   dynamicBooks: any[] = [];
 
+  books: any[] = [];
 
-  books = [
-    // {
-    //   id: 1,
-    //   title: "Complete Fat Loss Guide",
-    //   author: "Suraj Ambrale - Nutritionist | Fitness Trainer",
-    //   price: 49,
-    //   reviews: 24,
-    //   image: "assets/images/fatloss-book.jpeg",
-    //   previewImages: [
-    //     "assets/preview-img/fatloss1.jpeg",
-    //     "assets/preview-img/fatloss2.jpeg",
-    //     "assets/preview-img/fatloss3.jpeg"
-    //   ],
-    //   description: "Welcome to the Complete Fitness & Nutrition program. This program is specially designed for beginners and normal individuals who want to improve overall health, loose excess body fat, increase strength, and build a sustainable fitness lifestyle. The purpose of this kit is to simplify fitness and nutrition. No extreme workouts, no crash diets, and no complicated rules. This program focuses on consistency, balance, and long-term results."
-    // },
- 
-    {
-      id: 7,
-      title: "Admin Testing",
-      author: "Admin Testing",
-      price: 1,
-      reviews: 19,
-      image: "assets/images/admin-testing-book.jpg",
-      description: "Admin Testing Book, don't buy this book."
-    }
-  ];
+
+
 
   loadDynamicBooks() {
 
@@ -85,15 +62,6 @@ export class BookDetailComponent {
     this.book = this.dynamicBooks.find(
       (b: any) => b._id == id
     );
-
-    // Otherwise hardcoded books
-    if (!this.book) {
-
-      this.book = this.books.find(
-        b => b.id == id
-      );
-
-    }
 
     if (!this.book) {
 
@@ -140,9 +108,9 @@ export class BookDetailComponent {
 
   ngOnInit() {
 
-  this.loadDynamicBooks();
+    this.loadDynamicBooks();
 
-}
+  }
 
   //slider function start
 
