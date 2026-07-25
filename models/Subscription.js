@@ -31,7 +31,27 @@ const subscriptionSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "active"
-    }
+    },
+
+    sevenDayReminder: {
+        type: Boolean,
+        default: false
+    },
+
+    threeDayReminder: {
+        type: Boolean,
+        default: false
+    },
+
+    oneDayReminder: {
+        type: Boolean,
+        default: false
+    },
+
+    expiredReminder: {
+        type: Boolean,
+        default: false
+    },
 
 }, {
 

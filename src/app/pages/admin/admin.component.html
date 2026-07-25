@@ -373,7 +373,14 @@
 
       <h2>📚 Uploaded Books</h2>
 
-      <div class="uploaded-book-card" *ngFor="let book of dynamicBooks">
+      <input type="text" placeholder="🔍 Search Book..." [(ngModel)]="searchBook" (input)="searchBooks()" style="
+width:100%;
+padding:12px;
+margin-bottom:20px;
+border-radius:8px;
+border:1px solid #ccc;">
+
+      <div class="uploaded-book-card" *ngFor="let book of paginatedBooks">
 
         <img [src]="book.coverImage || book.coverUrl" width="100" height="140"
           style="object-fit:cover;border-radius:8px;">
@@ -393,6 +400,37 @@
         <button class="delete-btn" (click)="deleteBook(book._id)">
 
           🗑 Delete Book
+
+        </button>
+
+      </div>
+
+      <div style="
+display:flex;
+justify-content:center;
+align-items:center;
+gap:15px;
+margin-top:25px;">
+
+        <button (click)="previousPage()" [disabled]="currentPage==1">
+
+          ⬅ Previous
+
+        </button>
+
+        <span>
+
+          Page {{currentPage}}
+
+          of
+
+          {{totalPages}}
+
+        </span>
+
+        <button (click)="nextPage()" [disabled]="currentPage==totalPages">
+
+          Next ➡
 
         </button>
 

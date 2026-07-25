@@ -50,6 +50,12 @@ export class AdminComponent {
 
   editingBookId = '';
 
+  searchBook = '';
+
+  currentPage = 1;
+
+  itemsPerPage = 10;
+
 
 
   subscriptionSetting = {
@@ -335,6 +341,38 @@ export class AdminComponent {
 
   //edit book code end 
 
+  searchBooks() {
+
+    if (!this.searchBook.trim()) {
+
+      this.loadDynamicBooks();
+
+      return;
+
+    }
+
+    this.http.get<any[]>(
+
+      `${this.api}/admin/books/search?query=${this.searchBook}`
+
+    ).subscribe({
+
+      next: (res) => {
+
+        this.dynamicBooks = res;
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+  }
+
   //update book code start
 
   updateBook() {
@@ -412,6 +450,52 @@ export class AdminComponent {
   }
 
   //update book code end
+
+  //pagination code start
+
+  get paginatedBooks() {
+
+  const start = (this.currentPage - 1) * this.itemsPerPage;
+
+  const end = start + this.itemsPerPage;
+
+  return this.dynamicBooks.slice(start, end);
+
+}
+
+get totalPages() {
+
+  return Math.ceil(
+
+    this.dynamicBooks.length /
+
+    this.itemsPerPage
+
+  );
+
+}
+
+nextPage() {
+
+  if (this.currentPage < this.totalPages) {
+
+    this.currentPage++;
+
+  }
+
+}
+
+previousPage() {
+
+  if (this.currentPage > 1) {
+
+    this.currentPage--;
+
+  }
+
+}
+
+//pagination code end
 
   // admin password change code start
 

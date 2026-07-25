@@ -14,72 +14,163 @@ export class LoginComponent {
 
   name = '';
   phone = '';
+
+  // NEW
+  email = '';
+  password = '';
+  confirmPassword = '';
+
   isRegisterMode = true;
   isLoading = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router
+  ) { }
 
   toggleMode() {
     this.isRegisterMode = !this.isRegisterMode;
   }
 
-  // 🔥 CLEAN PHONE
   cleanPhone(phone: string) {
     return phone.replace(/\D/g, '');
   }
 
-  // 🔥 VALIDATE PHONE
   isValidPhone(phone: string) {
     return /^[0-9]{10}$/.test(phone);
   }
 
   submit() {
 
-    const cleanPhone = this.cleanPhone(this.phone);
-
-    // 🔴 VALIDATION
-    if (!this.isValidPhone(cleanPhone)) {
-      alert('Enter valid 10 digit phone number ❌');
-      return;
-    }
-
-    if (this.isRegisterMode && !this.name.trim()) {
-      alert('Name required ❌');
-      return;
-    }
-
-    this.isLoading = true;
-
+    // REGISTER
     if (this.isRegisterMode) {
 
-      this.auth.register({ name: this.name.trim(), phone: cleanPhone })
+      const cleanPhone = this.cleanPhone(this.phone);
+
+      if (!this.name.trim()) {
+        alert('Name Required');
+        return;
+      }
+
+      if (!this.isValidPhone(cleanPhone)) {
+        alert('Invalid Phone Number');
+        return;
+      }
+
+      if (!this.email.trim()) {
+        alert('Email Required');
+        return;
+      }
+
+      if (!this.password.trim()) {
+        alert('Password Required');
+        return;
+      }
+
+      if (this.password !== this.confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      this.isLoading = true;
+
+      this.auth.register({
+
+        name: this.name.trim(),
+
+        phone: cleanPhone,
+
+        email: this.email.trim(),
+
+        password: this.password
+
+      })
+
         .subscribe({
+
           next: () => {
+
             this.isLoading = false;
-            alert('Registered successfully ✅ Please login');
+
+            alert('Registered Successfully ✅');
+
             this.isRegisterMode = false;
+
+            // Clear fields
+            this.name = '';
+            this.phone = '';
+            this.password = '';
+            this.confirmPassword = '';
+
           },
-          error: () => {
+
+          error: (err) => {
+
             this.isLoading = false;
-            alert('User already exists ❌');
+
+            alert(err.error.message);
+
           }
+
         });
 
-    } else {
-
-      this.auth.login({ phone: cleanPhone })
-        .subscribe({
-          next: (res: any) => {
-            this.isLoading = false;
-            this.auth.saveToken(res.token);
-            this.auth.saveUser(res.user);
-            this.router.navigate(['/']);
-          },
-          error: () => {
-            this.isLoading = false;
-            alert('User not found ❌');
-          }
-        });
     }
+
+    // LOGIN
+    else {
+
+      if (!this.email.trim()) {
+
+        alert('Email Required');
+
+        return;
+
+      }
+
+      if (!this.password.trim()) {
+
+        alert('Password Required');
+
+        return;
+
+      }
+
+      this.isLoading = true;
+
+      this.auth.login({
+
+        email: this.email.trim(),
+
+        password: this.password
+
+      })
+
+        .subscribe({
+
+          next: (res: any) => {
+
+            this.isLoading = false;
+
+            this.auth.saveToken(res.token);
+
+            this.auth.saveUser(res.user);
+
+            this.router.navigate(['/']);
+
+          },
+
+          error: (err) => {
+
+            this.isLoading = false;
+
+            alert(err.error.message);
+
+          }
+
+        });
+
+    }
+
   }
+
 }

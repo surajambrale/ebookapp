@@ -149,4 +149,44 @@ router.delete('/delete/:id', async (req, res) => {
 
 });
 
+
+router.get('/search', async (req, res) => {
+
+    try {
+
+        const query = req.query.query || '';
+
+        const books = await DynamicBook.find({
+
+            $or: [
+
+                { title: { $regex: query, $options: 'i' } },
+
+                { author: { $regex: query, $options: 'i' } },
+
+                { category: { $regex: query, $options: 'i' } }
+
+            ]
+
+        }).sort({ createdAt: -1 });
+
+        res.json(books);
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+});
+
+
 module.exports = router;

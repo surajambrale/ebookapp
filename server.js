@@ -24,6 +24,10 @@ const SubscriptionSetting = require('./models/SubscriptionSetting');
 const AppSetting = require("./models/AppSetting");
 const upload = require('./config/multer');
 
+const cron = require('node-cron');
+const bcrypt = require('bcrypt');
+
+
 //dns code start
 
 const dns = require('dns');
@@ -434,9 +438,9 @@ app.put("/app-setting", async (req, res) => {
     setting.version = req.body.version;
 
     // 👇 Ye line add karo
-if (!setting.password) {
-  setting.password = "123456";
-}
+    if (!setting.password) {
+      setting.password = "123456";
+    }
 
     await setting.save();
 
@@ -793,55 +797,170 @@ app.delete('/admin/purchase/:id', verifyAdmin, async (req, res) => {
 
 // REGISTER
 app.post('/register', async (req, res) => {
+
   try {
-    const { name, phone } = req.body;
 
-    // 🔴 VALIDATE PHONE
+    const { name, phone, email, password } = req.body;
+
+    if (!name || !phone || !email || !password) {
+
+      return res.status(400).json({
+        message: "All fields required"
+      });
+
+    }
+
     if (!/^[0-9]{10}$/.test(phone)) {
-      return res.status(400).json({ message: 'Invalid phone number' });
+
+      return res.status(400).json({
+        message: "Invalid phone number"
+      });
+
     }
 
-    if (!name || name.trim() === '') {
-      return res.status(400).json({ message: 'Name required' });
+    const phoneExist = await User.findOne({ phone });
+
+    if (phoneExist) {
+
+      return res.status(400).json({
+        message: "Phone already registered"
+      });
+
     }
 
-    const existing = await User.findOne({ phone });
+    const emailExist = await User.findOne({
 
-    if (existing) {
-      return res.status(400).json({ message: 'User already exists' });
+      email: email.toLowerCase()
+
+    });
+
+    if (emailExist) {
+
+      return res.status(400).json({
+        message: "Email already registered"
+      });
+
     }
 
-    await User.create({ name, phone });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    res.json({ message: 'Registered successfully' });
+    await User.create({
 
-  } catch {
-    res.status(500).json({ message: 'Server error' });
+      name,
+
+      phone,
+
+      email: email.toLowerCase(),
+
+      password: hashedPassword
+
+    });
+
+    res.json({
+
+      success: true,
+
+      message: "Registered Successfully"
+
+    });
+
   }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message: "Server Error"
+
+    });
+
+  }
+
 });
 
 // LOGIN
 app.post('/login', async (req, res) => {
-  try {
-    const { phone } = req.body;
 
-    if (!/^[0-9]{10}$/.test(phone)) {
-      return res.status(400).json({ message: 'Invalid phone' });
+  try {
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+
+      return res.status(400).json({
+
+        message: "Email & Password Required"
+
+      });
+
     }
 
-    const user = await User.findOne({ phone });
+    const user = await User.findOne({
+
+      email: email.toLowerCase()
+
+    });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+
+      return res.status(404).json({
+
+        message: "User Not Found"
+
+      });
+
     }
 
-    const token = jwt.sign({ id: user._id }, SECRET);
+    const match = await bcrypt.compare(
 
-    res.json({ token, user });
+      password,
 
-  } catch {
-    res.status(500).json({ message: 'Server error' });
+      user.password
+
+    );
+
+    if (!match) {
+
+      return res.status(400).json({
+
+        message: "Invalid Password"
+
+      });
+
+    }
+
+    const token = jwt.sign(
+
+      { id: user._id },
+
+      SECRET
+
+    );
+
+    res.json({
+
+      token,
+
+      user
+
+    });
+
   }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message: "Server Error"
+
+    });
+
+  }
+
 });
 
 const razorpay = new Razorpay({
@@ -2227,6 +2346,212 @@ app.delete('/admin/testimonial/:id', verifyAdmin, async (req, res) => {
 });
 
 // testimonial code end
+
+//email sender code start
+
+cron.schedule('0 9 * * *', async () => {
+
+  console.log("Checking Subscription Reminder...");
+
+  const subscriptions = await Subscription.find({
+
+    status: "active"
+
+  });
+
+  const today = new Date();
+
+  for (const sub of subscriptions) {
+
+    const user = await User.findById(sub.userId);
+
+    if (!user) continue;
+
+    const diffTime =
+
+      sub.expiryDate.getTime() -
+
+      today.getTime();
+
+    const daysLeft =
+
+      Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 7 Days
+
+    if (daysLeft == 7 && !sub.sevenDayReminder) {
+
+      await sendReminderMail(
+
+        user.email,
+
+        user.name,
+
+        7
+
+      );
+
+      sub.sevenDayReminder = true;
+
+      await sub.save();
+
+    }
+
+    // 3 Days
+
+    if (daysLeft == 3 && !sub.threeDayReminder) {
+
+      await sendReminderMail(
+
+        user.email,
+
+        user.name,
+
+        3
+
+      );
+
+      sub.threeDayReminder = true;
+
+      await sub.save();
+
+    }
+
+    // 1 Day
+
+    if (daysLeft == 1 && !sub.oneDayReminder) {
+
+      await sendReminderMail(
+
+        user.email,
+
+        user.name,
+
+        1
+
+      );
+
+      sub.oneDayReminder = true;
+
+      await sub.save();
+
+    }
+
+    // Expired
+
+    if (daysLeft <= 0 && !sub.expiredReminder) {
+
+      await sendExpiredMail(
+
+        user.email,
+
+        user.name
+
+      );
+
+      sub.status = "expired";
+
+      sub.expiredReminder = true;
+
+      await sub.save();
+
+    }
+
+  }
+
+});
+
+async function sendReminderMail(
+
+  email,
+
+  name,
+
+  days
+
+) {
+
+  await transporter.sendMail({
+
+    from: process.env.EMAIL_USER,
+
+    to: email,
+
+    subject:
+
+      "SS Builds Subscription Reminder",
+
+    html: `
+
+<h2>Hello ${name}</h2>
+
+<p>
+
+Your Premium Subscription
+
+will expire in
+
+<b>${days} day(s)</b>
+
+</p>
+
+<p>
+
+Renew now to continue
+
+reading Premium Books.
+
+</p>
+
+`
+
+  });
+
+}
+
+async function sendExpiredMail(
+
+  email,
+
+  name
+
+) {
+
+  await transporter.sendMail({
+
+    from: process.env.EMAIL_USER,
+
+    to: email,
+
+    subject:
+
+      "Subscription Expired",
+
+    html: `
+
+<h2>Hello ${name}</h2>
+
+<p>
+
+Your Premium Subscription
+
+has expired.
+
+</p>
+
+<p>
+
+Renew today.
+
+</p>
+
+`
+
+  });
+
+}
+
+//email sender code end
 
 // ================= START =================
 

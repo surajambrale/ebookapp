@@ -3,21 +3,63 @@
   <h2 *ngIf="isRegisterMode">Register</h2>
   <h2 *ngIf="!isRegisterMode">Login</h2>
 
-  <input type="text" [(ngModel)]="name" placeholder="Name" *ngIf="isRegisterMode">
+  <!-- REGISTER -->
+  <input
+    *ngIf="isRegisterMode"
+    type="text"
+    [(ngModel)]="name"
+    placeholder="Full Name">
 
-  <input type="text" [(ngModel)]="phone" placeholder="Phone Number" maxlength="10">
+  <input
+    *ngIf="isRegisterMode"
+    type="text"
+    [(ngModel)]="phone"
+    placeholder="Phone Number"
+    maxlength="10">
 
-  <button (click)="submit()" [disabled]="isLoading">
+  <input
+    type="email"
+    [(ngModel)]="email"
+    placeholder="Email Address">
+
+  <input
+    type="password"
+    [(ngModel)]="password"
+    placeholder="Password">
+
+  <input
+    *ngIf="isRegisterMode"
+    type="password"
+    [(ngModel)]="confirmPassword"
+    placeholder="Confirm Password">
+
+  <button
+    (click)="submit()"
+    [disabled]="isLoading">
+
     <span *ngIf="!isLoading">
       {{ isRegisterMode ? 'Register' : 'Login' }}
     </span>
 
-    <!-- 🔥 LOADER -->
-    <span *ngIf="isLoading" class="btn-loader"></span>
+    <span
+      *ngIf="isLoading"
+      class="btn-loader">
+    </span>
+
   </button>
 
   <p (click)="toggleMode()">
-    {{ isRegisterMode ? 'Already have account? Login' : 'New user? Register' }}
+
+    {{ isRegisterMode ?
+
+    'Already have an account? Login'
+
+    :
+
+    'New user? Register'
+
+    }}
+
   </p>
 
 </div>
