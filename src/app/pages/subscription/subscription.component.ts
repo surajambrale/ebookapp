@@ -103,7 +103,6 @@ export class SubscriptionComponent implements OnInit {
 
     const options={
 
-      // key:"rzp_live_SWeBwjvwGx2bSP",
 
       key : environment.razorpayKey,
 

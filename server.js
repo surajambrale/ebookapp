@@ -48,16 +48,6 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 //gmail code end
 
-// 🔐 CORS (IMPORTANT 🔥)
-// app.use(cors({
-//   origin: [
-//     'http://localhost:4200',
-//     'https://ebookapp-gold.vercel.app' ,
-//      'https://ebookapp.onrender.com'
-//   ],
-//   credentials: true
-// }));
-
 
 
 app.use(cors({
@@ -854,22 +844,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
-// ================= PAYMENT =================
-
-//test key
-// const razorpay = new Razorpay({
-//   key_id: "rzp_test_STqAGoxV34Jsne",
-//   key_secret: "bfoAQJK911f9COnmbCndvYk5"
-// });
-//test key
-
-//live key
-// const razorpay = new Razorpay({
-//   key_id: "rzp_live_SWeBwjvwGx2bSP",
-//   key_secret: "B1sb1uMvujMNwnGJ5aSlHx5Z"
-// });
-
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET
@@ -910,7 +884,6 @@ app.post('/verify-payment', async (req, res) => {
 
 
     const expectedSignature = crypto
-      // .createHmac("sha256", "B1sb1uMvujMNwnGJ5aSlHx5Z")  //testing key. "secret key".
       .createHmac("sha256", process.env.RAZORPAY_SECRET)  //live key. "secret key" add karna hai ider.
       .update(body.toString())
       .digest("hex");

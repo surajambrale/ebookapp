@@ -193,7 +193,7 @@ export class BookDetailComponent {
 
         const options: any = {
           // key: "rzp_test_STqAGoxV34Jsne", // 🔴 testing key
-          key: "rzp_live_SWeBwjvwGx2bSP",  //live keyy
+          key: environment.razorpayKey,  //live keyy
           amount: order.amount,
           currency: "INR",
           name: "SS Builds",
