@@ -111,6 +111,10 @@
           App Settings
         </option>
 
+        <option value="notificationSetting">
+          Notification Settings
+        </option>
+
         <option value="changePassword">
           Change Admin Password
         </option>
@@ -564,6 +568,107 @@ margin-top:25px;">
     </div>
 
     <!-- subscription setting code end -->
+
+    <!-- ========================= -->
+    <!-- Notification Settings -->
+    <!-- ========================= -->
+
+    <div *ngIf="selectedView==='notificationSetting'" class="card">
+
+      <h2>📧 Notification Settings</h2>
+
+      <label>
+        <input type="checkbox" [(ngModel)]="notificationSettings.welcomeEmail">
+
+        Welcome Email
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="notificationSettings.purchaseEmail">
+
+        Purchase Success Email
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="notificationSettings.subscriptionReminder">
+
+        Subscription Reminder
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="notificationSettings.expiryReminder">
+
+        Expiry Reminder
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="notificationSettings.dailyMotivation">
+
+        Daily Motivation Email
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="notificationSettings.weeklyNewsletter">
+
+        Weekly Newsletter
+
+      </label>
+
+      <br><br>
+
+      <label>
+
+        Reminder Time
+
+      </label>
+
+      <input type="time" [(ngModel)]="notificationSettings.reminderTime">
+
+      <br><br>
+
+      <label>
+
+        Test Email
+
+      </label>
+
+      <input type="email" placeholder="example@gmail.com" [(ngModel)]="testEmail">
+
+      <br><br>
+
+      <button style="background:#ff9800;color:white;margin-right:10px;" (click)="sendTestEmail()">
+
+        📧 Send Test Email
+
+      </button>
+
+      <button style="background:#4caf50;color:white;" (click)="saveNotificationSettings()">
+
+        💾 Save Settings
+
+      </button>
+
+    </div>
 
 
 

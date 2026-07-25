@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const notificationRoutes = require('./routes/notificationRoutes');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -10,7 +10,7 @@ const path = require('path');
 const axios = require('axios');
 
 const Testimonial = require('./models/Testimonial');
-
+const NotificationSetting = require('./models/NotificationSetting');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const Subscription = require('./models/Subscription');
 const bookRoutes = require('./routes/bookRoutes');
@@ -69,7 +69,7 @@ app.use('/subscription', subscriptionRoutes);
 app.use('/api/books', uploadBookRoute);
 app.use('/admin/books', uploadBookRoute);
 app.use('/books', dynamicBookRoute);
-
+app.use('/notification', notificationRoutes);
 app.use('/books', bookRoutes);
 
 
@@ -588,28 +588,6 @@ app.put('/subscription-setting', async (req, res) => {
 
 //subcription setting code end
 
-// 📦 SCHEMA
-// const userSchema = new mongoose.Schema({
-//   name: String,
-//   phone: { type: String, unique: true }
-// });
-
-// const purchaseSchema = new mongoose.Schema({
-//   userId: String,
-//   bookId: String,
-//   paymentId: String,
-//   orderId: String,
-//   amount: Number
-
-//   },{
-
-//   timestamps: true
-// });
-
-// const User = mongoose.model('User', userSchema);
-// const Purchase = mongoose.model('Purchase', purchaseSchema);
-
-
 //book reading code start
 
 const ReadingProgressSchema = new mongoose.Schema({
@@ -856,13 +834,53 @@ app.post('/register', async (req, res) => {
 
     });
 
-    res.json({
+    const setting = await NotificationSetting.findOne();
 
-      success: true,
+if (setting?.welcomeEmail) {
 
-      message: "Registered Successfully"
+    await transporter.sendMail({
+
+        from: process.env.EMAIL_USER,
+
+        to: email,
+
+        subject: "Welcome to SS Builds 📚",
+
+        html: `
+
+        <h2>Hello ${name} 👋</h2>
+
+        <p>
+
+        Welcome to SS Builds Fitness & Nutrition.
+
+        </p>
+
+        <p>
+
+        Your account has been created successfully.
+
+        </p>
+
+        <br>
+
+        <b>
+
+        Happy Learning 💪
+
+        </b>
+
+        `
 
     });
+
+}
+
+res.json({
+
+    message: "Registered Successfully"
+
+});
 
   }
 

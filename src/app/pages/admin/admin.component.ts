@@ -92,6 +92,26 @@ export class AdminComponent {
 
   };
 
+  notificationSettings = {
+
+    welcomeEmail: true,
+
+    purchaseEmail: true,
+
+    subscriptionReminder: true,
+
+    expiryReminder: true,
+
+    dailyMotivation: false,
+
+    weeklyNewsletter: false,
+
+    reminderTime: "09:00"
+
+  };
+
+  testEmail = "";
+
   // book upload code start
 
   // =============================
@@ -341,6 +361,103 @@ export class AdminComponent {
 
   //edit book code end 
 
+  //email sender code start
+
+  loadNotificationSettings() {
+
+    this.http.get<any>(`${this.api}/notification/settings`)
+      .subscribe({
+
+        next: (res) => {
+
+          this.notificationSettings = res;
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+        }
+
+      });
+
+  }
+
+  saveNotificationSettings() {
+
+    this.http.post(
+
+      `${this.api}/notification/settings`,
+
+      this.notificationSettings
+
+    )
+
+      .subscribe({
+
+        next: () => {
+
+          alert("Notification Settings Saved ✅");
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          alert("Save Failed ❌");
+
+        }
+
+      });
+
+  }
+
+  sendTestEmail() {
+
+    if (!this.testEmail) {
+
+      alert("Enter Email");
+
+      return;
+
+    }
+
+    this.http.post(
+
+      `${this.api}/notification/test-email`,
+
+      {
+
+        email: this.testEmail
+
+      }
+
+    )
+
+      .subscribe({
+
+        next: () => {
+
+          alert("Test Email Sent ✅");
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          alert("Email Failed ❌");
+
+        }
+
+      });
+
+  }
+
+  //email sender code end
+
   searchBooks() {
 
     if (!this.searchBook.trim()) {
@@ -455,47 +572,47 @@ export class AdminComponent {
 
   get paginatedBooks() {
 
-  const start = (this.currentPage - 1) * this.itemsPerPage;
+    const start = (this.currentPage - 1) * this.itemsPerPage;
 
-  const end = start + this.itemsPerPage;
+    const end = start + this.itemsPerPage;
 
-  return this.dynamicBooks.slice(start, end);
-
-}
-
-get totalPages() {
-
-  return Math.ceil(
-
-    this.dynamicBooks.length /
-
-    this.itemsPerPage
-
-  );
-
-}
-
-nextPage() {
-
-  if (this.currentPage < this.totalPages) {
-
-    this.currentPage++;
+    return this.dynamicBooks.slice(start, end);
 
   }
 
-}
+  get totalPages() {
 
-previousPage() {
+    return Math.ceil(
 
-  if (this.currentPage > 1) {
+      this.dynamicBooks.length /
 
-    this.currentPage--;
+      this.itemsPerPage
+
+    );
 
   }
 
-}
+  nextPage() {
 
-//pagination code end
+    if (this.currentPage < this.totalPages) {
+
+      this.currentPage++;
+
+    }
+
+  }
+
+  previousPage() {
+
+    if (this.currentPage > 1) {
+
+      this.currentPage--;
+
+    }
+
+  }
+
+  //pagination code end
 
   // admin password change code start
 
@@ -756,6 +873,8 @@ previousPage() {
                 this.loadSubscriptionSetting();
 
                 this.loadAppSetting();
+
+                this.loadNotificationSettings();
 
               });
 
