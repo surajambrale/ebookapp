@@ -860,45 +860,40 @@ app.post('/register', async (req, res) => {
 
     const setting = await NotificationSetting.findOne();
 
-    if (setting?.welcomeEmail) {
+   if (setting?.welcomeEmail) {
 
-      await transporter.sendMail({
+  try {
 
-        from: process.env.EMAIL_USER,
+    await transporter.sendMail({
 
-        to: email,
+      from: process.env.EMAIL_USER,
 
-        subject: "Welcome to SS Builds 📚",
+      to: email,
 
-        html: `
+      subject: "Welcome to SS Builds 📚",
 
-        <h2>Hello ${name} 👋</h2>
+      html: `
+      <h2>Hello ${name} 👋</h2>
 
-        <p>
+      <p>Welcome to SS Builds Fitness & Nutrition.</p>
 
-        Welcome to SS Builds Fitness & Nutrition.
+      <p>Your account has been created successfully.</p>
 
-        </p>
+      <br>
 
-        <p>
+      <b>Happy Learning 💪</b>
+      `
 
-        Your account has been created successfully.
+    });
 
-        </p>
+  } catch (mailError) {
 
-        <br>
+    console.log("Welcome Email Failed:", mailError.message);
 
-        <b>
+    // ❌ Registration ko fail mat karo
+  }
 
-        Happy Learning 💪
-
-        </b>
-
-        `
-
-      });
-
-    }
+}
 
     res.json({
 
