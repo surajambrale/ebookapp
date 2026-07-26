@@ -823,33 +823,33 @@ app.post('/register', async (req, res) => {
 
     console.log("STEP 4 USER SAVED");
 
-    const setting = await NotificationSetting.findOne();
+    // const setting = await NotificationSetting.findOne();
 
-    console.log("STEP 5");
+    // console.log("STEP 5");
 
-    if (setting?.welcomeEmail) {
+    // if (setting?.welcomeEmail) {
 
-      console.log("STEP 6 SENDING EMAIL");
+    //   console.log("STEP 6 SENDING EMAIL");
 
-      try {
+    //   try {
 
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: email,
-          subject: "Welcome",
-          html: "Welcome"
+    //     await transporter.sendMail({
+    //       from: process.env.EMAIL_USER,
+    //       to: email,
+    //       subject: "Welcome",
+    //       html: "Welcome"
 
-        });
+    //     });
 
-        console.log("STEP 7 EMAIL SENT");
+    //     console.log("STEP 7 EMAIL SENT");
 
-      } catch (e) {
+    //   } catch (e) {
 
-        console.log("EMAIL FAILED", e.message);
+    //     console.log("EMAIL FAILED", e.message);
 
-      }
+    //   }
 
-    }
+    // }
 
     console.log("STEP 8 RESPONSE");
 
