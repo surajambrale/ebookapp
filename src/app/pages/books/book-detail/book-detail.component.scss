@@ -42,24 +42,59 @@
           transition: .3s;
         }
 
-        .buy {
-          width: 100%;
-          padding: 15px;
-          border-radius: 12px;
-          font-size: 18px;
-          font-weight: 700;
+        .buy{
 
-          background: linear-gradient(135deg, #667eea, #764ba2);
+  width:100%;
 
-          color: white;
+  padding:16px;
 
-          box-shadow: 0 10px 20px rgba(102, 126, 234, .35);
+  border:none;
 
-          &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 25px rgba(102, 126, 234, .45);
-          }
-        }
+  border-radius:14px;
+
+  background:linear-gradient(135deg,#5B5FF7,#7C3AED);
+
+  color:#fff;
+
+  font-size:18px;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  position:relative;
+
+  overflow:hidden;
+
+  box-shadow:
+  0 12px 28px rgba(91,95,247,.35);
+
+  transition:.35s ease;
+
+}
+
+.buy:hover{
+
+  transform:translateY(-3px);
+
+  box-shadow:
+  0 18px 35px rgba(91,95,247,.45);
+
+}
+
+.buy:active{
+
+  transform:scale(.98);
+
+}
+
+.buy:disabled{
+
+  opacity:.7;
+
+  cursor:not-allowed;
+
+}
       }
     }
   }
