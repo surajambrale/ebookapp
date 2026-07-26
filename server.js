@@ -87,11 +87,22 @@ const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 // notification bot code end
 
 // gmail code start
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: process.env.EMAIL_USER, // tera email
+//     pass: process.env.EMAIL_PASS // 🔥 app password
+//   }
+// });
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  requireTLS: true,
   auth: {
-    user: process.env.EMAIL_USER, // tera email
-    pass: process.env.EMAIL_PASS // 🔥 app password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 //gmail code end
