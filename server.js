@@ -802,115 +802,68 @@ app.post('/register', async (req, res) => {
 
   try {
 
+    console.log("STEP 1");
+
     const { name, phone, email, password } = req.body;
 
-    if (!name || !phone || !email || !password) {
+    console.log("STEP 2");
 
-      return res.status(400).json({
-        message: "All fields required"
-      });
-
-    }
-
-    if (!/^[0-9]{10}$/.test(phone)) {
-
-      return res.status(400).json({
-        message: "Invalid phone number"
-      });
-
-    }
-
-    const phoneExist = await User.findOne({ phone });
-
-    if (phoneExist) {
-
-      return res.status(400).json({
-        message: "Phone already registered"
-      });
-
-    }
-
-    const emailExist = await User.findOne({
-
-      email: email.toLowerCase()
-
-    });
-
-    if (emailExist) {
-
-      return res.status(400).json({
-        message: "Email already registered"
-      });
-
-    }
+    // ... validations
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    console.log("STEP 3");
+
     await User.create({
-
       name,
-
       phone,
-
       email: email.toLowerCase(),
-
       password: hashedPassword
-
     });
+
+    console.log("STEP 4 USER SAVED");
 
     const setting = await NotificationSetting.findOne();
 
-   if (setting?.welcomeEmail) {
+    console.log("STEP 5");
 
-  try {
+    if (setting?.welcomeEmail) {
 
-    await transporter.sendMail({
+      console.log("STEP 6 SENDING EMAIL");
 
-      from: process.env.EMAIL_USER,
+      try {
 
-      to: email,
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: "Welcome",
+          html: "Welcome"
 
-      subject: "Welcome to SS Builds 📚",
+        });
 
-      html: `
-      <h2>Hello ${name} 👋</h2>
+        console.log("STEP 7 EMAIL SENT");
 
-      <p>Welcome to SS Builds Fitness & Nutrition.</p>
+      } catch (e) {
 
-      <p>Your account has been created successfully.</p>
+        console.log("EMAIL FAILED", e.message);
 
-      <br>
+      }
 
-      <b>Happy Learning 💪</b>
-      `
+    }
 
-    });
-
-  } catch (mailError) {
-
-    console.log("Welcome Email Failed:", mailError.message);
-
-    // ❌ Registration ko fail mat karo
-  }
-
-}
+    console.log("STEP 8 RESPONSE");
 
     res.json({
-
+      success: true,
       message: "Registered Successfully"
-
     });
 
-  }
+  } catch (err) {
 
-  catch (err) {
-
-    console.log(err);
+    console.log("REGISTER ERROR", err);
 
     res.status(500).json({
-
       message: "Server Error"
-
     });
 
   }
