@@ -94,7 +94,13 @@ export class LoginComponent {
 
   alert("Registered Successfully ✅");
 
-  this.router.navigate(['/login']);
+   // Register → Login
+  this.isRegisterMode = false;
+
+  // Register fields clear
+  this.name = '';
+  this.phone = '';
+  this.confirmPassword = '';
 
 },
 
