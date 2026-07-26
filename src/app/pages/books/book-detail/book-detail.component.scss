@@ -42,59 +42,24 @@
           transition: .3s;
         }
 
-        .buy{
+        .buy {
+          width: 100%;
+          padding: 15px;
+          border-radius: 12px;
+          font-size: 18px;
+          font-weight: 700;
 
-  width:100%;
+          background: linear-gradient(135deg, #667eea, #764ba2);
 
-  padding:16px;
+          color: white;
 
-  border:none;
+          box-shadow: 0 10px 20px rgba(102, 126, 234, .35);
 
-  border-radius:14px;
-
-  background:linear-gradient(135deg,#5B5FF7,#7C3AED);
-
-  color:#fff;
-
-  font-size:18px;
-
-  font-weight:700;
-
-  cursor:pointer;
-
-  position:relative;
-
-  overflow:hidden;
-
-  box-shadow:
-  0 12px 28px rgba(91,95,247,.35);
-
-  transition:.35s ease;
-
-}
-
-.buy:hover{
-
-  transform:translateY(-3px);
-
-  box-shadow:
-  0 18px 35px rgba(91,95,247,.45);
-
-}
-
-.buy:active{
-
-  transform:scale(.98);
-
-}
-
-.buy:disabled{
-
-  opacity:.7;
-
-  cursor:not-allowed;
-
-}
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 25px rgba(102, 126, 234, .45);
+          }
+        }
       }
     }
   }
@@ -273,6 +238,102 @@ width:100%;
 width:100%;
 
 }
+
+}
+
+
+.premium-buy-btn{
+
+  width:100%;
+
+  padding:16px 20px;
+
+  border:none;
+
+  border-radius:16px;
+
+  background:linear-gradient(135deg,#5B5FF7,#7C3AED);
+
+  color:#fff;
+
+  font-size:18px;
+
+  font-weight:700;
+
+  letter-spacing:.5px;
+
+  cursor:pointer;
+
+  position:relative;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 12px 25px rgba(91,95,247,.35),
+    inset 0 1px 0 rgba(255,255,255,.25);
+
+  transition:all .35s ease;
+
+}
+
+/* Shine Effect */
+
+.premium-buy-btn::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:0;
+
+  left:-120%;
+
+  width:60%;
+
+  height:100%;
+
+  background:rgba(255,255,255,.35);
+
+  transform:skewX(-25deg);
+
+  transition:.6s;
+
+}
+
+.premium-buy-btn:hover::before{
+
+  left:140%;
+
+}
+
+.premium-buy-btn:hover{
+
+  transform:translateY(-3px);
+
+  box-shadow:
+    0 18px 35px rgba(91,95,247,.45);
+
+}
+
+.premium-buy-btn:active{
+
+  transform:scale(.98);
+
+}
+
+.premium-buy-btn:disabled{
+
+  opacity:.7;
+
+  cursor:not-allowed;
+
+}
+
+.premium-buy-btn span{
+
+  position:relative;
+
+  z-index:2;
 
 }
 

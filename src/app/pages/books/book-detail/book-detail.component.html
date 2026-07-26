@@ -73,10 +73,18 @@ COUPON SECTION
 
         </div>
 
-        <button (click)="buyBook()" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Buy Now</span>
-          <span *ngIf="isLoading" class="btn-loader"></span>
-        </button>
+        <button
+  class="premium-buy-btn"
+  (click)="buyBook()"
+  [disabled]="isLoading">
+
+  <span *ngIf="!isLoading">
+    🛒 Buy Now
+  </span>
+
+  <span *ngIf="isLoading" class="btn-loader"></span>
+
+</button>
 
       </div>
 
