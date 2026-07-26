@@ -1,3 +1,10 @@
+//dns code start
+
+const dns = require('dns');
+
+dns.setDefaultResultOrder('ipv4first');
+
+//dns code end
 require('dotenv').config();
 const notificationRoutes = require('./routes/notificationRoutes');
 const express = require('express');
@@ -8,13 +15,11 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const path = require('path');
 const axios = require('axios');
-
 const Testimonial = require('./models/Testimonial');
 const NotificationSetting = require('./models/NotificationSetting');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const Subscription = require('./models/Subscription');
 const bookRoutes = require('./routes/bookRoutes');
-
 const User = require('./models/User');
 const Purchase = require('./models/Purchase');
 const uploadBookRoute = require('./routes/uploadBookRoute');
@@ -23,19 +28,8 @@ const DynamicBook = require('./models/DynamicBook');
 const SubscriptionSetting = require('./models/SubscriptionSetting');
 const AppSetting = require("./models/AppSetting");
 const upload = require('./config/multer');
-
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
-
-
-//dns code start
-
-const dns = require('dns');
-
-dns.setDefaultResultOrder('ipv4first');
-
-//dns code end
-
 const app = express();
 
 // const books = require('./data/books');
@@ -100,6 +94,11 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   requireTLS: true,
+  connectionTimeout: 30000,
+
+  greetingTimeout: 30000,
+
+  socketTimeout: 30000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -847,9 +846,9 @@ app.post('/register', async (req, res) => {
 
     const setting = await NotificationSetting.findOne();
 
-if (setting?.welcomeEmail) {
+    if (setting?.welcomeEmail) {
 
-    await transporter.sendMail({
+      await transporter.sendMail({
 
         from: process.env.EMAIL_USER,
 
@@ -883,15 +882,15 @@ if (setting?.welcomeEmail) {
 
         `
 
+      });
+
+    }
+
+    res.json({
+
+      message: "Registered Successfully"
+
     });
-
-}
-
-res.json({
-
-    message: "Registered Successfully"
-
-});
 
   }
 
