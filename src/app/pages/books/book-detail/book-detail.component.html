@@ -23,43 +23,90 @@
           Read Book
         </button>
 
+        <!-- =========================
+COUPON SECTION
+========================= -->
+
+        <div class="coupon-box" *ngIf="!hasAccess">
+
+          <h3>🎟 Apply Coupon</h3>
+
+          <div style="display:flex;gap:10px;">
+
+            <input type="text" placeholder="Enter Coupon Code" [(ngModel)]="couponCode" style="flex:1;">
+
+            <button (click)="applyCoupon()">
+
+              Apply
+
+            </button>
+
+          </div>
+
+          <div *ngIf="couponApplied" style="margin-top:15px;">
+
+            <p>
+
+              <b>Original Price :</b>
+
+              ₹{{book.price}}
+
+            </p>
+
+            <p style="color:green;">
+
+              <b>Discount :</b>
+
+              - ₹{{discount}}
+
+            </p>
+
+            <p style="font-size:20px;font-weight:bold;">
+
+              Final Price :
+
+              ₹{{finalPrice}}
+
+            </p>
+
+          </div>
+
+        </div>
+
         <button (click)="buyBook()" [disabled]="isLoading">
-  <span *ngIf="!isLoading">Buy Now</span>
-  <span *ngIf="isLoading" class="btn-loader"></span>
-</button>
+          <span *ngIf="!isLoading">Buy Now</span>
+          <span *ngIf="isLoading" class="btn-loader"></span>
+        </button>
 
       </div>
 
       <!-- book preview code start -->
 
       <!-- 🔥 BOOK PREVIEW -->
-<div class="preview-section" *ngIf="book.previewImages?.length">
+      <div class="preview-section" *ngIf="book.previewImages?.length">
 
-  <h3>Preview Pages</h3>
+        <h3>Preview Pages</h3>
 
-  <div class="slider">
-    <button class="nav-btn left" (click)="prevImage()">‹</button>
+        <div class="slider">
+          <button class="nav-btn left" (click)="prevImage()">‹</button>
 
-    <div class="image-frame">
-    <img [src]="book.previewImages[currentImageIndex]" class="preview-img"
-     (touchstart)="onTouchStart($event)"
-     (touchend)="onTouchEnd($event)"   
-    />
-    </div>
-    
-    <button class="nav-btn right" (click)="nextImage()">›</button>
-  </div>
+          <div class="image-frame">
+            <img [src]="book.previewImages[currentImageIndex]" class="preview-img" (touchstart)="onTouchStart($event)"
+              (touchend)="onTouchEnd($event)" />
+          </div>
 
-  <div class="dots">
-    <span *ngFor="let img of book.previewImages; let i = index"
-          [class.active]="i === currentImageIndex"
-          (click)="goToImage(i)">
-    </span>
-  </div>
+          <button class="nav-btn right" (click)="nextImage()">›</button>
+        </div>
 
-</div>
+        <div class="dots">
+          <span *ngFor="let img of book.previewImages; let i = index" [class.active]="i === currentImageIndex"
+            (click)="goToImage(i)">
+          </span>
+        </div>
 
-  <!-- book preview code end -->
+      </div>
+
+      <!-- book preview code end -->
 
       <!-- 🔥 MOVE DESCRIPTION HERE -->
       <div class="description">
@@ -74,11 +121,8 @@
 </div>
 
 <!-- WhatsApp Floating Button start -->
-<a 
-  href="https://wa.me/919372336433?text=Hello%20I%20am%20interested%20in%20your%20ebooks" 
-  class="whatsapp-float" 
-  target="_blank"
->
+<a href="https://wa.me/919372336433?text=Hello%20I%20am%20interested%20in%20your%20ebooks" class="whatsapp-float"
+  target="_blank">
   <img src="assets/images/whatsapp.png" alt="WhatsApp" />
 </a>
 
@@ -90,42 +134,25 @@
 <div class="bottom-navbar">
 
   <!-- HOME -->
-  <div
-    class="nav-item"
-    routerLink="/"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
+  <div class="nav-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
     <span>🏠</span>
     <p>Home</p>
   </div>
 
   <!-- EXPLORE -->
-  <div
-    class="nav-item"
-    routerLink="/explore"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/explore" routerLinkActive="active">
     <span>🔍</span>
     <p>Explore</p>
   </div>
 
   <!-- MY BOOKS -->
-  <div
-    class="nav-item"
-    routerLink="/my-books"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/my-books" routerLinkActive="active">
     <span>📚</span>
     <p>My Books</p>
   </div>
 
   <!-- PROFILE -->
-  <div
-    class="nav-item"
-    routerLink="/profile"
-    routerLinkActive="active"
-  >
+  <div class="nav-item" routerLink="/profile" routerLinkActive="active">
     <span>👤</span>
     <p>Profile</p>
   </div>
@@ -133,5 +160,3 @@
 </div>
 
 <!-- navbar end -->
-
-

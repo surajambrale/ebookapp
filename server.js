@@ -31,6 +31,7 @@ const upload = require('./config/multer');
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
 const app = express();
+const couponRoutes = require('./routes/couponRoutes');
 
 // const books = require('./data/books');
 const books = require('./data/books');
@@ -65,6 +66,7 @@ app.use('/admin/books', uploadBookRoute);
 app.use('/books', dynamicBookRoute);
 app.use('/notification', notificationRoutes);
 app.use('/books', bookRoutes);
+app.use('/coupon', couponRoutes);
 
 
 

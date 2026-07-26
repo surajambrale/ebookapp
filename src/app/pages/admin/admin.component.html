@@ -107,6 +107,10 @@
           Subscription Settings
         </option>
 
+        <option value="couponManagement">
+          Coupon Management
+        </option>
+
         <option value="appSetting">
           App Settings
         </option>
@@ -568,6 +572,100 @@ margin-top:25px;">
     </div>
 
     <!-- subscription setting code end -->
+
+    <!-- //coupon management start -->
+
+    <div *ngIf="selectedView==='couponManagement'" class="card">
+
+      <h2>🎟 Coupon Management</h2>
+
+      <input type="text" placeholder="Coupon Code" [(ngModel)]="coupon.code">
+
+      <select [(ngModel)]="coupon.discountType">
+
+        <option value="flat">Flat Discount</option>
+
+        <option value="percentage">Percentage Discount</option>
+
+      </select>
+
+      <input type="number" placeholder="Discount Value" [(ngModel)]="coupon.discountValue">
+
+      <input type="number" placeholder="Minimum Order" [(ngModel)]="coupon.minimumOrder">
+
+      <input type="date" [(ngModel)]="coupon.expiryDate">
+
+      <input type="number" placeholder="Usage Limit" [(ngModel)]="coupon.usageLimit">
+
+      <label>
+
+        <input type="checkbox" [(ngModel)]="coupon.active">
+
+        Active
+
+      </label>
+
+      <button *ngIf="!isCouponEdit" (click)="createCoupon()">
+
+        ➕ Create Coupon
+
+      </button>
+
+      <button *ngIf="isCouponEdit" (click)="updateCoupon()">
+
+        💾 Update Coupon
+
+      </button>
+
+      <button *ngIf="isCouponEdit" (click)="cancelCouponEdit()">
+
+        Cancel
+
+      </button>
+
+      <hr>
+
+      <h3>📋 Coupon List</h3>
+
+      <div class="card" *ngFor="let c of coupons">
+
+        <p><b>Code:</b> {{c.code}}</p>
+
+        <p><b>Type:</b> {{c.discountType}}</p>
+
+        <p><b>Value:</b> {{c.discountValue}}</p>
+
+        <p><b>Minimum Order:</b> ₹{{c.minimumOrder}}</p>
+
+        <p><b>Expiry:</b> {{c.expiryDate | date:'dd MMM yyyy'}}</p>
+
+        <p><b>Used:</b> {{c.usedCount}} / {{c.usageLimit}}</p>
+
+        <p>
+
+          <b>Status:</b>
+
+          {{ c.active ? '🟢 Active' : '🔴 Inactive' }}
+
+        </p>
+
+        <button style="background:#2196f3;color:white;margin-right:10px;" (click)="editCoupon(c)">
+
+          ✏ Edit
+
+        </button>
+
+        <button class="delete-btn" (click)="deleteCoupon(c._id)">
+
+          🗑 Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- //coupon management end -->
 
     <!-- ========================= -->
     <!-- Notification Settings -->

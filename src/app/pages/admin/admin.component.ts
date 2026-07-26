@@ -112,6 +112,22 @@ export class AdminComponent {
 
   testEmail = "";
 
+  coupon = {
+  code: '',
+  discountType: 'flat',
+  discountValue: 0,
+  minimumOrder: 0,
+  expiryDate: '',
+  usageLimit: 100,
+  active: true
+};
+
+coupons: any[] = [];
+
+isCouponEdit = false;
+
+editingCouponId = '';
+
   // book upload code start
 
   // =============================
@@ -360,6 +376,31 @@ export class AdminComponent {
   }
 
   //edit book code end 
+
+  //load coupon code start
+
+  loadCoupons() {
+
+  this.http.get<any[]>(`${environment.apiUrl}/coupon/all`)
+    .subscribe({
+
+      next: (res) => {
+
+        this.coupons = res;
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+      }
+
+    });
+
+}
+
+  //load coupon code end
 
   //email sender code start
 
@@ -613,6 +654,176 @@ export class AdminComponent {
   }
 
   //pagination code end
+
+  //create coupon code start
+
+  createCoupon() {
+
+  this.http.post(
+
+    `${environment.apiUrl}/coupon/create`,
+
+    this.coupon
+
+  ).subscribe({
+
+    next: (res: any) => {
+
+      alert("Coupon Created Successfully ✅");
+
+      this.loadCoupons();
+
+      this.coupon = {
+
+        code: '',
+
+        discountType: 'flat',
+
+        discountValue: 0,
+
+        minimumOrder: 0,
+
+        expiryDate: '',
+
+        usageLimit: 100,
+
+        active: true
+
+      };
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert(err.error.message);
+
+    }
+
+  });
+
+}
+
+editCoupon(coupon: any) {
+
+  this.isCouponEdit = true;
+
+  this.editingCouponId = coupon._id;
+
+  this.coupon = {
+
+    code: coupon.code,
+
+    discountType: coupon.discountType,
+
+    discountValue: coupon.discountValue,
+
+    minimumOrder: coupon.minimumOrder,
+
+    expiryDate: coupon.expiryDate.split('T')[0],
+
+    usageLimit: coupon.usageLimit,
+
+    active: coupon.active
+
+  };
+
+}
+
+updateCoupon() {
+
+  this.http.put(
+
+    `${environment.apiUrl}/coupon/update/${this.editingCouponId}`,
+
+    this.coupon
+
+  ).subscribe({
+
+    next: (res: any) => {
+
+      alert("Coupon Updated Successfully ✅");
+
+      this.loadCoupons();
+
+      this.cancelCouponEdit();
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert(err.error.message);
+
+    }
+
+  });
+
+}
+
+cancelCouponEdit() {
+
+  this.isCouponEdit = false;
+
+  this.editingCouponId = '';
+
+  this.coupon = {
+
+    code: '',
+
+    discountType: 'flat',
+
+    discountValue: 0,
+
+    minimumOrder: 0,
+
+    expiryDate: '',
+
+    usageLimit: 100,
+
+    active: true
+
+  };
+
+}
+
+deleteCoupon(id: string) {
+
+  if (!confirm("Delete this coupon?")) {
+
+    return;
+
+  }
+
+  this.http.delete(
+
+    `${environment.apiUrl}/coupon/delete/${id}`
+
+  ).subscribe({
+
+    next: () => {
+
+      alert("Coupon Deleted ✅");
+
+      this.loadCoupons();
+
+    },
+
+    error: (err) => {
+
+      console.log(err);
+
+      alert("Delete Failed");
+
+    }
+
+  });
+
+}
+
+  //create coupon code end
 
   // admin password change code start
 
@@ -875,6 +1086,8 @@ export class AdminComponent {
                 this.loadAppSetting();
 
                 this.loadNotificationSettings();
+
+                this.loadCoupons();
 
               });
 

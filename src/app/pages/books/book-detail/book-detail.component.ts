@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-book-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,FormsModule,],
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
@@ -20,6 +21,13 @@ export class BookDetailComponent {
 
   isLoading: boolean = false; // 🔥 single loader use
   apiUrl = environment.apiUrl;
+  couponCode = '';
+
+  discount = 0;
+
+  finalPrice = 0;
+
+  couponApplied = false;
 
   // 🔥 SLIDER
   currentImageIndex = 0;
@@ -62,6 +70,8 @@ export class BookDetailComponent {
     this.book = this.dynamicBooks.find(
       (b: any) => b._id == id
     );
+
+    this.finalPrice = this.book.price;
 
     if (!this.book) {
 
@@ -186,7 +196,7 @@ export class BookDetailComponent {
 
     // 🧾 CREATE ORDER
     this.http.post(`${this.apiUrl}/create-order`, {
-      amount: this.book.price
+      amount: this.finalPrice
     }).subscribe({
 
       next: (order: any) => {
@@ -209,7 +219,7 @@ export class BookDetailComponent {
               razorpay_signature: response.razorpay_signature,
               userId: user._id,
               bookId: (this.book._id || this.book.id).toString(),
-              amount: this.book.price
+              amount: this.finalPrice
             }).subscribe({
 
               next: () => {
@@ -262,11 +272,59 @@ export class BookDetailComponent {
     });
   }
 
-  // dynamic book code start
+  // apply coupn code start
 
+applyCoupon() {
 
+  if (!this.couponCode.trim()) {
 
-  // dynamic book code end
+    alert("Enter Coupon Code");
+
+    return;
+
+  }
+
+  this.http.post<any>(`${this.apiUrl}/coupon/verify`, {
+
+    code: this.couponCode,
+
+    amount: this.finalPrice
+
+  })
+
+  .subscribe({
+
+    next: (res) => {
+
+      if (!res.success) {
+
+        alert(res.message);
+
+        return;
+
+      }
+
+      this.discount = res.discount;
+
+      this.finalPrice = res.finalPrice;
+
+      this.couponApplied = true;
+
+      alert("Coupon Applied Successfully 🎉");
+
+    },
+
+    error: () => {
+
+      alert("Coupon Verification Failed");
+
+    }
+
+  });
+
+}
+
+  // apply coupn code end
 
   // 📖 READ BOOK
   readBook() {
