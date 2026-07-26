@@ -90,19 +90,13 @@ export class LoginComponent {
 
           next: () => {
 
-            this.isLoading = false;
+  this.isLoading = false;
 
-            alert('Registered Successfully ✅');
+  alert("Registered Successfully ✅");
 
-            this.isRegisterMode = false;
+  this.router.navigate(['/login']);
 
-            // Clear fields
-            this.name = '';
-            this.phone = '';
-            this.password = '';
-            this.confirmPassword = '';
-
-          },
+},
 
           error: (err) => {
 
