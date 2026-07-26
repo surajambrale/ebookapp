@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-book-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule,FormsModule,],
+  imports: [CommonModule, RouterModule, FormsModule,],
   templateUrl: './book-detail.component.html',
   styleUrls: ['./book-detail.component.scss']
 })
@@ -194,6 +194,10 @@ export class BookDetailComponent {
 
     this.isLoading = true;
 
+    console.log("Book Price:", this.book.price);
+    console.log("Final Price:", this.finalPrice);
+    console.log("Coupon Applied:", this.couponApplied);
+
     // 🧾 CREATE ORDER
     this.http.post(`${this.apiUrl}/create-order`, {
       amount: this.finalPrice
@@ -274,55 +278,55 @@ export class BookDetailComponent {
 
   // apply coupn code start
 
-applyCoupon() {
+  applyCoupon() {
 
-  if (!this.couponCode.trim()) {
+    if (!this.couponCode.trim()) {
 
-    alert("Enter Coupon Code");
+      alert("Enter Coupon Code");
 
-    return;
-
-  }
-
-  this.http.post<any>(`${this.apiUrl}/coupon/verify`, {
-
-    code: this.couponCode,
-
-    amount: this.finalPrice
-
-  })
-
-  .subscribe({
-
-    next: (res) => {
-
-      if (!res.success) {
-
-        alert(res.message);
-
-        return;
-
-      }
-
-      this.discount = res.discount;
-
-      this.finalPrice = res.finalPrice;
-
-      this.couponApplied = true;
-
-      alert("Coupon Applied Successfully 🎉");
-
-    },
-
-    error: () => {
-
-      alert("Coupon Verification Failed");
+      return;
 
     }
 
-  });
+    this.http.post<any>(`${this.apiUrl}/coupon/verify`, {
 
-}
+      code: this.couponCode,
+
+      amount: this.book.price
+
+    })
+
+      .subscribe({
+
+        next: (res) => {
+
+          if (!res.success) {
+
+            alert(res.message);
+
+            return;
+
+          }
+
+          this.discount = res.discount;
+
+          this.finalPrice = Number(res.finalPrice);
+
+          this.couponApplied = true;
+
+          alert("Coupon Applied Successfully 🎉");
+
+        },
+
+        error: () => {
+
+          alert("Coupon Verification Failed");
+
+        }
+
+      });
+
+  }
 
   // apply coupn code end
 
