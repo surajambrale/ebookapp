@@ -461,10 +461,10 @@ app.put("/app-setting", async (req, res) => {
     setting.website = req.body.website;
     setting.version = req.body.version;
 
-    // 👇 Ye line add karo
-    if (!setting.password) {
-      setting.password = "123456";
-    }
+    // Password ko kabhi overwrite mat karo
+if (req.body.password !== undefined) {
+  setting.password = req.body.password;
+}
 
     await setting.save();
 
