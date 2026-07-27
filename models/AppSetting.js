@@ -12,6 +12,12 @@ const appSettingSchema = new mongoose.Schema({
         default:""
     },
 
+     // ✅ NEW
+  password: {
+    type: String,
+    default: "123456"
+  },
+
     settings:[
 
         {
