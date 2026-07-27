@@ -31,6 +31,15 @@ export class BookListComponent {
 
   books: any[] = [];
 
+    // 🔥 FILTERED BOOKS
+  filteredBooks: any[] = [];
+
+  currentPage = 1;
+  totalPages = 1;
+  limit = 10;
+
+
+
   subscribeNow() {
 
     if (this.subscriptionActive) {
@@ -59,29 +68,29 @@ export class BookListComponent {
 
 
   //  dynamic book code start
-  loadBooks() {
+  loadBooks(page: number = 1) {
 
-    this.http.get<any[]>(`${this.api}/books/all`)
+    this.http.get<any>(
+      `${this.api}/books/all?page=${page}&limit=${this.limit}`
+    )
       .subscribe({
 
         next: (res) => {
 
-          this.books = res;
+          this.books = res.books;
 
-          this.filteredBooks = res;
+          this.filteredBooks = res.books;
+
+          this.currentPage = res.currentPage;
+
+          this.totalPages = res.totalPages;
 
           this.dynamicCategories = [
-
             ...new Set(
-
-              res
-
+              (res.books as any[])
                 .map(book => book.category)
-
-                .filter(category => category)
-
+                .filter(category => !!category)
             )
-
           ];
 
         },
@@ -97,12 +106,58 @@ export class BookListComponent {
   }
 
 
-
   // dynamic book code end
 
+  //pagination code start
 
-  // 🔥 FILTERED BOOKS
-  filteredBooks: any[] = [];
+nextPage() {
+
+  if (this.currentPage < this.totalPages) {
+
+    this.loadBooks(this.currentPage + 1);
+
+  }
+
+}
+
+previousPage() {
+
+  if (this.currentPage > 1) {
+
+    this.loadBooks(this.currentPage - 1);
+
+  }
+
+}
+
+goToPage(page: number) {
+
+  this.loadBooks(page);
+
+}
+
+
+get pages(): number[] {
+
+  const pages: number[] = [];
+
+  const start = Math.max(1, this.currentPage - 2);
+
+  const end = Math.min(this.totalPages, this.currentPage + 2);
+
+  for (let i = start; i <= end; i++) {
+
+    pages.push(i);
+
+  }
+
+  return pages;
+
+}
+
+//pagination code end
+
+
 
 
 

@@ -12,9 +12,29 @@ router.get('/all', async (req, res) => {
 
     try {
 
-        const books = await DynamicBook.find().sort({ createdAt: -1 });
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
 
-        res.json(books);
+        const skip = (page - 1) * limit;
+
+        const totalBooks = await DynamicBook.countDocuments();
+
+        const books = await DynamicBook.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        res.json({
+
+            books,
+
+            currentPage: page,
+
+            totalPages: Math.ceil(totalBooks / limit),
+
+            totalBooks
+
+        });
 
     }
 

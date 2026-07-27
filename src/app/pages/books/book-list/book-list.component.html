@@ -12,80 +12,193 @@
       <p>View All</p>
     </div>
 
-    <div class="category-card" *ngFor="let category of dynamicCategories" (click)="filterCategory(category)">
+    <div
+      class="category-card"
+      *ngFor="let category of dynamicCategories"
+      (click)="filterCategory(category)">
+
       <div class="category-icon">📖</div>
       <p>{{ category }}</p>
+
     </div>
 
   </div>
 
 </div>
 
-<!-- category section end -->
+<!-- 🔥 Subscription -->
 
 <div class="subscription-card">
 
   <h2>{{subscriptionSetting.planName}}</h2>
 
-  <p>Read Unlimited Books at
-  </p>
+  <p>Read Unlimited Books at</p>
 
   <h1>
 
     ₹{{subscriptionSetting.price}}
 
-    <span>
-
-      / {{subscriptionSetting.duration}} Days
-
-    </span>
+    <span>/ {{subscriptionSetting.duration}} Days</span>
 
   </h1>
 
-  <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="!subscriptionSetting.active">
+  <button
+    class="subscribe-btn"
+    (click)="subscribeNow()"
+    [disabled]="!subscriptionSetting.active">
 
     {{
-
-    subscriptionSetting.active
-
-    ? 'Subscribe Now'
-
-    : 'Subscription Closed'
-
+      subscriptionSetting.active
+      ? 'Subscribe Now'
+      : 'Subscription Closed'
     }}
 
   </button>
 
 </div>
 
+<!-- 🔥 BOOK LIST -->
+
 <div class="book-list">
 
   <h2 class="title">New Releases in Store</h2>
 
   <div class="book-grid">
-    <div class="book-card" *ngFor="let book of filteredBooks" (click)="openBook(book._id || book.id)">
+
+    <div
+      class="book-card"
+      *ngFor="let book of filteredBooks"
+      (click)="openBook(book._id || book.id)">
 
       <div class="image">
-        <img [src]="book.image || book.coverImage" alt="book">
+        <img
+          [src]="book.image || book.coverImage"
+          alt="book">
       </div>
 
       <div class="info">
+
         <h3>{{ book.title }}</h3>
-        <p class="author">{{ book.author }}</p>
+
+        <p class="author">
+
+          {{ book.author }}
+
+        </p>
 
         <div class="rating">
-          ⭐⭐⭐⭐☆ <span>{{ book.reviews }}</span>
+
+          ⭐⭐⭐⭐☆
+
+          <span>{{ book.reviews }}</span>
+
         </div>
 
-        <!-- <p class="price">₹{{ book.price }}</p> -->
         <p class="price">
+
           ₹{{ book.price }}
-          <span class="original-price">₹{{ book.originalPrice }}</span>
-          <!-- <span class="discount">60% OFF</span> -->
+
+          <span class="original-price">
+
+            ₹{{ book.originalPrice }}
+
+          </span>
+
         </p>
+
       </div>
 
     </div>
+
+  </div>
+
+  <!-- ===========================
+       PREMIUM PAGINATION
+  ============================ -->
+
+  <div class="pagination" *ngIf="totalPages > 1">
+
+    <button
+      class="nav-btn"
+      (click)="previousPage()"
+      [disabled]="currentPage===1">
+
+      ← Previous
+
+    </button>
+
+    <button
+      *ngIf="currentPage>3"
+      (click)="goToPage(1)">
+
+      1
+
+    </button>
+
+    <span *ngIf="currentPage>4">
+
+      ...
+
+    </span>
+
+    <button
+      *ngFor="let page of pages"
+      (click)="goToPage(page)"
+      [class.active]="page===currentPage">
+
+      {{page}}
+
+    </button>
+
+    <span *ngIf="currentPage<totalPages-3">
+
+      ...
+
+    </span>
+
+    <button
+      *ngIf="currentPage<totalPages-2"
+      (click)="goToPage(totalPages)">
+
+      {{totalPages}}
+
+    </button>
+
+    <button
+      class="nav-btn"
+      (click)="nextPage()"
+      [disabled]="currentPage===totalPages">
+
+      Next →
+
+    </button>
+
+  </div>
+
+  <!-- Showing Info -->
+
+  <div class="page-info">
+
+    Showing
+
+    <b>
+
+      {{ (currentPage-1)*limit + 1 }}
+
+    </b>
+
+    -
+
+    <b>
+
+      {{
+        ((currentPage-1)*limit + books.length)
+      }}
+
+    </b>
+
+    Books
+
   </div>
 
 </div>
@@ -122,24 +235,6 @@
 
   </div>
 
-  <!-- 🔥 TESTIMONIAL LIST -->
-
-  <!-- <div
-    *ngFor="let t of testimonials"
-    class="testimonial-card"
-  >
-
-    <h3>{{ t.name }}</h3>
-
-    <p>{{ t.message }}</p>
-
-    <small>
-      ⭐ {{ t.rating }}/5
-    </small>
-
-  </div>
-
-</div> -->
 
   <!-- 🔥 TESTIMONIAL SECTION -->
 

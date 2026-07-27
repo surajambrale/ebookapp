@@ -1206,3 +1206,110 @@ transition:.3s;
 transform:scale(1.05);
 
 }
+
+
+/* ==========================
+   PREMIUM PAGINATION
+========================== */
+
+.pagination{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:12px;
+
+margin:35px 0 15px;
+
+flex-wrap:wrap;
+
+}
+
+.pagination button{
+
+background:#1f2937;
+
+color:#fff;
+
+border:none;
+
+padding:12px 18px;
+
+border-radius:12px;
+
+font-size:15px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+min-width:48px;
+
+}
+
+.pagination button:hover{
+
+background:#2563eb;
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 20px rgba(37,99,235,.35);
+
+}
+
+.pagination button.active{
+
+background:linear-gradient(135deg,#2563eb,#06b6d4);
+
+box-shadow:0 10px 25px rgba(37,99,235,.45);
+
+}
+
+.pagination button:disabled{
+
+opacity:.4;
+
+cursor:not-allowed;
+
+transform:none;
+
+box-shadow:none;
+
+}
+
+.pagination span{
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#999;
+
+}
+
+.nav-btn{
+
+background:#111827!important;
+
+padding:12px 22px!important;
+
+}
+
+.page-info{
+
+text-align:center;
+
+color:#666;
+
+font-size:15px;
+
+margin-bottom:30px;
+
+font-weight:500;
+
+}
