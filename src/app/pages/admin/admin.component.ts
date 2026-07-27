@@ -29,6 +29,14 @@ export class AdminComponent {
   // 🔥 DROPDOWN
   selectedView = 'users';
 
+  newSetting = {
+
+  label: '',
+
+  value: ''
+
+};
+
   // 🔥 SEARCH
   searchPhone = '';
   searchedPurchases: any[] = [];
@@ -984,6 +992,44 @@ deleteCoupon(id: string) {
 
   }
   //testimonial code end
+
+  //app setting code start
+
+  addSetting() {
+
+  if (!this.newSetting.label || !this.newSetting.value) {
+
+    alert("Please fill both fields");
+
+    return;
+
+  }
+
+  this.appSetting.settings.push({
+
+    label: this.newSetting.label,
+
+    value: this.newSetting.value
+
+  });
+
+  this.newSetting = {
+
+    label: '',
+
+    value: ''
+
+  };
+
+}
+
+removeSetting(index:number){
+
+  this.appSetting.settings.splice(index,1);
+
+}
+
+ //app setting code end
 
   // 🔥 ANALYTICS
   totalRevenue = 0;

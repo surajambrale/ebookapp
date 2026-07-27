@@ -450,63 +450,104 @@ margin-top:25px;">
 
     <!-- app settings code start -->
 
-    <div *ngIf="selectedView==='appSetting'" class="card">
+    <!-- ==========================
+APP SETTINGS
+========================== -->
 
-      <h2>⚙️ App Settings</h2>
+<div *ngIf="selectedView==='appSetting'" class="card">
 
-      <label>Application Name</label>
+  <h2>⚙️ App Settings</h2>
 
-      <input type="text" [(ngModel)]="appSetting.appName">
+  <label>Application Name</label>
 
-      <label><b>Application Logo</b></label>
+  <input
+    type="text"
+    [(ngModel)]="appSetting.appName">
 
-      <input type="file" (change)="onLogoSelected($event)">
+  <label>Application Logo</label>
 
-      <button (click)="uploadLogo()">
+  <input
+    type="file"
+    (change)="onLogoSelected($event)">
 
-        Upload Logo
+  <button
+    (click)="uploadLogo()">
 
-      </button>
+    Upload Logo
 
-      <label>Support Phone</label>
+  </button>
 
-      <input type="text" [(ngModel)]="appSetting.phone">
+  <hr>
 
-      <label>WhatsApp Number</label>
+  <h3>➕ Add New Setting</h3>
 
-      <input type="text" [(ngModel)]="appSetting.whatsapp">
+  <select [(ngModel)]="newSetting.label">
 
-      <label>Email</label>
+    <option value="">Select Setting</option>
 
-      <input type="text" [(ngModel)]="appSetting.email">
+    <option>Instagram</option>
 
-      <label>Instagram</label>
+    <option>Facebook</option>
 
-      <input type="text" [(ngModel)]="appSetting.instagram">
+    <option>Youtube</option>
 
-      <label>Facebook</label>
+    <option>Website</option>
 
-      <input type="text" [(ngModel)]="appSetting.facebook">
+    <option>Email</option>
 
-      <label>Youtube</label>
+    <option>Phone</option>
 
-      <input type="text" [(ngModel)]="appSetting.youtube">
+    <option>WhatsApp</option>
 
-      <label>Website</label>
+    <option>Telegram</option>
 
-      <input type="text" [(ngModel)]="appSetting.website">
+    <option>LinkedIn</option>
 
-      <label>Version</label>
+  </select>
 
-      <input type="text" [(ngModel)]="appSetting.version">
+  <input
+    type="text"
+    [(ngModel)]="newSetting.value"
+    placeholder="Enter Value">
 
-      <button (click)="saveAppSetting()">
+  <button
+    (click)="addSetting()">
 
-        Save Settings
+    Add Setting
 
-      </button>
+  </button>
 
-    </div>
+  <hr>
+
+  <h3>📋 Added Settings</h3>
+
+  <div
+    class="setting-item"
+    *ngFor="let item of appSetting.settings; let i=index">
+
+    <label>{{item.label}}</label>
+
+    <input
+      [(ngModel)]="item.value">
+
+    <button
+      class="delete-btn"
+      (click)="removeSetting(i)">
+
+      Delete
+
+    </button>
+
+  </div>
+
+  <button
+    (click)="saveAppSetting()">
+
+    Save All Settings
+
+  </button>
+
+</div>
 
 
     <!-- app settings code end -->

@@ -627,6 +627,145 @@ overflow-y:auto;
 }
 
 
+/* ==========================
+DYNAMIC SETTINGS
+========================== */
+
+.setting-item{
+
+background:#262626;
+
+border:1px solid #3b3b3b;
+
+padding:18px;
+
+border-radius:16px;
+
+margin-bottom:18px;
+
+transition:.3s;
+
+}
+
+.setting-item:hover{
+
+transform:translateY(-3px);
+
+border-color:gold;
+
+box-shadow:0 10px 25px rgba(255,215,0,.15);
+
+}
+
+.setting-item label{
+
+display:block;
+
+font-size:15px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+color:#FFD54F;
+
+}
+
+.setting-item input{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+outline:none;
+
+border-radius:12px;
+
+background:#1f1f1f;
+
+color:white;
+
+margin-bottom:12px;
+
+}
+
+.setting-item .delete-btn{
+
+background:linear-gradient(135deg,#ff4d4d,#d60000);
+
+border:none;
+
+padding:12px;
+
+border-radius:10px;
+
+width:100%;
+
+font-weight:bold;
+
+color:white;
+
+transition:.3s;
+
+cursor:pointer;
+
+}
+
+.setting-item .delete-btn:hover{
+
+transform:scale(1.03);
+
+box-shadow:0 10px 20px rgba(255,0,0,.35);
+
+}
+
+.card h3{
+
+color:#FFD54F;
+
+margin:20px 0 12px;
+
+font-size:18px;
+
+}
+
+.card select{
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+outline:none;
+
+border-radius:12px;
+
+background:#1f1f1f;
+
+color:white;
+
+margin-bottom:15px;
+
+}
+
+.card button{
+
+transition:.3s;
+
+}
+
+.card button:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 10px 20px rgba(255,215,0,.18);
+
+}
+
+
 /* =========================================
 🔥 BOTTOM NAVBAR start
 ========================================= */
