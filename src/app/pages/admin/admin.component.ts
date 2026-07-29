@@ -31,11 +31,11 @@ export class AdminComponent {
 
   newSetting = {
 
-  label: '',
+    label: '',
 
-  value: ''
+    value: ''
 
-};
+  };
 
   // 🔥 SEARCH
   searchPhone = '';
@@ -121,20 +121,20 @@ export class AdminComponent {
   testEmail = "";
 
   coupon = {
-  code: '',
-  discountType: 'flat',
-  discountValue: 0,
-  minimumOrder: 0,
-  expiryDate: '',
-  usageLimit: 100,
-  active: true
-};
+    code: '',
+    discountType: 'flat',
+    discountValue: 0,
+    minimumOrder: 0,
+    expiryDate: '',
+    usageLimit: 100,
+    active: true
+  };
 
-coupons: any[] = [];
+  coupons: any[] = [];
 
-isCouponEdit = false;
+  isCouponEdit = false;
 
-editingCouponId = '';
+  editingCouponId = '';
 
   // book upload code start
 
@@ -389,24 +389,24 @@ editingCouponId = '';
 
   loadCoupons() {
 
-  this.http.get<any[]>(`${environment.apiUrl}/coupon/all`)
-    .subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/coupon/all`)
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        this.coupons = res;
+          this.coupons = res;
 
-      },
+        },
 
-      error: (err) => {
+        error: (err) => {
 
-        console.log(err);
+          console.log(err);
 
-      }
+        }
 
-    });
+      });
 
-}
+  }
 
   //load coupon code end
 
@@ -667,169 +667,169 @@ editingCouponId = '';
 
   createCoupon() {
 
-  this.http.post(
+    this.http.post(
 
-    `${environment.apiUrl}/coupon/create`,
+      `${environment.apiUrl}/coupon/create`,
 
-    this.coupon
+      this.coupon
 
-  ).subscribe({
+    ).subscribe({
 
-    next: (res: any) => {
+      next: (res: any) => {
 
-      alert("Coupon Created Successfully ✅");
+        alert("Coupon Created Successfully ✅");
 
-      this.loadCoupons();
+        this.loadCoupons();
 
-      this.coupon = {
+        this.coupon = {
 
-        code: '',
+          code: '',
 
-        discountType: 'flat',
+          discountType: 'flat',
 
-        discountValue: 0,
+          discountValue: 0,
 
-        minimumOrder: 0,
+          minimumOrder: 0,
 
-        expiryDate: '',
+          expiryDate: '',
 
-        usageLimit: 100,
+          usageLimit: 100,
 
-        active: true
+          active: true
 
-      };
+        };
 
-    },
+      },
 
-    error: (err) => {
+      error: (err) => {
 
-      console.log(err);
+        console.log(err);
 
-      alert(err.error.message);
+        alert(err.error.message);
 
-    }
+      }
 
-  });
-
-}
-
-editCoupon(coupon: any) {
-
-  this.isCouponEdit = true;
-
-  this.editingCouponId = coupon._id;
-
-  this.coupon = {
-
-    code: coupon.code,
-
-    discountType: coupon.discountType,
-
-    discountValue: coupon.discountValue,
-
-    minimumOrder: coupon.minimumOrder,
-
-    expiryDate: coupon.expiryDate.split('T')[0],
-
-    usageLimit: coupon.usageLimit,
-
-    active: coupon.active
-
-  };
-
-}
-
-updateCoupon() {
-
-  this.http.put(
-
-    `${environment.apiUrl}/coupon/update/${this.editingCouponId}`,
-
-    this.coupon
-
-  ).subscribe({
-
-    next: (res: any) => {
-
-      alert("Coupon Updated Successfully ✅");
-
-      this.loadCoupons();
-
-      this.cancelCouponEdit();
-
-    },
-
-    error: (err) => {
-
-      console.log(err);
-
-      alert(err.error.message);
-
-    }
-
-  });
-
-}
-
-cancelCouponEdit() {
-
-  this.isCouponEdit = false;
-
-  this.editingCouponId = '';
-
-  this.coupon = {
-
-    code: '',
-
-    discountType: 'flat',
-
-    discountValue: 0,
-
-    minimumOrder: 0,
-
-    expiryDate: '',
-
-    usageLimit: 100,
-
-    active: true
-
-  };
-
-}
-
-deleteCoupon(id: string) {
-
-  if (!confirm("Delete this coupon?")) {
-
-    return;
+    });
 
   }
 
-  this.http.delete(
+  editCoupon(coupon: any) {
 
-    `${environment.apiUrl}/coupon/delete/${id}`
+    this.isCouponEdit = true;
 
-  ).subscribe({
+    this.editingCouponId = coupon._id;
 
-    next: () => {
+    this.coupon = {
 
-      alert("Coupon Deleted ✅");
+      code: coupon.code,
 
-      this.loadCoupons();
+      discountType: coupon.discountType,
 
-    },
+      discountValue: coupon.discountValue,
 
-    error: (err) => {
+      minimumOrder: coupon.minimumOrder,
 
-      console.log(err);
+      expiryDate: coupon.expiryDate.split('T')[0],
 
-      alert("Delete Failed");
+      usageLimit: coupon.usageLimit,
+
+      active: coupon.active
+
+    };
+
+  }
+
+  updateCoupon() {
+
+    this.http.put(
+
+      `${environment.apiUrl}/coupon/update/${this.editingCouponId}`,
+
+      this.coupon
+
+    ).subscribe({
+
+      next: (res: any) => {
+
+        alert("Coupon Updated Successfully ✅");
+
+        this.loadCoupons();
+
+        this.cancelCouponEdit();
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        alert(err.error.message);
+
+      }
+
+    });
+
+  }
+
+  cancelCouponEdit() {
+
+    this.isCouponEdit = false;
+
+    this.editingCouponId = '';
+
+    this.coupon = {
+
+      code: '',
+
+      discountType: 'flat',
+
+      discountValue: 0,
+
+      minimumOrder: 0,
+
+      expiryDate: '',
+
+      usageLimit: 100,
+
+      active: true
+
+    };
+
+  }
+
+  deleteCoupon(id: string) {
+
+    if (!confirm("Delete this coupon?")) {
+
+      return;
 
     }
 
-  });
+    this.http.delete(
 
-}
+      `${environment.apiUrl}/coupon/delete/${id}`
+
+    ).subscribe({
+
+      next: () => {
+
+        alert("Coupon Deleted ✅");
+
+        this.loadCoupons();
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        alert("Delete Failed");
+
+      }
+
+    });
+
+  }
 
   //create coupon code end
 
@@ -997,39 +997,39 @@ deleteCoupon(id: string) {
 
   addSetting() {
 
-  if (!this.newSetting.label || !this.newSetting.value) {
+    if (!this.newSetting.label || !this.newSetting.value) {
 
-    alert("Please fill both fields");
+      alert("Please fill both fields");
 
-    return;
+      return;
+
+    }
+
+    this.appSetting.settings.push({
+
+      label: this.newSetting.label,
+
+      value: this.newSetting.value
+
+    });
+
+    this.newSetting = {
+
+      label: '',
+
+      value: ''
+
+    };
 
   }
 
-  this.appSetting.settings.push({
+  removeSetting(index: number) {
 
-    label: this.newSetting.label,
+    this.appSetting.settings.splice(index, 1);
 
-    value: this.newSetting.value
+  }
 
-  });
-
-  this.newSetting = {
-
-    label: '',
-
-    value: ''
-
-  };
-
-}
-
-removeSetting(index:number){
-
-  this.appSetting.settings.splice(index,1);
-
-}
-
- //app setting code end
+  //app setting code end
 
   // 🔥 ANALYTICS
   totalRevenue = 0;
@@ -1112,15 +1112,14 @@ removeSetting(index:number){
             this.loadSubscriptions();
 
             // Dynamic Books
-            this.http.get<any[]>(`${this.api}/books/all`)
-              .subscribe(dynamicRes => {
+            this.http.get<any>(`${this.api}/books/all`)
+              .subscribe(res => {
 
-                this.dynamicBooks = dynamicRes;
+                this.dynamicBooks = res.books || [];
 
-                // Merge
                 this.books = [
                   ...this.books,
-                  ...dynamicRes
+                  ...this.dynamicBooks
                 ];
 
                 // ✅ Ab analytics chalao
