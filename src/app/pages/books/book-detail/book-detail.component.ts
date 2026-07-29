@@ -41,26 +41,32 @@ export class BookDetailComponent {
 
   loadDynamicBooks() {
 
-    this.http.get<any[]>(`${this.apiUrl}/books/all`)
-      .subscribe({
+  this.http.get<any>(`${this.apiUrl}/books/all`)
+    .subscribe({
 
-        next: (res) => {
+      next: (res) => {
 
-          this.dynamicBooks = res;
+        this.dynamicBooks = res.books || [];
 
-          this.loadBook();
+        console.log("Dynamic Books:", this.dynamicBooks);
 
-        },
+        this.loadBook();
 
-        error: () => {
+      },
 
-          this.loadBook();
+      error: (err) => {
 
-        }
+        console.log(err);
 
-      });
+        this.dynamicBooks = [];
 
-  }
+        this.loadBook();
+
+      }
+
+    });
+
+}
 
   loadBook() {
 
@@ -103,7 +109,7 @@ export class BookDetailComponent {
 
         });
 
-        
+
     }
 
   }
