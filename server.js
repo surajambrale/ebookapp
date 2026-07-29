@@ -1537,6 +1537,72 @@ app.get('/payments/:userId', async (req, res) => {
 
 //payment verification data end 
 
+//free book code start
+
+app.post('/verify-free-book', async (req, res) => {
+
+  try {
+
+    const { userId, bookId } = req.body;
+
+    const alreadyPurchased = await Purchase.findOne({
+
+      userId,
+
+      bookId
+
+    });
+
+    if (alreadyPurchased) {
+
+      return res.json({
+
+        success: true
+
+      });
+
+    }
+
+    await Purchase.create({
+
+      userId,
+
+      bookId,
+
+      amount: 0,
+
+      paymentId: "FREE-COUPON",
+
+      orderId: "FREE-COUPON",
+
+      createdAt: new Date()
+
+    });
+
+    res.json({
+
+      success: true
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      message: err.message
+
+    });
+
+  }
+
+});
+
+//free book code end 
+
 
 // ================= PROFILE DATA =================
 

@@ -191,6 +191,7 @@ export class BookDetailComponent {
       return;
     }
 
+
     const user = this.auth.getUser();
 
     if (!user || !user._id) {
@@ -198,6 +199,53 @@ export class BookDetailComponent {
       this.router.navigate(['/login']);
       return;
     }
+
+     // free book code start
+
+       // ⭐⭐⭐ FREE BOOK (100% Coupon) ⭐⭐⭐
+  if (this.finalPrice <= 0) {
+
+    this.isLoading = true;
+
+    this.http.post(`${this.apiUrl}/free-book`, {
+
+      userId: user._id,
+      bookId: this.book._id || this.book.id
+
+    }).subscribe({
+
+      next: () => {
+
+        this.isLoading = false;
+
+        alert("Book Added Successfully 🎉");
+
+        this.hasAccess = true;
+
+        this.router.navigate([
+          '/read',
+          this.book._id || this.book.id
+        ]);
+
+      },
+
+      error: () => {
+
+        this.isLoading = false;
+
+        alert("Something went wrong ❌");
+
+      }
+
+    });
+
+    return; // 👈 Razorpay nahi chalega
+
+  }
+
+    
+
+    // free book code end
 
     this.isLoading = true;
 
