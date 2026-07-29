@@ -103,6 +103,7 @@ export class BookDetailComponent {
 
         });
 
+        
     }
 
   }
