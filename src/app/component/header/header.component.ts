@@ -19,6 +19,7 @@ export class HeaderComponent {
   API = environment.apiUrl;
 
   appSetting: any = {};
+  
 
   constructor(private http: HttpClient) {}
 
@@ -27,6 +28,8 @@ export class HeaderComponent {
   this.loadAppSetting();
 
 }
+
+
 
 loadAppSetting() {
 
@@ -49,11 +52,17 @@ loadAppSetting() {
 
 }
 
+  // toggleSidebar() {
+  //   if (this.isMobile()) {
+  //     this.isSidebarOpen.update(value => !value);
+  //   }
+  // }
+
   toggleSidebar() {
-    if (this.isMobile()) {
-      this.isSidebarOpen.update(value => !value);
-    }
-  }
+
+  this.isSidebarOpen.update(value => !value);
+
+}
 
   closeSidebar = () => {
     this.isSidebarOpen.set(false);
