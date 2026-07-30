@@ -59,7 +59,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use('/', bookRoutes);
+// app.use('/', bookRoutes);
 app.use('/subscription', subscriptionRoutes);
 app.use('/api/books', uploadBookRoute);
 app.use('/admin/books', uploadBookRoute);
