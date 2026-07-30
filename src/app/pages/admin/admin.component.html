@@ -206,33 +206,21 @@
 
   <h4>Select Book</h4>
 
-  <div class="grant-book-list">
+<select [(ngModel)]="selectedBook" style="width:100%;padding:10px;border-radius:8px;">
 
-    <div
-      class="grant-book-card"
-      *ngFor="let b of books"
-      (click)="selectedBook = (b._id || b.id)"
-      [class.active]="selectedBook == (b._id || b.id)">
+  <option value="">
+    Select Book
+  </option>
 
-      <img
-        [src]="b.coverImage || b.coverUrl || b.image"
-        width="70"
-        height="100"
-        style="border-radius:8px;object-fit:cover;">
+  <option
+    *ngFor="let b of books"
+    [value]="b._id || b.id">
 
-      <div class="grant-book-info">
+    {{ b.title || b.name }} - ₹{{ b.price }}
 
-        <h4>{{ b.title || b.name }}</h4>
+  </option>
 
-        <p>{{ b.author }}</p>
-
-        <small>₹{{ b.price }}</small>
-
-      </div>
-
-    </div>
-
-  </div>
+</select>
 
   <br>
 
