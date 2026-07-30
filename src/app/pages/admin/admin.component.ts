@@ -78,27 +78,31 @@ export class AdminComponent {
 
   };
 
+  // appSetting: any = {
+
+  //   appName: '',
+
+  //   phone: '',
+
+  //   whatsapp: '',
+
+  //   email: '',
+
+  //   instagram: '',
+
+  //   facebook: '',
+
+  //   youtube: '',
+
+  //   website: '',
+
+  //   version: ''
+
+  // };
+
   appSetting: any = {
-
-    appName: '',
-
-    phone: '',
-
-    whatsapp: '',
-
-    email: '',
-
-    instagram: '',
-
-    facebook: '',
-
-    youtube: '',
-
-    website: '',
-
-    version: ''
-
-  };
+  settings: []
+};
 
   notificationSettings = {
 

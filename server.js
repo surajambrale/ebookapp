@@ -491,6 +491,28 @@ if (req.body.password !== undefined) {
 
 });
 
+app.post("/app-setting", async (req, res) => {
+
+    const { settings } = req.body;
+
+    let appSetting = await AppSetting.findOne();
+
+    if (!appSetting) {
+
+        appSetting = new AppSetting();
+
+    }
+
+    appSetting.settings = settings;
+
+    await appSetting.save();
+
+    res.json({
+        success: true
+    });
+
+});
+
 // ===============================
 // UPDATE SUBSCRIPTION SETTINGS
 // ===============================
