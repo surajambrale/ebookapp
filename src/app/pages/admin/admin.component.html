@@ -184,55 +184,51 @@
     </button>
 
     <!-- 🔥 GRANT ACCESS -->
-   <!-- 🔥 GRANT ACCESS -->
-<div *ngIf="selectedView === 'grant'" class="card">
+    <!-- 🔥 GRANT ACCESS -->
+    <div *ngIf="selectedView === 'grant'" class="card">
 
-  <h3>Grant Book Access</h3>
+      <h3>Grant Book Access</h3>
 
-  <!-- USER -->
-  <select [(ngModel)]="selectedUser">
+      <!-- USER -->
+      <select [(ngModel)]="selectedUser">
 
-    <option value="">
-      Select User
-    </option>
+        <option value="">
+          Select User
+        </option>
 
-    <option *ngFor="let u of users" [value]="u._id">
-      {{u.name}} ({{u.phone}})
-    </option>
+        <option *ngFor="let u of users" [value]="u._id">
+          {{u.name}} ({{u.phone}})
+        </option>
 
-  </select>
+      </select>
 
-  <br><br>
+      <br><br>
 
-  <h4>Select Book</h4>
+      <h4>Select Book</h4>
 
-<select [(ngModel)]="selectedBook" style="width:100%;padding:10px;border-radius:8px;">
+      <select [(ngModel)]="selectedBook" style="width:100%;padding:10px;border-radius:8px;">
 
-  <option value="">
-    Select Book
-  </option>
+        <option value="">
+          Select Book
+        </option>
 
-  <option
-    *ngFor="let b of books"
-    [value]="b._id || b.id">
+        <option *ngFor="let b of books" [value]="b._id || b.id">
 
-    {{ b.title || b.name }} - ₹{{ b.price }}
+          {{ b.title || b.name }} - ₹{{ b.price }}
 
-  </option>
+        </option>
 
-</select>
+      </select>
 
-  <br>
+      <br>
 
-  <button
-    [disabled]="!selectedUser || !selectedBook"
-    (click)="grantAccess()">
+      <button [disabled]="!selectedUser || !selectedBook" (click)="grantAccess()">
 
-    Give Access
+        Give Access
 
-  </button>
+      </button>
 
-</div>
+    </div>
 
     <!-- 🔥 USERS -->
     <div *ngIf="selectedView === 'users'">
@@ -622,36 +618,48 @@ APP SETTINGS
 
       <h2>🎟 Coupon Management</h2>
 
-      <input type="text" placeholder="Coupon Code" [(ngModel)]="coupon.code">
+      <div class="form-group">
+        <label><b>Coupon Code</b></label>
+        <input type="text" placeholder="Example: DIWALI50" [(ngModel)]="coupon.code">
+      </div>
 
-      <select [(ngModel)]="coupon.discountType">
+      <div class="form-group">
+        <label><b>Discount Type</b></label>
+        <select [(ngModel)]="coupon.discountType">
+          <option value="flat">Flat Discount (₹)</option>
+          <option value="percentage">Percentage Discount (%)</option>
+        </select>
+      </div>
 
-        <option value="flat">Flat Discount</option>
+      <div class="form-group">
+        <label><b>Discount Value</b></label>
+        <input type="number" placeholder="Example: 100 or 20" [(ngModel)]="coupon.discountValue">
+      </div>
 
-        <option value="percentage">Percentage Discount</option>
+      <div class="form-group">
+        <label><b>Minimum Order Amount (₹)</b></label>
+        <input type="number" placeholder="Example: 399" [(ngModel)]="coupon.minimumOrder">
+      </div>
 
-      </select>
+      <div class="form-group">
+        <label><b>Expiry Date</b></label>
+        <input type="date" [(ngModel)]="coupon.expiryDate">
+      </div>
 
-      <input type="number" placeholder="Discount Value" [(ngModel)]="coupon.discountValue">
+      <div class="form-group">
+        <label><b>Usage Limit</b></label>
+        <input type="number" placeholder="Example: 100" [(ngModel)]="coupon.usageLimit">
+      </div>
 
-      <input type="number" placeholder="Minimum Order" [(ngModel)]="coupon.minimumOrder">
-
-      <input type="date" [(ngModel)]="coupon.expiryDate">
-
-      <input type="number" placeholder="Usage Limit" [(ngModel)]="coupon.usageLimit">
-
-      <label>
-
-        <input type="checkbox" [(ngModel)]="coupon.active">
-
-        Active
-
-      </label>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="coupon.active">
+          Active Coupon
+        </label>
+      </div>
 
       <button *ngIf="!isCouponEdit" (click)="createCoupon()">
-
         ➕ Create Coupon
-
       </button>
 
       <button *ngIf="isCouponEdit" (click)="updateCoupon()">

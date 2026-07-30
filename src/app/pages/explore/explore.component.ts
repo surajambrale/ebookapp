@@ -35,18 +35,24 @@ export class ExploreComponent implements OnInit {
 
   loadDynamicBooks() {
 
-    this.http.get<any[]>(`${this.api}/books/all`)
+    this.http.get<any>(`${this.api}/books/all?page=1&limit=1000`)
       .subscribe({
 
         next: (res) => {
 
-          this.books = res.map(book => ({
+          console.log("Explore Books:", res);
+
+          this.books = (res.books || []).map((book: any) => ({
 
             id: book._id,
+
+            _id: book._id,
 
             title: book.title,
 
             image: book.coverImage,
+
+            coverImage: book.coverImage,
 
             author: book.author,
 
@@ -62,9 +68,11 @@ export class ExploreComponent implements OnInit {
 
           this.filteredBooks = [...this.books];
 
+          console.log("Mapped Books:", this.filteredBooks);
+
         },
 
-        error: err => {
+        error: (err) => {
 
           console.log(err);
 
@@ -96,7 +104,7 @@ export class ExploreComponent implements OnInit {
   // 🔥 OPEN BOOK PAGE
   openBook(book: any) {
 
-    this.router.navigate(['/book', book.id]);
+    this.router.navigate(['/book', book._id || book.id]);
 
   }
 

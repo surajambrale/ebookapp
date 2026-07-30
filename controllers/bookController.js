@@ -1,6 +1,5 @@
 const Purchase = require('../models/Purchase');
 const Subscription = require('../models/Subscription');
-const books = require('../data/books');
 const path = require('path');
 const DynamicBook = require('../models/DynamicBook');
 
@@ -32,20 +31,6 @@ exports.getMyBooks = async (req, res) => {
 
         });
 
-        // Hardcoded Books
-        let hardcodedBooks = [];
-
-        if (subscription) {
-
-            hardcodedBooks = books;
-
-        } else {
-
-            hardcodedBooks = books.filter(book =>
-                purchasedIds.includes(book.id.toString())
-            );
-
-        }
 
         // Dynamic Books
         let dynamicBooks = [];
@@ -66,8 +51,6 @@ exports.getMyBooks = async (req, res) => {
 
         // Merge both
         res.json([
-
-            ...hardcodedBooks,
 
             ...dynamicBooks
 
@@ -220,6 +203,41 @@ exports.readBook = async (req, res) => {
         console.log(err);
 
         res.status(500).send("Error");
+
+    }
+
+};
+
+
+// ======================
+// GET SINGLE BOOK
+// ======================
+
+exports.getBookById = async (req, res) => {
+
+    try {
+
+        const book = await DynamicBook.findById(req.params.id);
+
+        if (!book) {
+
+            return res.status(404).json({
+                message: "Book Not Found"
+            });
+
+        }
+
+        res.json(book);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            message: err.message
+        });
 
     }
 
