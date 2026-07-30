@@ -101,8 +101,8 @@ export class AdminComponent {
   // };
 
   appSetting: any = {
-  settings: []
-};
+    settings: []
+  };
 
   notificationSettings = {
 
@@ -388,6 +388,20 @@ export class AdminComponent {
   }
 
   //edit book code end 
+
+  //sidebar setting code start
+
+  getSetting(label: string): string {
+
+    const item = this.appSetting.settings.find(
+      (x: any) => x.label === label
+    );
+
+    return item ? item.value : '';
+
+  }
+
+  //sidebar setting code end
 
   //load coupon code start
 
@@ -1439,6 +1453,16 @@ export class AdminComponent {
         next: (res) => {
 
           this.appSetting = res;
+
+          this.appSetting.phone = this.getSetting("Phone");
+          this.appSetting.email = this.getSetting("Email");
+          this.appSetting.whatsapp = this.getSetting("WhatsApp");
+          this.appSetting.instagram = this.getSetting("Instagram");
+          this.appSetting.facebook = this.getSetting("Facebook");
+          this.appSetting.youtube = this.getSetting("Youtube");
+          this.appSetting.website = this.getSetting("Website");
+          this.appSetting.telegram = this.getSetting("Telegram");
+          this.appSetting.linkedin = this.getSetting("LinkedIn");
 
         },
 
