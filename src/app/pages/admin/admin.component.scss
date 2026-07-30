@@ -20,29 +20,29 @@
 
 }
 
-.admin::-webkit-scrollbar {
+.admin::-webkit-scrollbar{
 
-  width: 8px;
-
-}
-
-.admin::-webkit-scrollbar-track {
-
-  background: #1b1b1b;
+width:8px;
 
 }
 
-.admin::-webkit-scrollbar-thumb {
+.admin::-webkit-scrollbar-track{
 
-  background: gold;
-
-  border-radius: 20px;
+background:#1b1b1b;
 
 }
 
-.admin::-webkit-scrollbar-thumb:hover {
+.admin::-webkit-scrollbar-thumb{
 
-  background: #ffcc00;
+background:gold;
+
+border-radius:20px;
+
+}
+
+.admin::-webkit-scrollbar-thumb:hover{
+
+background:#ffcc00;
 
 }
 
@@ -311,7 +311,7 @@
 
   border: 1px solid #2d2d2d;
 
-  overflow-x: auto;
+  overflow-x:auto;
 
   p {
 
@@ -438,72 +438,72 @@
 UPLOAD BOOK
 ======================= */
 
-.upload-book-card {
+.upload-book-card{
 
-  background: #1b1b1b;
-  border: 1px solid #333;
-  border-radius: 18px;
-  padding: 25px;
-  overflow-x: auto;
-
-}
-
-.upload-book-card h2 {
-
-  color: #FFD54F;
-  text-align: center;
-  margin-bottom: 20px;
+background:#1b1b1b;
+border:1px solid #333;
+border-radius:18px;
+padding:25px;
+overflow-x:auto;
 
 }
 
-.upload-book-card label {
+.upload-book-card h2{
 
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #FFD54F;
+color:#FFD54F;
+text-align:center;
+margin-bottom:20px;
+
+}
+
+.upload-book-card label{
+
+display:block;
+margin-top:15px;
+margin-bottom:8px;
+font-weight:600;
+color:#FFD54F;
 
 }
 
 .upload-book-card input,
-.upload-book-card textarea {
+.upload-book-card textarea{
 
-  width: 100%;
-  padding: 14px;
-  background: #2a2a2a;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  box-sizing: border-box;
-
-}
-
-.upload-book-card textarea {
-
-  min-height: 140px;
-  resize: vertical;
+width:100%;
+padding:14px;
+background:#2a2a2a;
+border:none;
+border-radius:12px;
+color:white;
+box-sizing:border-box;
 
 }
 
-.upload-book-card input[type=file] {
+.upload-book-card textarea{
 
-  padding: 10px;
+min-height:140px;
+resize:vertical;
 
 }
 
-.upload-book-card button {
+.upload-book-card input[type=file]{
 
-  margin-top: 20px;
-  background: gold;
-  color: black;
-  font-weight: bold;
+padding:10px;
+
 }
 
-.upload-book-card hr {
+.upload-book-card button{
 
-  margin: 30px 0;
-  border-color: #333;
+margin-top:20px;
+background:gold;
+color:black;
+font-weight:bold;
+}
+
+.upload-book-card hr{
+
+margin:30px 0;
+border-color:#333;
 
 }
 
@@ -512,64 +512,64 @@ UPLOAD BOOK
 UPLOADED BOOK
 ======================= */
 
-.uploaded-book-card {
+.uploaded-book-card{
 
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: #232323;
-  padding: 18px;
-  border-radius: 15px;
-  margin-bottom: 18px;
-
-}
-
-.uploaded-book-card img {
-
-  width: 100px;
-  height: 145px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid gold;
+display:flex;
+align-items:center;
+gap:20px;
+background:#232323;
+padding:18px;
+border-radius:15px;
+margin-bottom:18px;
 
 }
 
-.uploaded-book-card h3 {
+.uploaded-book-card img{
 
-  color: #FFD54F;
-  margin-bottom: 8px;
-
-}
-
-.uploaded-book-card p {
-
-  color: white;
-  margin: 4px 0;
+width:100px;
+height:145px;
+border-radius:12px;
+object-fit:cover;
+border:2px solid gold;
 
 }
 
-.uploaded-book-card .delete-btn {
+.uploaded-book-card h3{
 
-  margin-left: auto;
-  width: auto;
+color:#FFD54F;
+margin-bottom:8px;
 
 }
 
-@media(max-width:768px) {
+.uploaded-book-card p{
 
-  .uploaded-book-card {
+color:white;
+margin:4px 0;
 
-    flex-direction: column;
-    text-align: center;
+}
 
-  }
+.uploaded-book-card .delete-btn{
 
-  .uploaded-book-card .delete-btn {
+margin-left:auto;
+width:auto;
 
-    width: 100%;
-    margin-left: 0;
+}
 
-  }
+@media(max-width:768px){
+
+.uploaded-book-card{
+
+flex-direction:column;
+text-align:center;
+
+}
+
+.uploaded-book-card .delete-btn{
+
+width:100%;
+margin-left:0;
+
+}
 
 }
 
@@ -614,15 +614,15 @@ UPLOADED BOOK
 
   }
 
-  .admin {
+  .admin{
 
-    padding: 15px;
+padding:15px;
 
-    padding-bottom: 120px;
+padding-bottom:120px;
 
-    overflow-y: auto;
+overflow-y:auto;
 
-  }
+}
 
 }
 
@@ -631,193 +631,141 @@ UPLOADED BOOK
 DYNAMIC SETTINGS
 ========================== */
 
-.setting-item {
+.setting-item{
 
-  background: #262626;
+background:#262626;
 
-  border: 1px solid #3b3b3b;
+border:1px solid #3b3b3b;
 
-  padding: 18px;
+padding:18px;
 
-  border-radius: 16px;
+border-radius:16px;
 
-  margin-bottom: 18px;
+margin-bottom:18px;
 
-  transition: .3s;
-
-}
-
-.setting-item:hover {
-
-  transform: translateY(-3px);
-
-  border-color: gold;
-
-  box-shadow: 0 10px 25px rgba(255, 215, 0, .15);
+transition:.3s;
 
 }
 
-.setting-item label {
+.setting-item:hover{
 
-  display: block;
+transform:translateY(-3px);
 
-  font-size: 15px;
+border-color:gold;
 
-  font-weight: 600;
-
-  margin-bottom: 8px;
-
-  color: #FFD54F;
+box-shadow:0 10px 25px rgba(255,215,0,.15);
 
 }
 
-.setting-item input {
+.setting-item label{
 
-  width: 100%;
+display:block;
 
-  padding: 14px;
+font-size:15px;
 
-  border: none;
+font-weight:600;
 
-  outline: none;
+margin-bottom:8px;
 
-  border-radius: 12px;
-
-  background: #1f1f1f;
-
-  color: white;
-
-  margin-bottom: 12px;
+color:#FFD54F;
 
 }
 
-.setting-item .delete-btn {
+.setting-item input{
 
-  background: linear-gradient(135deg, #ff4d4d, #d60000);
+width:100%;
 
-  border: none;
+padding:14px;
 
-  padding: 12px;
+border:none;
 
-  border-radius: 10px;
+outline:none;
 
-  width: 100%;
+border-radius:12px;
 
-  font-weight: bold;
+background:#1f1f1f;
 
-  color: white;
+color:white;
 
-  transition: .3s;
-
-  cursor: pointer;
+margin-bottom:12px;
 
 }
 
-.setting-item .delete-btn:hover {
+.setting-item .delete-btn{
 
-  transform: scale(1.03);
+background:linear-gradient(135deg,#ff4d4d,#d60000);
 
-  box-shadow: 0 10px 20px rgba(255, 0, 0, .35);
+border:none;
 
-}
+padding:12px;
 
-.card h3 {
+border-radius:10px;
 
-  color: #FFD54F;
+width:100%;
 
-  margin: 20px 0 12px;
+font-weight:bold;
 
-  font-size: 18px;
+color:white;
 
-}
+transition:.3s;
 
-.card select {
-
-  width: 100%;
-
-  padding: 14px;
-
-  border: none;
-
-  outline: none;
-
-  border-radius: 12px;
-
-  background: #1f1f1f;
-
-  color: white;
-
-  margin-bottom: 15px;
+cursor:pointer;
 
 }
 
-.card button {
+.setting-item .delete-btn:hover{
 
-  transition: .3s;
+transform:scale(1.03);
 
-}
-
-.card button:hover {
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 10px 20px rgba(255, 215, 0, .18);
+box-shadow:0 10px 20px rgba(255,0,0,.35);
 
 }
 
-.grant-book-card {
+.card h3{
 
-  display: flex;
+color:#FFD54F;
 
-  align-items: center;
+margin:20px 0 12px;
 
-  gap: 15px;
-
-  padding: 10px;
-
-  margin-bottom: 12px;
-
-  border: 1px solid #ddd;
-
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  transition: .3s;
+font-size:18px;
 
 }
 
-.grant-book-card:hover {
+.card select{
 
-  background: #f5f5f5;
+width:100%;
 
-}
+padding:14px;
 
-.grant-book-card.active {
+border:none;
 
-  border: 2px solid #4caf50;
+outline:none;
 
-  background: #e8f5e9;
+border-radius:12px;
 
-}
+background:#1f1f1f;
 
-.grant-book-info h4 {
+color:white;
 
-  margin: 0;
-
-  font-size: 16px;
+margin-bottom:15px;
 
 }
 
-.grant-book-info p {
+.card button{
 
-  margin: 4px 0;
-
-  font-size: 13px;
-
-  color: #666;
+transition:.3s;
 
 }
+
+.card button:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 10px 20px rgba(255,215,0,.18);
+
+}
+
+
 
 
 /* =========================================
