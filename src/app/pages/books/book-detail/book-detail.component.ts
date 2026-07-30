@@ -44,14 +44,21 @@ export class BookDetailComponent {
   this.http.get<any>(`${this.apiUrl}/books/all`)
     .subscribe({
 
-      next: () => {
+      next: (res) => {
 
-        // books list load ho gayi
+        this.dynamicBooks = res.books || [];
+
+        console.log("Dynamic Books:", this.dynamicBooks);
+
         this.loadBook();
 
       },
 
-      error: () => {
+      error: (err) => {
+
+        console.log(err);
+
+        this.dynamicBooks = [];
 
         this.loadBook();
 
