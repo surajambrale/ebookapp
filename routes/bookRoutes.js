@@ -50,4 +50,37 @@ router.get('/all', async (req, res) => {
 
 });
 
+// GET SINGLE BOOK
+router.get('/:id', async (req, res) => {
+
+    try {
+
+        const book = await DynamicBook.findById(req.params.id);
+
+        if (!book) {
+
+            return res.status(404).json({
+                message: "Book Not Found"
+            });
+
+        }
+
+        res.json(book);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+
+            message: err.message
+
+        });
+
+    }
+
+});
+
 module.exports = router;
