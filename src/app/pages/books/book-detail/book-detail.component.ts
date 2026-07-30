@@ -44,21 +44,14 @@ export class BookDetailComponent {
   this.http.get<any>(`${this.apiUrl}/books/all`)
     .subscribe({
 
-      next: (res) => {
+      next: () => {
 
-        this.dynamicBooks = res.books || [];
-
-        console.log("Dynamic Books:", this.dynamicBooks);
-
+        // books list load ho gayi
         this.loadBook();
 
       },
 
-      error: (err) => {
-
-        console.log(err);
-
-        this.dynamicBooks = [];
+      error: () => {
 
         this.loadBook();
 
@@ -70,49 +63,57 @@ export class BookDetailComponent {
 
   loadBook() {
 
-    const id = this.route.snapshot.params['id'];
+  const id = this.route.snapshot.params['id'];
 
-    // First check dynamic books
-    this.book = this.dynamicBooks.find(
-      (b: any) => b._id == id
-    );
+  // 👇 API se book load karo
+  this.http.get<any>(`${this.apiUrl}/books/${id}`)
+    .subscribe({
 
-    this.finalPrice = this.book.price;
+      next: (book) => {
 
-    if (!this.book) {
+        this.book = book;
 
-      alert("Book not found");
+        this.finalPrice = book.price;
 
-      this.router.navigate(['/']);
+        const user = this.auth.getUser();
 
-      return;
+        if (user && user._id) {
 
-    }
+          this.http.get<any>(
+            `${this.apiUrl}/check/${user._id}/${book._id}`
+          ).subscribe({
 
-    const user = this.auth.getUser();
+            next: (res) => {
 
-    if (user && user._id) {
+              this.hasAccess = res.access;
 
-      const bookId = this.book._id || this.book.id;
+            },
 
-      this.http.get(
-        `${this.apiUrl}/check/${user._id}/${bookId}`
-      )
+            error: (err) => {
 
-        .subscribe({
+              console.log(err);
 
-          next: (res: any) => {
+            }
 
-            this.hasAccess = res.access;
+          });
 
-          }
+        }
 
-        });
+      },
 
+      error: (err) => {
 
-    }
+        console.log(err);
 
-  }
+        alert("Book not found");
+
+        this.router.navigate(['/']);
+
+      }
+
+    });
+
+}
 
 
 
