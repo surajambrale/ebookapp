@@ -184,56 +184,67 @@
     </button>
 
     <!-- 🔥 GRANT ACCESS -->
-    <div *ngIf="selectedView === 'grant'" class="card">
+   <!-- 🔥 GRANT ACCESS -->
+<div *ngIf="selectedView === 'grant'" class="card">
 
-      <h3>Grant Book Access</h3>
+  <h3>Grant Book Access</h3>
 
-      <!-- USER -->
+  <!-- USER -->
+  <select [(ngModel)]="selectedUser">
 
-      <select [(ngModel)]="selectedUser">
+    <option value="">
+      Select User
+    </option>
 
-        <option value="">
-          Select User
-        </option>
+    <option *ngFor="let u of users" [value]="u._id">
+      {{u.name}} ({{u.phone}})
+    </option>
 
-        <option *ngFor="let u of users" [value]="u._id">
+  </select>
 
-          {{u.name}} ({{u.phone}})
+  <br><br>
 
-        </option>
+  <h4>Select Book</h4>
 
-      </select>
+  <div class="grant-book-list">
 
-      <br><br>
+    <div
+      class="grant-book-card"
+      *ngFor="let b of books"
+      (click)="selectedBook = (b._id || b.id)"
+      [class.active]="selectedBook == (b._id || b.id)">
 
-      <!-- BOOKS -->
+      <img
+        [src]="b.coverImage || b.coverUrl || b.image"
+        width="70"
+        height="100"
+        style="border-radius:8px;object-fit:cover;">
 
-      <div class="grant-book-card" *ngFor="let b of books" (click)="selectedBook = b._id"
-        [class.active]="selectedBook == b._id">
+      <div class="grant-book-info">
 
-        <img [src]="b.coverImage || b.coverUrl" width="60" height="90" style="border-radius:8px;object-fit:cover;">
+        <h4>{{ b.title || b.name }}</h4>
 
-        <div class="grant-book-info">
+        <p>{{ b.author }}</p>
 
-          <h4>{{b.title}}</h4>
-
-          <p>{{b.author}}</p>
-
-          <small>₹{{b.price}}</small>
-
-        </div>
+        <small>₹{{ b.price }}</small>
 
       </div>
 
-      <br>
-
-      <button (click)="grantAccess()">
-
-        Give Access
-
-      </button>
-
     </div>
+
+  </div>
+
+  <br>
+
+  <button
+    [disabled]="!selectedUser || !selectedBook"
+    (click)="grantAccess()">
+
+    Give Access
+
+  </button>
+
+</div>
 
     <!-- 🔥 USERS -->
     <div *ngIf="selectedView === 'users'">

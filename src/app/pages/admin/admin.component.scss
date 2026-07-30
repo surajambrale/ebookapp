@@ -765,6 +765,54 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
 
 }
 
+//grant access scss code start
+
+.grant-book-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.grant-book-card{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+    background:#fff;
+}
+
+.grant-book-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+}
+
+.grant-book-card.active{
+    border:2px solid #4caf50;
+    background:#e8f5e9;
+}
+
+.grant-book-info h4{
+    margin:0;
+}
+
+.grant-book-info p{
+    margin:4px 0;
+    color:#666;
+}
+
+.grant-book-info small{
+    color:#2196f3;
+    font-weight:bold;
+}
+
+
+//grant access scss code end
+
 
 
 
