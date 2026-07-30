@@ -28,6 +28,17 @@ export class SidebarComponent {
 
   }
 
+  getSetting(label: string): string {
+
+  const item = this.appSetting?.settings?.find(
+    (x: any) => x.label === label
+  );
+
+  return item ? item.value : '';
+
+}
+
+
   loadAppSetting() {
 
     this.http.get<any>(`${this.API}/app-setting`)

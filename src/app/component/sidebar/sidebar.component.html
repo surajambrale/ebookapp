@@ -2,136 +2,60 @@
 
 <div class="sidebar" [class.open]="isOpen">
   <div class="close-btn" (click)="closeSidebar()">X</div>
-  <!-- <nav class="sidebar-links">
-        <a href="#home" (click)="closeSidebar()">Home</a>
-        <a routerLink="/admin-login" (click)="closeSidebar()">Admin</a>
 
-    </nav> -->
   <h2>
     Support Center
   </h2>
 
   <!-- 🔥 SUPPORT -->
 
-  <div class="menu-item">
+<div
+  class="menu-item"
+  *ngFor="let item of appSetting.settings">
 
-    <span>📞</span>
+  <span>
 
-    <a [href]="'tel:' + appSetting.phone">
-      Call Support
-    </a>
+    <ng-container [ngSwitch]="item.label">
 
-  </div>
+      <span *ngSwitchCase="'Phone'">📞</span>
 
-  <!-- 🔥 WHATSAPP -->
+      <span *ngSwitchCase="'WhatsApp'">💬</span>
 
-  <div class="menu-item">
+      <span *ngSwitchCase="'Email'">📧</span>
 
-    <span>💬</span>
+      <span *ngSwitchCase="'Website'">🌐</span>
 
-    <a [href]="'https://wa.me/' + appSetting.whatsapp" target="_blank">
+      <span *ngSwitchCase="'Instagram'">📸</span>
 
-      WhatsApp Support
+      <span *ngSwitchCase="'Facebook'">👍</span>
 
-    </a>
+      <span *ngSwitchCase="'Youtube'">▶️</span>
 
-  </div>
+      <span *ngSwitchCase="'Telegram'">✈️</span>
 
-  <!-- 🔥 EMAIL -->
+      <span *ngSwitchCase="'LinkedIn'">💼</span>
 
-  <div class="menu-item">
+      <span *ngSwitchDefault>🔗</span>
 
-    <span>📧</span>
+    </ng-container>
 
-    <a [href]="'mailto:' + appSetting.email">
-      Email Support
-    </a>
-
-  </div>
-
-  <!-- 🔥 REPORT -->
-
-  <div class="menu-item">
-
-    <span>🐞</span>
-
-    <a [href]="'https://wa.me/' + appSetting.whatsapp + '?text=I found a bug in your application'" target="_blank">
-      Report Issue
-    </a>
-
-  </div>
-
-  <!-- 🔥 FEATURE -->
-
-  <div class="menu-item">
-
-    <span>💡</span>
-
-    <a [href]="'https://wa.me/' + appSetting.whatsapp + '?text=I want to suggest a feature'" target="_blank">
-      Suggest Feature
-    </a>
-
-  </div>
-
-  <!-- WEBSITE -->
-
-<div class="menu-item">
-
-  <span>🌐</span>
+  </span>
 
   <a
-    [href]="appSetting.website"
+
+    [href]="
+      item.label=='Phone'
+        ? 'tel:'+item.value
+        : item.label=='Email'
+        ? 'mailto:'+item.value
+        : item.label=='WhatsApp'
+        ? 'https://wa.me/'+item.value
+        : item.value
+    "
+
     target="_blank">
 
-    Website
-
-  </a>
-
-</div>
-
-<!-- INSTAGRAM -->
-
-<div class="menu-item">
-
-  <span>📸</span>
-
-  <a
-    [href]="appSetting.instagram"
-    target="_blank">
-
-    Instagram
-
-  </a>
-
-</div>
-
-<!-- FACEBOOK -->
-
-<div class="menu-item">
-
-  <span>👍</span>
-
-  <a
-    [href]="appSetting.facebook"
-    target="_blank">
-
-    Facebook
-
-  </a>
-
-</div>
-
-<!-- YOUTUBE -->
-
-<div class="menu-item">
-
-  <span>▶️</span>
-
-  <a
-    [href]="appSetting.youtube"
-    target="_blank">
-
-    YouTube
+    {{item.label}}
 
   </a>
 
