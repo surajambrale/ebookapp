@@ -450,16 +450,7 @@ app.put("/app-setting", async (req, res) => {
     setting.appName = req.body.appName;
     setting.logo = req.body.logo;
 
-    setting.phone = req.body.phone;
-    setting.whatsapp = req.body.whatsapp;
-    setting.email = req.body.email;
-
-    setting.instagram = req.body.instagram;
-    setting.facebook = req.body.facebook;
-    setting.youtube = req.body.youtube;
-
-    setting.website = req.body.website;
-    setting.version = req.body.version;
+    setting.settings = req.body.settings || [];
 
     // Password ko kabhi overwrite mat karo
 if (req.body.password !== undefined) {
