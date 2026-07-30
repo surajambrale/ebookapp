@@ -188,6 +188,8 @@
 
       <h3>Grant Book Access</h3>
 
+      <!-- USER -->
+
       <select [(ngModel)]="selectedUser">
 
         <option value="">
@@ -195,25 +197,40 @@
         </option>
 
         <option *ngFor="let u of users" [value]="u._id">
-          {{ u.name }} ({{ u.phone }})
+
+          {{u.name}} ({{u.phone}})
+
         </option>
 
       </select>
 
-      <select [(ngModel)]="selectedBook">
+      <br><br>
 
-        <option value="">
-          Select Book
-        </option>
+      <!-- BOOKS -->
 
-        <option *ngFor="let b of books" [value]="b.id">
-          {{ b.name }}
-        </option>
+      <div class="grant-book-card" *ngFor="let b of books" (click)="selectedBook = b._id"
+        [class.active]="selectedBook == b._id">
 
-      </select>
+        <img [src]="b.coverImage || b.coverUrl" width="60" height="90" style="border-radius:8px;object-fit:cover;">
+
+        <div class="grant-book-info">
+
+          <h4>{{b.title}}</h4>
+
+          <p>{{b.author}}</p>
+
+          <small>₹{{b.price}}</small>
+
+        </div>
+
+      </div>
+
+      <br>
 
       <button (click)="grantAccess()">
+
         Give Access
+
       </button>
 
     </div>
@@ -454,101 +471,86 @@ margin-top:25px;">
 APP SETTINGS
 ========================== -->
 
-<div *ngIf="selectedView==='appSetting'" class="card">
+    <div *ngIf="selectedView==='appSetting'" class="card">
 
-  <h2>⚙️ App Settings</h2>
+      <h2>⚙️ App Settings</h2>
 
-  <label>Application Name</label>
+      <label>Application Name</label>
 
-  <input
-    type="text"
-    [(ngModel)]="appSetting.appName">
+      <input type="text" [(ngModel)]="appSetting.appName">
 
-  <label>Application Logo</label>
+      <label>Application Logo</label>
 
-  <input
-    type="file"
-    (change)="onLogoSelected($event)">
+      <input type="file" (change)="onLogoSelected($event)">
 
-  <button
-    (click)="uploadLogo()">
+      <button (click)="uploadLogo()">
 
-    Upload Logo
+        Upload Logo
 
-  </button>
+      </button>
 
-  <hr>
+      <hr>
 
-  <h3>➕ Add New Setting</h3>
+      <h3>➕ Add New Setting</h3>
 
-  <select [(ngModel)]="newSetting.label">
+      <select [(ngModel)]="newSetting.label">
 
-    <option value="">Select Setting</option>
+        <option value="">Select Setting</option>
 
-    <option>Instagram</option>
+        <option>Instagram</option>
 
-    <option>Facebook</option>
+        <option>Facebook</option>
 
-    <option>Youtube</option>
+        <option>Youtube</option>
 
-    <option>Website</option>
+        <option>Website</option>
 
-    <option>Email</option>
+        <option>Email</option>
 
-    <option>Phone</option>
+        <option>Phone</option>
 
-    <option>WhatsApp</option>
+        <option>WhatsApp</option>
 
-    <option>Telegram</option>
+        <option>Telegram</option>
 
-    <option>LinkedIn</option>
+        <option>LinkedIn</option>
 
-  </select>
+      </select>
 
-  <input
-    type="text"
-    [(ngModel)]="newSetting.value"
-    placeholder="Enter Value">
+      <input type="text" [(ngModel)]="newSetting.value" placeholder="Enter Value">
 
-  <button
-    (click)="addSetting()">
+      <button (click)="addSetting()">
 
-    Add Setting
+        Add Setting
 
-  </button>
+      </button>
 
-  <hr>
+      <hr>
 
-  <h3>📋 Added Settings</h3>
+      <h3>📋 Added Settings</h3>
 
-  <div
-    class="setting-item"
-    *ngFor="let item of appSetting.settings; let i=index">
+      <div class="setting-item" *ngFor="let item of appSetting.settings; let i=index">
 
-    <label>{{item.label}}</label>
+        <label>{{item.label}}</label>
 
-    <input
-      [(ngModel)]="item.value">
+        <input [(ngModel)]="item.value">
 
-    <button
-      class="delete-btn"
-      (click)="removeSetting(i)">
+        <button class="delete-btn" (click)="removeSetting(i)">
 
-      Delete
+          Delete
 
-    </button>
+        </button>
 
-  </div>
-  
+      </div>
 
-  <button
-    (click)="saveAppSetting()">
 
-    Save All Settings
+      <button (click)="saveAppSetting()">
 
-  </button>
+        Save All Settings
 
-</div>
+      </button>
+
+    </div>
 
 
     <!-- app settings code end -->
