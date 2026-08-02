@@ -1407,7 +1407,7 @@ app.get('/my-books/:userId', async (req, res) => {
     // PURCHASED BOOKS
     // ===============================
 
-    const Subscription = require('../models/Subscription');
+    // const Subscription = require('../models/Subscription');
 
     exports.getMyBooks = async (req, res) => {
 

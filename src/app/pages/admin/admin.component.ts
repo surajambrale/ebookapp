@@ -1539,7 +1539,7 @@ export class AdminComponent {
 
         error: () => {
 
-          alert('Error ❌');
+          alert('Already Granted ❌');
 
         }
 
