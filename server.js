@@ -1374,111 +1374,38 @@ app.get('/my-books/:userId', async (req, res) => {
 
     const { userId } = req.params;
 
-    // ===============================
-    // CHECK ACTIVE SUBSCRIPTION
-    // ===============================
-
     const subscription = await Subscription.findOne({
-
       userId,
-
       status: "active",
-
-      expiryDate: {
-
-        $gt: new Date()
-
-      }
-
+      expiryDate: { $gt: new Date() }
     });
-
-    // ===============================
-    // IF SUBSCRIPTION ACTIVE
-    // RETURN ALL BOOKS
-    // ===============================
 
     if (subscription) {
 
-      return res.json(books);
+      const allBooks = await DynamicBook.find()
+        .sort({ createdAt: -1 });
+
+      return res.json(allBooks);
 
     }
 
-    // ===============================
-    // PURCHASED BOOKS
-    // ===============================
+    // Purchase books
+    const purchases = await Purchase.find({ userId });
 
-    // const Subscription = require('../models/Subscription');
+    const purchasedIds = purchases.map(p => p.bookId);
 
-    exports.getMyBooks = async (req, res) => {
+    const purchasedBooks = await DynamicBook.find({
+      _id: { $in: purchasedIds }
+    }).sort({ createdAt: -1 });
 
-      try {
+    return res.json(purchasedBooks);
 
-        const userId = req.params.userId;
-
-        const purchases = await Purchase.find({
-          userId
-        });
-
-        const purchasedIds =
-          purchases.map(p => p.bookId.toString());
-
-        const subscription =
-          await Subscription.findOne({
-
-            userId,
-
-            status: "active",
-
-            expiryDate: {
-              $gt: new Date()
-            }
-
-          });
-
-        let userBooks = [];
-
-        if (subscription) {
-
-          userBooks = books;
-
-        } else {
-
-          userBooks = books.filter(book =>
-
-            purchasedIds.includes(book.id.toString())
-
-          );
-
-        }
-
-        res.json(userBooks);
-
-      }
-
-      catch (err) {
-
-        console.log(err);
-
-        res.status(500).json({
-
-          message: "Error"
-
-        });
-
-      }
-
-    }
-
-  }
-
-  catch (err) {
+  } catch (err) {
 
     console.log(err);
 
     res.status(500).json({
-
       message: "Server Error"
-
     });
 
   }
