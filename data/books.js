@@ -7,12 +7,12 @@ const books = [
   //   image: "assets/images/fatloss-book.jpeg"
   // },
 
-  {
-    id: "7",
-    name: "Admin Testing Book",
-    price: 1,
-    image: "assets/images/admin-testing-book.jpg"
-  }
+  // {
+  //   id: "7",
+  //   name: "Admin Testing Book",
+  //   price: 1,
+  //   image: "assets/images/admin-testing-book.jpg"
+  // }
 
 ];
 
