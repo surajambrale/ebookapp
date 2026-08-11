@@ -74,6 +74,223 @@
 
     </div>
 
+    <!-- folder code start  -->
+
+    <!-- ========================================= -->
+    <!-- 📚 LIBRARY / FOLDER MANAGEMENT -->
+    <!-- ========================================= -->
+
+    <div *ngIf="selectedView === 'library'" class="card library-container">
+
+      <div class="library-header">
+
+        <div>
+
+          <h2>📚 Library Management</h2>
+
+          <p>
+            Manage folders and subfolders
+          </p>
+
+        </div>
+
+
+        <button class="create-folder-btn" (click)="showFolderForm = !showFolderForm">
+
+          ➕ New Folder
+
+        </button>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- CREATE FOLDER -->
+      <!-- ===================================== -->
+
+      <div class="folder-form" *ngIf="showFolderForm">
+
+        <h3>
+
+          📁
+          {{ currentFolderId
+          ? 'Create Subfolder'
+          : 'Create Folder'
+          }}
+
+        </h3>
+
+
+        <label>
+          Folder Name
+        </label>
+
+        <input type="text" [(ngModel)]="newFolderName" placeholder="Enter folder name">
+
+
+        <label>
+          Description
+        </label>
+
+        <textarea [(ngModel)]="newFolderDescription" placeholder="Enter folder description">
+    </textarea>
+
+
+        <div class="form-buttons">
+
+          <button class="save-btn" (click)="createFolder()">
+
+            Create Folder
+
+          </button>
+
+
+          <button class="cancel-btn" (click)="showFolderForm = false">
+
+            Cancel
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- BREADCRUMB -->
+      <!-- ===================================== -->
+
+      <div class="folder-breadcrumb">
+
+        <button (click)="loadFolders(null); folderPath = []">
+
+          🏠 Library
+
+        </button>
+
+
+        <span *ngFor="let path of folderPath">
+
+          / {{ path.name }}
+
+        </span>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- BACK -->
+      <!-- ===================================== -->
+
+      <button *ngIf="currentFolderId" class="back-folder-btn" (click)="goBackFolder()">
+
+        ← Back
+
+      </button>
+
+
+      <!-- ===================================== -->
+      <!-- LOADING -->
+      <!-- ===================================== -->
+
+      <div *ngIf="loadingFolders">
+
+        Loading folders...
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- FOLDER LIST -->
+      <!-- ===================================== -->
+
+      <div class="folder-grid" *ngIf="!loadingFolders">
+
+
+        <div class="folder-card" *ngFor="let folder of folders" (dblclick)="openFolder(folder)">
+
+
+          <div class="folder-icon">
+
+            📁
+
+          </div>
+
+
+          <div class="folder-info">
+
+            <h3>
+
+              {{ folder.name }}
+
+            </h3>
+
+
+            <p>
+
+              {{ folder.description }}
+
+            </p>
+
+          </div>
+
+
+          <div class="folder-actions">
+
+
+            <button (click)="openFolder(folder); $event.stopPropagation()">
+
+              Open
+
+            </button>
+
+
+            <button class="delete-folder" (click)="deleteFolder(folder); $event.stopPropagation()">
+
+              🗑 Delete
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- EMPTY -->
+      <!-- ===================================== -->
+
+      <div class="empty-folder" *ngIf="!loadingFolders && folders.length === 0">
+
+        <div>
+
+          📂
+
+        </div>
+
+        <p>
+
+          No folders found
+
+        </p>
+
+        <small>
+
+          Create your first folder
+
+        </small>
+
+      </div>
+
+    </div>
+
+    <!-- folder code end -->
+
     <!-- 🔥 DROPDOWN -->
     <div class="view-select">
 

@@ -64,6 +64,29 @@ export class AdminComponent {
 
   itemsPerPage = 10;
 
+  //folder code start
+  // =====================================
+  // 📚 FOLDER MANAGEMENT
+  // =====================================
+
+  folders: any[] = [];
+
+  currentFolderId: string | null = null;
+
+  folderPath: any[] = [];
+
+  newFolderName = '';
+
+  newFolderDescription = '';
+
+  showFolderForm = false;
+
+  loadingFolders = false;
+
+
+  //folder code end
+
+
 
 
   subscriptionSetting = {
@@ -389,6 +412,215 @@ export class AdminComponent {
 
   //edit book code end 
 
+  //load folder code start 
+
+  // =====================================
+  // LOAD FOLDERS
+  // =====================================
+
+  loadFolders(parentId: string | null = null) {
+
+    this.loadingFolders = true;
+
+    const url = parentId
+      ? `${this.api}/folders/${parentId}`
+      : `${this.api}/folders`;
+
+    this.http.get<any[]>(url)
+      .subscribe({
+
+        next: (res) => {
+
+          this.folders = res;
+
+          this.currentFolderId = parentId;
+
+          this.loadingFolders = false;
+
+        },
+
+        error: (err) => {
+
+          console.log('Folder Load Error:', err);
+
+          this.loadingFolders = false;
+
+        }
+
+      });
+
+  }
+
+  // =====================================
+  // CREATE FOLDER
+  // =====================================
+
+  createFolder() {
+
+    if (!this.newFolderName.trim()) {
+
+      alert('Please enter folder name');
+
+      return;
+
+    }
+
+
+    const data = {
+
+      name: this.newFolderName.trim(),
+
+      description: this.newFolderDescription,
+
+      parentId: this.currentFolderId
+
+    };
+
+
+    this.http.post<any>(
+
+      `${this.api}/folders`,
+
+      data
+
+    ).subscribe({
+
+      next: (res) => {
+
+        alert('Folder Created Successfully ✅');
+
+        this.newFolderName = '';
+
+        this.newFolderDescription = '';
+
+        this.showFolderForm = false;
+
+        this.loadFolders(this.currentFolderId);
+
+      },
+
+      error: (err) => {
+
+        console.log('Create Folder Error:', err);
+
+        alert(
+          err.error?.message ||
+          'Folder creation failed ❌'
+        );
+
+      }
+
+    });
+
+  }
+
+  // =====================================
+  // OPEN FOLDER
+  // =====================================
+
+  openFolder(folder: any) {
+
+    this.folderPath.push({
+
+      _id: folder._id,
+
+      name: folder.name
+
+    });
+
+    this.loadFolders(folder._id);
+
+  }
+
+  // =====================================
+  // GO BACK
+  // =====================================
+
+  goBackFolder() {
+
+    if (this.folderPath.length === 0) {
+
+      this.loadFolders(null);
+
+      return;
+
+    }
+
+
+    this.folderPath.pop();
+
+
+    if (this.folderPath.length === 0) {
+
+      this.loadFolders(null);
+
+    } else {
+
+      const parent =
+        this.folderPath[
+        this.folderPath.length - 1
+        ];
+
+      this.loadFolders(parent._id);
+
+    }
+
+  }
+
+  // =====================================
+// DELETE FOLDER
+// =====================================
+
+deleteFolder(folder: any) {
+
+  const confirmDelete = confirm(
+
+    `Delete "${folder.name}" folder?`
+
+  );
+
+
+  if (!confirmDelete) {
+
+    return;
+
+  }
+
+
+  this.http.delete<any>(
+
+    `${this.api}/folders/${folder._id}`
+
+  ).subscribe({
+
+    next: (res) => {
+
+      alert('Folder Deleted ✅');
+
+      this.loadFolders(this.currentFolderId);
+
+    },
+
+    error: (err) => {
+
+      console.log('Delete Folder Error:', err);
+
+      alert(
+
+        err.error?.message ||
+
+        'Unable to delete folder ❌'
+
+      );
+
+    }
+
+  });
+
+}
+
+  //load folder code end 
+
   //sidebar setting code start
 
   getSetting(label: string): string {
@@ -634,6 +866,7 @@ export class AdminComponent {
   }
 
   //update book code end
+
 
   //pagination code start
 

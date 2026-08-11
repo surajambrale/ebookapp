@@ -33,6 +33,8 @@ const bcrypt = require('bcrypt');
 const app = express();
 const couponRoutes = require('./routes/couponRoutes');
 
+const folderRoutes = require('./routes/folderRoutes');
+
 // const books = require('./data/books');
 const books = require('./data/books');
 
@@ -66,6 +68,7 @@ app.use('/admin/books', uploadBookRoute);
 app.use('/books', dynamicBookRoute);
 app.use('/notification', notificationRoutes);
 app.use('/books', bookRoutes);
+app.use('/folders', folderRoutes);
 app.use('/coupon', couponRoutes);
 
 
