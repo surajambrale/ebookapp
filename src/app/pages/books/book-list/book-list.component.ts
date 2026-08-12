@@ -189,7 +189,13 @@ export class BookListComponent {
 
         error: (err) => {
 
-          console.log(err);
+          console.log('Books API Error:', err);
+
+          this.books = [];
+
+          this.filteredBooks = [];
+
+          this.totalBooks = 0;
 
         }
 
