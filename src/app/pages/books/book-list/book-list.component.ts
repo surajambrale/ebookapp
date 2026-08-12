@@ -30,8 +30,100 @@ export class BookListComponent {
   };
 
   books: any[] = [];
+  libraryFolders: any[] = [];
+  libraryContents: any[] = [];
 
-    // 🔥 FILTERED BOOKS
+  contentLoading = false;
+
+  currentLibraryFolder: any = null;
+
+  libraryPath: any[] = [];
+
+  libraryLoading = false;
+  folders: any[] = [];
+  contents: any[] = [];
+  currentFolderId: string | null = null;
+
+  loadFolders(parentId: string | null = null) {
+
+    this.http
+      .get<any[]>(`${this.api}/folders`, {
+        params: parentId
+          ? { parentId }
+          : {}
+      })
+      .subscribe({
+
+        next: (res) => {
+
+          this.folders = res;
+
+          this.loadContents(parentId);
+
+        },
+
+        error: (err) => {
+
+          console.log('Folder Error:', err);
+
+        }
+
+      });
+
+  }
+
+
+  loadContents(folderId: string | null) {
+
+    if (!folderId) {
+
+      this.contents = [];
+
+      return;
+
+    }
+
+    this.http
+      .get<any[]>(
+        `${this.api}/content/folder/${folderId}`
+      )
+      .subscribe({
+
+        next: (res) => {
+
+          this.contents = res;
+
+        },
+
+        error: (err) => {
+
+          console.log('Content Error:', err);
+
+        }
+
+      });
+
+  }
+
+
+  openFolder(folder: any) {
+
+    this.currentFolderId = folder._id;
+
+    this.loadFolders(folder._id);
+
+  }
+
+
+  backToRoot() {
+
+    this.currentFolderId = null;
+
+    this.loadFolders(null);
+
+  }
+
+  // 🔥 FILTERED BOOKS
   filteredBooks: any[] = [];
 
   currentPage = 1;
@@ -108,54 +200,247 @@ export class BookListComponent {
 
   // dynamic book code end
 
+
+  //folder code start
+
+  // ===============================
+  // 📚 LOAD ROOT FOLDERS
+  // ===============================
+
+  loadLibraryFolders(parentId: string | null = null) {
+
+    this.libraryLoading = true;
+
+    this.http.get<any[]>(
+      `${this.api}/library/folders`,
+      {
+        params: {
+          parentId: parentId || ''
+        }
+      }
+    ).subscribe({
+
+      next: (res) => {
+
+        this.libraryFolders = res || [];
+
+        this.libraryLoading = false;
+
+      },
+
+      error: (err) => {
+
+        console.log('Library folder error:', err);
+
+        this.libraryFolders = [];
+
+        this.libraryLoading = false;
+
+      }
+
+    });
+
+  }
+
+
+  // ===============================
+  // 📂 OPEN FOLDER
+  // ===============================
+
+  openLibraryFolder(folder: any) {
+
+    this.currentLibraryFolder = folder;
+
+    this.libraryPath.push(folder);
+
+    // Load subfolders
+    this.loadLibraryFolders(folder._id);
+
+    // Load PDF / Video / Notes
+    this.loadLibraryContents(folder._id);
+
+  }
+
+  // ===============================
+  // ⬅️ BACK
+  // ===============================
+
+  backLibraryFolder() {
+
+  if (this.libraryPath.length === 0) {
+
+    return;
+
+  }
+
+  this.libraryPath.pop();
+
+  const previousFolder =
+    this.libraryPath.length > 0
+      ? this.libraryPath[
+          this.libraryPath.length - 1
+        ]
+      : null;
+
+  this.currentLibraryFolder =
+    previousFolder;
+
+  this.loadLibraryFolders(
+    previousFolder
+      ? previousFolder._id
+      : null
+  );
+
+  if (previousFolder) {
+
+    this.loadLibraryContents(
+      previousFolder._id
+    );
+
+  } else {
+
+    this.libraryContents = [];
+
+  }
+
+}
+
+
+  // ===============================
+  // 🏠 ROOT
+  // ===============================
+
+  goToLibraryRoot() {
+
+    this.libraryPath = [];
+
+    this.currentLibraryFolder = null;
+    this.libraryContents = [];
+
+    this.loadLibraryFolders(null);
+
+  }
+
+  loadLibraryContents(folderId: string) {
+
+    this.contentLoading = true;
+
+    this.http
+      .get<any>(`${this.api}/content/folder/${folderId}`)
+      .subscribe({
+
+        next: (res) => {
+
+          this.libraryContents =
+            res?.contents || [];
+
+          this.contentLoading = false;
+
+        },
+
+        error: (err) => {
+
+          console.log(
+            'Library content error:',
+            err
+          );
+
+          this.libraryContents = [];
+
+          this.contentLoading = false;
+
+        }
+
+      });
+
+  }
+
+  openLibraryContent(content: any) {
+
+  if (content.type === 'pdf') {
+
+    window.open(
+      content.url,
+      '_blank'
+    );
+
+    return;
+
+  }
+
+
+  if (content.type === 'video') {
+
+    window.open(
+      content.url,
+      '_blank'
+    );
+
+    return;
+
+  }
+
+
+  if (content.type === 'note') {
+
+    alert(
+      content.noteContent || 'No note content'
+    );
+
+  }
+
+}
+
+  //folder code end
+
   //pagination code start
 
-nextPage() {
+  nextPage() {
 
-  if (this.currentPage < this.totalPages) {
+    if (this.currentPage < this.totalPages) {
 
-    this.loadBooks(this.currentPage + 1);
+      this.loadBooks(this.currentPage + 1);
 
-  }
-
-}
-
-previousPage() {
-
-  if (this.currentPage > 1) {
-
-    this.loadBooks(this.currentPage - 1);
+    }
 
   }
 
-}
+  previousPage() {
 
-goToPage(page: number) {
+    if (this.currentPage > 1) {
 
-  this.loadBooks(page);
+      this.loadBooks(this.currentPage - 1);
 
-}
-
-
-get pages(): number[] {
-
-  const pages: number[] = [];
-
-  const start = Math.max(1, this.currentPage - 2);
-
-  const end = Math.min(this.totalPages, this.currentPage + 2);
-
-  for (let i = start; i <= end; i++) {
-
-    pages.push(i);
+    }
 
   }
 
-  return pages;
+  goToPage(page: number) {
 
-}
+    this.loadBooks(page);
 
-//pagination code end
+  }
+
+
+  get pages(): number[] {
+
+    const pages: number[] = [];
+
+    const start = Math.max(1, this.currentPage - 2);
+
+    const end = Math.min(this.totalPages, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+
+      pages.push(i);
+
+    }
+
+    return pages;
+
+  }
+
+  //pagination code end
 
 
 
@@ -176,6 +461,8 @@ get pages(): number[] {
     this.checkSubscription();
 
     this.loadSubscriptionSetting();
+
+    this.loadLibraryFolders(null);
 
   }
 

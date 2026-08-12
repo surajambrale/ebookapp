@@ -83,6 +83,26 @@ export class AdminComponent {
 
   loadingFolders = false;
 
+  // =====================================
+  // 📚 CONTENT MANAGEMENT
+  // =====================================
+
+  contents: any[] = [];
+
+  showContentForm = false;
+
+  contentTitle = '';
+
+  contentType = 'pdf';
+
+  selectedContentFile: File | null = null;
+
+  selectedThumbnailFile: File | null = null;
+
+  uploadingContent = false;
+
+  noteContent = '';
+
 
   //folder code end
 
@@ -520,17 +540,26 @@ export class AdminComponent {
 
   openFolder(folder: any) {
 
-    this.folderPath.push({
+  this.folderPath.push({
 
-      _id: folder._id,
+    _id: folder._id,
 
-      name: folder.name
+    name: folder.name
 
-    });
+  });
 
-    this.loadFolders(folder._id);
 
-  }
+  this.loadFolders(folder._id);
+
+
+  // 🔥 Load files inside folder
+
+  this.loadContents(folder._id);
+
+
+  this.showContentForm = false;
+
+}
 
   // =====================================
   // GO BACK
@@ -568,14 +597,365 @@ export class AdminComponent {
   }
 
   // =====================================
-// DELETE FOLDER
+  // DELETE FOLDER
+  // =====================================
+
+  deleteFolder(folder: any) {
+
+    const confirmDelete = confirm(
+
+      `Delete "${folder.name}" folder?`
+
+    );
+
+
+    if (!confirmDelete) {
+
+      return;
+
+    }
+
+
+    this.http.delete<any>(
+
+      `${this.api}/folders/${folder._id}`
+
+    ).subscribe({
+
+      next: (res) => {
+
+        alert('Folder Deleted ✅');
+
+        this.loadFolders(this.currentFolderId);
+
+      },
+
+      error: (err) => {
+
+        console.log('Delete Folder Error:', err);
+
+        alert(
+
+          err.error?.message ||
+
+          'Unable to delete folder ❌'
+
+        );
+
+      }
+
+    });
+
+  }
+
+
+  onViewChange() {
+    if (this.selectedView === 'library') {
+      this.folderPath = [];
+      this.currentFolderId = null;
+      this.loadFolders(null);
+    }
+  }
+
+  // =====================================
+  // 📄 SELECT CONTENT FILE
+  // =====================================
+
+  onContentFileSelected(event: any) {
+
+    const file = event.target.files?.[0];
+
+    if (!file) {
+
+      this.selectedContentFile = null;
+
+      return;
+
+    }
+
+
+    this.selectedContentFile = file;
+
+  }
+
+  // =====================================
+  // 🖼 SELECT THUMBNAIL
+  // =====================================
+
+  onThumbnailSelected(event: any) {
+
+    const file = event.target.files?.[0];
+
+    if (!file) {
+
+      this.selectedThumbnailFile = null;
+
+      return;
+
+    }
+
+
+    this.selectedThumbnailFile = file;
+
+  }
+
+  // =====================================
+  // 📤 UPLOAD CONTENT
+  // =====================================
+
+  uploadContent() {
+
+    if (!this.currentFolderId) {
+
+      alert('Please open a folder first');
+
+      return;
+
+    }
+
+
+    if (!this.contentTitle.trim()) {
+
+      alert('Please enter content title');
+
+      return;
+
+    }
+
+
+    // =====================================
+    // NOTE
+    // =====================================
+
+    if (this.contentType === 'note') {
+
+      if (!this.noteContent.trim()) {
+
+        alert('Please enter note content');
+
+        return;
+
+      }
+
+
+      const data = {
+
+        title: this.contentTitle,
+
+        folderId: this.currentFolderId,
+
+        noteContent: this.noteContent
+
+      };
+
+
+      this.uploadingContent = true;
+
+
+      this.http.post<any>(
+
+        `${this.api}/content/note`,
+
+        data
+
+      ).subscribe({
+
+        next: () => {
+
+          alert('Note added successfully ✅');
+
+          this.resetContentForm();
+
+          this.loadContents(this.currentFolderId!);
+
+        },
+
+        error: (err) => {
+
+          console.log(err);
+
+          alert(
+
+            err.error?.message ||
+
+            'Note creation failed ❌'
+
+          );
+
+          this.uploadingContent = false;
+
+        }
+
+      });
+
+
+      return;
+
+    }
+
+
+    // =====================================
+    // PDF / VIDEO
+    // =====================================
+
+    if (!this.selectedContentFile) {
+
+      alert('Please select a file');
+
+      return;
+
+    }
+
+
+    const formData = new FormData();
+
+
+    formData.append(
+
+      'title',
+
+      this.contentTitle
+
+    );
+
+
+    formData.append(
+
+      'folderId',
+
+      this.currentFolderId
+
+    );
+
+
+    formData.append(
+
+      'type',
+
+      this.contentType
+
+    );
+
+
+    formData.append(
+
+      'file',
+
+      this.selectedContentFile
+
+    );
+
+
+    if (this.selectedThumbnailFile) {
+
+      formData.append(
+
+        'thumbnail',
+
+        this.selectedThumbnailFile
+
+      );
+
+    }
+
+
+    this.uploadingContent = true;
+
+
+    this.http.post<any>(
+
+      `${this.api}/content/upload`,
+
+      formData
+
+    ).subscribe({
+
+      next: (res) => {
+
+        alert(
+
+          res.message ||
+          'Content uploaded successfully ✅'
+
+        );
+
+
+        this.resetContentForm();
+
+        this.loadContents(
+
+          this.currentFolderId!
+
+        );
+
+      },
+
+      error: (err) => {
+
+        console.log('Upload Error:', err);
+
+        alert(
+
+          err.error?.message ||
+
+          'Upload failed ❌'
+
+        );
+
+        this.uploadingContent = false;
+
+      }
+
+    });
+
+  }
+
+  // =====================================
+// LOAD CONTENTS
 // =====================================
 
-deleteFolder(folder: any) {
+loadContents(folderId: string) {
+
+  this.http.get<any>(
+
+    `${this.api}/content/folder/${folderId}`
+
+  ).subscribe({
+
+    next: (res) => {
+
+      this.contents =
+        res.contents || [];
+
+    },
+
+    error: (err) => {
+
+      console.log(
+
+        'Content Load Error:',
+
+        err
+
+      );
+
+      this.contents = [];
+
+    }
+
+  });
+
+}
+
+// =====================================
+// 🗑 DELETE CONTENT
+// =====================================
+
+deleteContent(content: any) {
 
   const confirmDelete = confirm(
 
-    `Delete "${folder.name}" folder?`
+    `Delete "${content.title}"?`
 
   );
 
@@ -589,27 +969,36 @@ deleteFolder(folder: any) {
 
   this.http.delete<any>(
 
-    `${this.api}/folders/${folder._id}`
+    `${this.api}/content/${content._id}`
 
   ).subscribe({
 
-    next: (res) => {
+    next: () => {
 
-      alert('Folder Deleted ✅');
+      alert('Content deleted ✅');
 
-      this.loadFolders(this.currentFolderId);
+
+      if (this.currentFolderId) {
+
+        this.loadContents(
+
+          this.currentFolderId
+
+        );
+
+      }
 
     },
 
     error: (err) => {
 
-      console.log('Delete Folder Error:', err);
+      console.log(err);
 
       alert(
 
         err.error?.message ||
 
-        'Unable to delete folder ❌'
+        'Unable to delete content ❌'
 
       );
 
@@ -619,14 +1008,70 @@ deleteFolder(folder: any) {
 
 }
 
+// =====================================
+// RESET CONTENT FORM
+// =====================================
 
-onViewChange(){
-  if (this.selectedView === 'library') {
-    this.folderPath = [];
-    this.currentFolderId = null;
-    this.loadFolders(null);
-  }
+resetContentForm() {
+
+  this.contentTitle = '';
+
+  this.contentType = 'pdf';
+
+  this.selectedContentFile = null;
+
+  this.selectedThumbnailFile = null;
+
+  this.noteContent = '';
+
+  this.showContentForm = false;
+
+  this.uploadingContent = false;
+
 }
+
+openContent(content: any) {
+
+  if (!content) {
+    return;
+  }
+
+  // PDF
+  if (content.type === 'pdf') {
+
+    window.open(
+      content.url,
+      '_blank'
+    );
+
+    return;
+  }
+
+  // Video
+  if (content.type === 'video') {
+
+    window.open(
+      content.url,
+      '_blank'
+    );
+
+    return;
+  }
+
+  // Note
+  if (content.type === 'note') {
+
+    alert(
+      content.noteContent ||
+      'No note content available'
+    );
+
+    return;
+  }
+
+}
+
+
 
   //load folder code end 
 

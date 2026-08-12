@@ -34,9 +34,13 @@ const app = express();
 const couponRoutes = require('./routes/couponRoutes');
 
 const folderRoutes = require('./routes/folderRoutes');
-
+const contentRoutes =
+  require('./routes/contentRoutes');
 // const books = require('./data/books');
 const books = require('./data/books');
+
+const contentUploadRoutes =
+    require('./routes/contentUploadRoutes');
 
 // multer code start
 
@@ -69,6 +73,8 @@ app.use('/books', dynamicBookRoute);
 app.use('/notification', notificationRoutes);
 app.use('/books', bookRoutes);
 app.use('/folders', folderRoutes);
+app.use('/content', contentRoutes);
+app.use('/content', contentUploadRoutes);
 app.use('/coupon', couponRoutes);
 
 
@@ -456,9 +462,9 @@ app.put("/app-setting", async (req, res) => {
     setting.settings = req.body.settings || [];
 
     // Password ko kabhi overwrite mat karo
-if (req.body.password !== undefined) {
-  setting.password = req.body.password;
-}
+    if (req.body.password !== undefined) {
+      setting.password = req.body.password;
+    }
 
     await setting.save();
 
@@ -487,23 +493,23 @@ if (req.body.password !== undefined) {
 
 app.post("/app-setting", async (req, res) => {
 
-    const { settings } = req.body;
+  const { settings } = req.body;
 
-    let appSetting = await AppSetting.findOne();
+  let appSetting = await AppSetting.findOne();
 
-    if (!appSetting) {
+  if (!appSetting) {
 
-        appSetting = new AppSetting();
+    appSetting = new AppSetting();
 
-    }
+  }
 
-    appSetting.settings = settings;
+  appSetting.settings = settings;
 
-    await appSetting.save();
+  await appSetting.save();
 
-    res.json({
-        success: true
-    });
+  res.json({
+    success: true
+  });
 
 });
 
