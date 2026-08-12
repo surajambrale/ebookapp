@@ -32,7 +32,7 @@ export class BookListComponent {
   books: any[] = [];
   libraryFolders: any[] = [];
   libraryContents: any[] = [];
-
+  totalBooks: number = 0;
   contentLoading = false;
 
   currentLibraryFolder: any = null;
@@ -267,43 +267,43 @@ export class BookListComponent {
 
   backLibraryFolder() {
 
-  if (this.libraryPath.length === 0) {
+    if (this.libraryPath.length === 0) {
 
-    return;
+      return;
 
-  }
+    }
 
-  this.libraryPath.pop();
+    this.libraryPath.pop();
 
-  const previousFolder =
-    this.libraryPath.length > 0
-      ? this.libraryPath[
-          this.libraryPath.length - 1
+    const previousFolder =
+      this.libraryPath.length > 0
+        ? this.libraryPath[
+        this.libraryPath.length - 1
         ]
-      : null;
+        : null;
 
-  this.currentLibraryFolder =
-    previousFolder;
+    this.currentLibraryFolder =
+      previousFolder;
 
-  this.loadLibraryFolders(
-    previousFolder
-      ? previousFolder._id
-      : null
-  );
-
-  if (previousFolder) {
-
-    this.loadLibraryContents(
-      previousFolder._id
+    this.loadLibraryFolders(
+      previousFolder
+        ? previousFolder._id
+        : null
     );
 
-  } else {
+    if (previousFolder) {
 
-    this.libraryContents = [];
+      this.loadLibraryContents(
+        previousFolder._id
+      );
+
+    } else {
+
+      this.libraryContents = [];
+
+    }
 
   }
-
-}
 
 
   // ===============================
@@ -357,39 +357,39 @@ export class BookListComponent {
 
   openLibraryContent(content: any) {
 
-  if (content.type === 'pdf') {
+    if (content.type === 'pdf') {
 
-    window.open(
-      content.url,
-      '_blank'
-    );
+      window.open(
+        content.url,
+        '_blank'
+      );
 
-    return;
+      return;
+
+    }
+
+
+    if (content.type === 'video') {
+
+      window.open(
+        content.url,
+        '_blank'
+      );
+
+      return;
+
+    }
+
+
+    if (content.type === 'note') {
+
+      alert(
+        content.noteContent || 'No note content'
+      );
+
+    }
 
   }
-
-
-  if (content.type === 'video') {
-
-    window.open(
-      content.url,
-      '_blank'
-    );
-
-    return;
-
-  }
-
-
-  if (content.type === 'note') {
-
-    alert(
-      content.noteContent || 'No note content'
-    );
-
-  }
-
-}
 
   //folder code end
 
