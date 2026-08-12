@@ -619,6 +619,15 @@ deleteFolder(folder: any) {
 
 }
 
+
+onViewChange(){
+  if (this.selectedView === 'library') {
+    this.folderPath = [];
+    this.currentFolderId = null;
+    this.loadFolders(null);
+  }
+}
+
   //load folder code end 
 
   //sidebar setting code start
