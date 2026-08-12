@@ -98,6 +98,7 @@ export class BookListComponent {
         error: (err) => {
 
           console.log('Content Error:', err);
+          this.contents = [];
 
         }
 
@@ -215,18 +216,18 @@ export class BookListComponent {
 
   loadLibraryFolders(parentId: string | null = null) {
 
-    this.libraryLoading = true;
+  this.libraryLoading = true;
 
-    this.http.get<any[]>(
-      `${this.api}/library/folders`,
-      {
-        params: {
-          parentId: parentId || ''
-        }
-      }
-    ).subscribe({
+  const url = parentId
+    ? `${this.api}/folders/${parentId}`
+    : `${this.api}/folders`;
+
+  this.http.get<any[]>(url)
+    .subscribe({
 
       next: (res) => {
+
+        console.log('Folders loaded:', res);
 
         this.libraryFolders = res || [];
 
@@ -246,7 +247,7 @@ export class BookListComponent {
 
     });
 
-  }
+}
 
 
   // ===============================
