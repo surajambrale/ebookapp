@@ -16,7 +16,6 @@ import {
   HttpClient
 } from '@angular/common/http';
 
-
 @Component({
   selector: 'app-library-folder',
 
@@ -26,16 +25,13 @@ import {
     CommonModule
   ],
 
-  templateUrl:
-    './library-folder.component.html',
+  templateUrl: './library-folder.component.html',
 
   styleUrls: [
     './library-folder.component.scss'
   ]
 })
-export class LibraryFolderComponent
-  implements OnInit {
-
+export class LibraryFolderComponent implements OnInit {
 
   folderId = '';
 
@@ -49,43 +45,47 @@ export class LibraryFolderComponent
 
   loading = true;
 
-
   constructor(
-
     private route: ActivatedRoute,
-
     private router: Router,
-
     private http: HttpClient
-
   ) {}
-
 
   ngOnInit(): void {
 
     this.folderId =
-      this.route.snapshot.paramMap
-        .get('id') || '';
+      this.route.snapshot.paramMap.get('id') || '';
+
+    if (!this.folderId) {
+      this.goToLibrary();
+      return;
+    }
 
     this.loadFolder();
-
   }
 
+  // =====================================
+  // LOAD FOLDER
+  // =====================================
 
   loadFolder(): void {
 
     this.loading = true;
 
-
     this.http.get<any>(
-      `/api/folders/${this.folderId}`
+      `/api/folders/detail/${this.folderId}`
     )
     .subscribe({
 
       next: (res) => {
 
+        console.log(
+          'FOLDER DETAIL:',
+          res
+        );
+
         this.folder =
-          res.folder;
+          res.folder || null;
 
         this.subFolders =
           res.subFolders || [];
@@ -94,10 +94,9 @@ export class LibraryFolderComponent
           res.contents || [];
 
         this.hasAccess =
-          res.hasAccess;
+          res.hasAccess === true;
 
         this.loading = false;
-
       },
 
       error: (error) => {
@@ -109,73 +108,116 @@ export class LibraryFolderComponent
 
         this.loading = false;
 
+        alert(
+          'Unable to load folder'
+        );
+
+        this.goToLibrary();
       }
 
     });
-
   }
 
+  // =====================================
+  // OPEN SUB FOLDER
+  // =====================================
 
-  openSubFolder(
-    folder: any
-  ): void {
+  openSubFolder(folder: any): void {
+
+    if (!folder?._id) {
+      return;
+    }
 
     this.router.navigate([
       '/library/folder',
       folder._id
     ]);
-
   }
 
+  // =====================================
+  // OPEN CONTENT
+  // =====================================
 
-  openContent(
-    content: any
-  ): void {
+  openContent(content: any): void {
 
     if (!this.hasAccess) {
 
       this.buyFolder();
 
       return;
-
     }
 
-    // Existing content opening logic
-    // yahan apna existing method/service use karo.
+    console.log(
+      'OPEN CONTENT:',
+      content
+    );
 
+    /*
+      Yaha tumhara existing PDF/video/note
+      opening logic rahega.
+
+      Old content code ko abhi remove mat karo.
+    */
   }
 
+  // =====================================
+  // BUY FOLDER
+  // =====================================
 
   buyFolder(): void {
 
-    /*
-      Existing Razorpay purchase flow
-      yahan connect karenge.
-    */
+    if (!this.folderId) {
+      return;
+    }
 
     console.log(
       'BUY FOLDER:',
       this.folderId
     );
 
+    /*
+      Yaha folder Razorpay purchase API connect hogi.
+
+      Example:
+
+      this.http.post(
+        '/api/folder-purchase/create-order',
+        {
+          folderId: this.folderId
+        }
+      ).subscribe(...)
+
+      Existing book Razorpay flow ko directly
+      overwrite mat karna.
+    */
+
   }
 
+  // =====================================
+  // BACK
+  // =====================================
 
   goBack(): void {
 
-    this.router.navigate([
-      '/library'
-    ]);
+    if (window.history.length > 1) {
 
+      window.history.back();
+
+      return;
+    }
+
+    this.goToLibrary();
   }
 
+  // =====================================
+  // LIBRARY
+  // =====================================
 
   goToLibrary(): void {
 
     this.router.navigate([
       '/library'
     ]);
-
   }
 
 }

@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 
 export class AdminComponent {
 
- 
+
   selectedUser: string = '';
   selectedBook: string = '';
   selectedFolder: string = '';
@@ -29,7 +29,7 @@ export class AdminComponent {
   books: any[] = [];
   subscriptions: any[] = [];
 
-  
+
   libraryFolders: any[] = [];
   grantAccessType: 'book' | 'folder' = 'book';
   grantDuration: number = 30;
@@ -52,7 +52,7 @@ export class AdminComponent {
   //testimonial code start
   testimonials: any[] = [];
   dynamicBooks: any[] = [];
- 
+
   selectedPreviewImages: File[] = [];
   selectedLogo: File | null = null;
 
@@ -73,7 +73,7 @@ export class AdminComponent {
 
   itemsPerPage = 10;
 
-  
+
 
   //folder code start
   // =====================================
@@ -551,26 +551,26 @@ export class AdminComponent {
 
   openFolder(folder: any) {
 
-  this.folderPath.push({
+    this.folderPath.push({
 
-    _id: folder._id,
+      _id: folder._id,
 
-    name: folder.name
+      name: folder.name
 
-  });
-
-
-  this.loadFolders(folder._id);
+    });
 
 
-  // 🔥 Load files inside folder
-
-  this.loadContents(folder._id);
+    this.loadFolders(folder._id);
 
 
-  this.showContentForm = false;
+    // 🔥 Load files inside folder
 
-}
+    this.loadContents(folder._id);
+
+
+    this.showContentForm = false;
+
+  }
 
   // =====================================
   // GO BACK
@@ -922,165 +922,165 @@ export class AdminComponent {
   }
 
   // =====================================
-// LOAD CONTENTS
-// =====================================
+  // LOAD CONTENTS
+  // =====================================
 
-loadContents(folderId: string) {
+  loadContents(folderId: string) {
 
-  this.http.get<any>(
+    this.http.get<any>(
 
-    `${this.api}/content/folder/${folderId}`
+      `${this.api}/content/folder/${folderId}`
 
-  ).subscribe({
+    ).subscribe({
 
-    next: (res) => {
+      next: (res) => {
 
-      this.contents =
-        res.contents || [];
+        this.contents =
+          res.contents || [];
 
-    },
+      },
 
-    error: (err) => {
+      error: (err) => {
 
-      console.log(
+        console.log(
 
-        'Content Load Error:',
+          'Content Load Error:',
 
-        err
+          err
 
-      );
+        );
 
-      this.contents = [];
+        this.contents = [];
 
-    }
+      }
 
-  });
-
-}
-
-// =====================================
-// 🗑 DELETE CONTENT
-// =====================================
-
-deleteContent(content: any) {
-
-  const confirmDelete = confirm(
-
-    `Delete "${content.title}"?`
-
-  );
-
-
-  if (!confirmDelete) {
-
-    return;
+    });
 
   }
 
+  // =====================================
+  // 🗑 DELETE CONTENT
+  // =====================================
 
-  this.http.delete<any>(
+  deleteContent(content: any) {
 
-    `${this.api}/content/${content._id}`
+    const confirmDelete = confirm(
 
-  ).subscribe({
+      `Delete "${content.title}"?`
 
-    next: () => {
-
-      alert('Content deleted ✅');
+    );
 
 
-      if (this.currentFolderId) {
+    if (!confirmDelete) {
 
-        this.loadContents(
+      return;
 
-          this.currentFolderId
+    }
+
+
+    this.http.delete<any>(
+
+      `${this.api}/content/${content._id}`
+
+    ).subscribe({
+
+      next: () => {
+
+        alert('Content deleted ✅');
+
+
+        if (this.currentFolderId) {
+
+          this.loadContents(
+
+            this.currentFolderId
+
+          );
+
+        }
+
+      },
+
+      error: (err) => {
+
+        console.log(err);
+
+        alert(
+
+          err.error?.message ||
+
+          'Unable to delete content ❌'
 
         );
 
       }
 
-    },
+    });
 
-    error: (err) => {
+  }
 
-      console.log(err);
+  // =====================================
+  // RESET CONTENT FORM
+  // =====================================
 
-      alert(
+  resetContentForm() {
 
-        err.error?.message ||
+    this.contentTitle = '';
 
-        'Unable to delete content ❌'
+    this.contentType = 'pdf';
 
-      );
+    this.selectedContentFile = null;
 
+    this.selectedThumbnailFile = null;
+
+    this.noteContent = '';
+
+    this.showContentForm = false;
+
+    this.uploadingContent = false;
+
+  }
+
+  openContent(content: any) {
+
+    if (!content) {
+      return;
     }
 
-  });
+    // PDF
+    if (content.type === 'pdf') {
 
-}
+      window.open(
+        content.url,
+        '_blank'
+      );
 
-// =====================================
-// RESET CONTENT FORM
-// =====================================
+      return;
+    }
 
-resetContentForm() {
+    // Video
+    if (content.type === 'video') {
 
-  this.contentTitle = '';
+      window.open(
+        content.url,
+        '_blank'
+      );
 
-  this.contentType = 'pdf';
+      return;
+    }
 
-  this.selectedContentFile = null;
+    // Note
+    if (content.type === 'note') {
 
-  this.selectedThumbnailFile = null;
+      alert(
+        content.noteContent ||
+        'No note content available'
+      );
 
-  this.noteContent = '';
+      return;
+    }
 
-  this.showContentForm = false;
-
-  this.uploadingContent = false;
-
-}
-
-openContent(content: any) {
-
-  if (!content) {
-    return;
   }
-
-  // PDF
-  if (content.type === 'pdf') {
-
-    window.open(
-      content.url,
-      '_blank'
-    );
-
-    return;
-  }
-
-  // Video
-  if (content.type === 'video') {
-
-    window.open(
-      content.url,
-      '_blank'
-    );
-
-    return;
-  }
-
-  // Note
-  if (content.type === 'note') {
-
-    alert(
-      content.noteContent ||
-      'No note content available'
-    );
-
-    return;
-  }
-
-}
 
 
 
@@ -1800,6 +1800,34 @@ openContent(content: any) {
       Authorization: this.token
     });
 
+    // 🔥 LIBRARY FOLDERS
+    this.http.get<any[]>(`${this.api}/folders`, { headers })
+      .subscribe({
+
+        next: (res) => {
+
+          this.libraryFolders = res || [];
+
+          console.log(
+            '📂 Library Folders Loaded:',
+            this.libraryFolders
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Failed to load library folders:',
+            error
+          );
+
+          this.libraryFolders = [];
+
+        }
+
+      });
+
     // 🔥 USERS
     this.http.get(`${this.api}/admin/users`, { headers })
 
@@ -1807,6 +1835,31 @@ openContent(content: any) {
 
         this.users = res;
 
+      });
+
+    // 🔥 LIBRARY FOLDERS
+    this.http.get<any>(`${this.api}/library/folders`, { headers })
+      .subscribe({
+        next: (res) => {
+
+          this.libraryFolders = Array.isArray(res)
+            ? res
+            : (res.folders || res.data || []);
+
+          console.log('📂 Library Folders:', this.libraryFolders);
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            '❌ Failed to load library folders:',
+            error
+          );
+
+          this.libraryFolders = [];
+
+        }
       });
 
     // 🔥 BOOKS FIRST
@@ -2211,91 +2264,91 @@ openContent(content: any) {
   //app setting code end
 
   // 🔥 GRANT ACCESS
- grantAccess(): void {
+  grantAccess(): void {
 
-  const headers = new HttpHeaders({
-    Authorization: this.token
-  });
+    const headers = new HttpHeaders({
+      Authorization: this.token
+    });
 
-  this.http.post(
-    `${this.api}/admin/grant-access`,
-    {
-      userId: this.selectedUser,
-      bookId: this.selectedBook
-    },
-    { headers }
-  ).subscribe({
+    this.http.post(
+      `${this.api}/admin/grant-access`,
+      {
+        userId: this.selectedUser,
+        bookId: this.selectedBook
+      },
+      { headers }
+    ).subscribe({
 
-    next: () => {
+      next: () => {
 
-      alert('Book Access Granted ✅');
+        alert('Book Access Granted ✅');
 
-      this.loadData();
+        this.loadData();
 
-    },
+      },
 
-    error: (error) => {
+      error: (error) => {
 
-      console.error(error);
+        console.error(error);
 
-      alert('Already Granted ❌');
+        alert('Already Granted ❌');
 
-    }
+      }
 
-  });
-
-}
-
-// 🔥 GRANT FOLDER ACCESS
-grantFolderAccess(): void {
-
-  if (!this.selectedUser || !this.selectedFolder) {
-
-    alert('Please select user and folder');
-
-    return;
+    });
 
   }
 
-  this.http.post(
-    `${this.api}/folder-access/grant`,
-    {
-      userId: this.selectedUser,
-      folderId: this.selectedFolder,
+  // 🔥 GRANT FOLDER ACCESS
+  grantFolderAccess(): void {
 
-      // 🔥 1 MONTH ACCESS
-      durationDays: 30
+    if (!this.selectedUser || !this.selectedFolder) {
 
-    }
-  ).subscribe({
+      alert('Please select user and folder');
 
-    next: () => {
-
-      alert('Folder access granted successfully ✅');
-
-      this.loadData();
-
-      this.selectedFolder = '';
-
-    },
-
-    error: (error) => {
-
-      console.error(
-        'Folder access error:',
-        error
-      );
-
-      alert(
-        error?.error?.message ||
-        'Failed to grant folder access ❌'
-      );
+      return;
 
     }
 
-  });
+    this.http.post(
+      `${this.api}/folder-access/grant`,
+      {
+        userId: this.selectedUser,
+        folderId: this.selectedFolder,
 
-}
+        // 🔥 1 MONTH ACCESS
+        durationDays: 30
+
+      }
+    ).subscribe({
+
+      next: () => {
+
+        alert('Folder access granted successfully ✅');
+
+        this.loadData();
+
+        this.selectedFolder = '';
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Folder access error:',
+          error
+        );
+
+        alert(
+          error?.error?.message ||
+          'Failed to grant folder access ❌'
+        );
+
+      }
+
+    });
+
+  }
 
   loadDynamicBooks() {
 

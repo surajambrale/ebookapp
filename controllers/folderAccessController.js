@@ -1,6 +1,11 @@
 const FolderAccess = require('../models/FolderAccess');
 const Folder = require('../models/Folder');
 
+// IMPORTANT:
+// Apne actual content model ka path/name yaha rakho.
+// Agar model ka naam LibraryContent hai:
+const LibraryContent = require('../models/Content');
+
 
 // =========================================================
 // CHECK FOLDER ACCESS
@@ -12,21 +17,39 @@ const checkFolderAccess = async (req, res) => {
 
     const { folderId } = req.params;
 
+    if (!req.user || !req.user.id) {
+
+      return res.status(401).json({
+        success: false,
+        message: 'User authentication required'
+      });
+
+    }
+
     const userId = req.user.id;
 
     const access = await FolderAccess.findOne({
+
       user: userId,
+
       folder: folderId,
+
       isActive: true,
+
       expiryDate: {
         $gt: new Date()
       }
+
     });
 
     res.json({
+
       success: true,
+
       hasAccess: !!access,
+
       access: access || null
+
     });
 
   } catch (error) {
@@ -37,11 +60,15 @@ const checkFolderAccess = async (req, res) => {
     );
 
     res.status(500).json({
+
       success: false,
+
       message: 'Failed to check folder access'
+
     });
 
   }
+
 };
 
 
@@ -59,62 +86,105 @@ const grantFolderAccess = async (req, res) => {
       durationDays = 30
     } = req.body;
 
+
     if (!userId || !folderId) {
 
       return res.status(400).json({
+
         success: false,
+
         message: 'User and folder are required'
+
       });
 
     }
 
-    const startDate = new Date();
 
-    const expiryDate = new Date(startDate);
+    // Check user/folder actually exist
 
-    expiryDate.setDate(
-      expiryDate.getDate() + Number(durationDays)
+    const folder = await Folder.findById(
+      folderId
     );
 
-    let access = await FolderAccess.findOne({
-      user: userId,
-      folder: folderId
-    });
+    if (!folder) {
+
+      return res.status(404).json({
+
+        success: false,
+
+        message: 'Folder not found'
+
+      });
+
+    }
+
+
+    const startDate = new Date();
+
+    const expiryDate = new Date(
+      startDate
+    );
+
+    expiryDate.setDate(
+      expiryDate.getDate() +
+      Number(durationDays)
+    );
+
+
+    let access =
+      await FolderAccess.findOne({
+
+        user: userId,
+
+        folder: folderId
+
+      });
+
 
     if (access) {
 
-      access.startDate = startDate;
-      access.expiryDate = expiryDate;
-      access.accessType = 'admin';
-      access.isActive = true;
+      access.startDate =
+        startDate;
+
+      access.expiryDate =
+        expiryDate;
+
+      access.accessType =
+        'admin';
+
+      access.isActive =
+        true;
 
       await access.save();
 
     } else {
 
-      access = await FolderAccess.create({
+      access =
+        await FolderAccess.create({
 
-        user: userId,
+          user: userId,
 
-        folder: folderId,
+          folder: folderId,
 
-        accessType: 'admin',
+          accessType: 'admin',
 
-        startDate,
+          startDate,
 
-        expiryDate,
+          expiryDate,
 
-        isActive: true
+          isActive: true
 
-      });
+        });
 
     }
+
 
     res.json({
 
       success: true,
 
-      message: 'Folder access granted successfully',
+      message:
+        'Folder access granted successfully',
 
       access
 
@@ -128,11 +198,16 @@ const grantFolderAccess = async (req, res) => {
     );
 
     res.status(500).json({
+
       success: false,
-      message: 'Failed to grant folder access'
+
+      message:
+        'Failed to grant folder access'
+
     });
 
   }
+
 };
 
 
@@ -144,23 +219,31 @@ const getUserFolderAccess = async (req, res) => {
 
   try {
 
-    const userId = req.params.userId;
+    const userId =
+      req.params.userId;
 
-    const accesses = await FolderAccess
-      .find({
-        user: userId,
-        expiryDate: {
-          $gt: new Date()
-        },
-        isActive: true
-      })
-      .populate(
-        'folder',
-        'name description sellingPrice offerPrice'
-      )
-      .sort({
-        createdAt: -1
-      });
+
+    const accesses =
+      await FolderAccess
+        .find({
+
+          user: userId,
+
+          expiryDate: {
+            $gt: new Date()
+          },
+
+          isActive: true
+
+        })
+        .populate(
+          'folder',
+          'name description sellingPrice offerPrice parentId'
+        )
+        .sort({
+          createdAt: -1
+        });
+
 
     res.json({
 
@@ -181,12 +264,15 @@ const getUserFolderAccess = async (req, res) => {
 
       success: false,
 
-      message: 'Failed to get folder access'
+      message:
+        'Failed to get folder access'
 
     });
 
   }
+
 };
+
 
 // =========================================================
 // GET FOLDER DETAILS
@@ -196,20 +282,26 @@ const getFolderDetails = async (req, res) => {
 
   try {
 
-    const { folderId } = req.params;
-
-    const userId = req.user
-      ? req.user.id
-      : null;
-
-
-    // -----------------------------------------------------
-    // MAIN FOLDER
-    // -----------------------------------------------------
-
-    const folder = await Folder.findById(
+    const {
       folderId
-    );
+    } = req.params;
+
+
+    const userId =
+      req.user
+        ? req.user.id
+        : null;
+
+
+    // =========================================
+    // MAIN FOLDER
+    // =========================================
+
+    const folder =
+      await Folder.findById(
+        folderId
+      );
+
 
     if (!folder) {
 
@@ -217,31 +309,33 @@ const getFolderDetails = async (req, res) => {
 
         success: false,
 
-        message: 'Folder not found'
+        message:
+          'Folder not found'
 
       });
 
     }
 
 
-    // -----------------------------------------------------
+    // =========================================
     // SUB FOLDERS
-    // -----------------------------------------------------
+    // =========================================
 
-    const subFolders = await Folder.find({
+    const subFolders =
+      await Folder.find({
 
-      parentFolder: folderId
+        parentId: folder._id
 
-    }).sort({
+      }).sort({
 
-      createdAt: -1
+        createdAt: -1
 
-    });
+      });
 
 
-    // -----------------------------------------------------
+    // =========================================
     // ACCESS
-    // -----------------------------------------------------
+    // =========================================
 
     let hasAccess = false;
 
@@ -250,52 +344,49 @@ const getFolderDetails = async (req, res) => {
 
     if (userId) {
 
-      access = await FolderAccess.findOne({
+      access =
+        await FolderAccess.findOne({
 
-        user: userId,
+          user: userId,
 
-        folder: folderId,
+          folder: folder._id,
 
-        isActive: true,
+          isActive: true,
 
-        expiryDate: {
-          $gt: new Date()
-        }
+          expiryDate: {
 
-      });
+            $gt: new Date()
 
-      hasAccess = !!access;
+          }
+
+        });
+
+
+      hasAccess =
+        !!access;
 
     }
 
 
-    // -----------------------------------------------------
+    // =========================================
     // CONTENT
-    // -----------------------------------------------------
+    // =========================================
 
-    /*
-      IMPORTANT:
+    const contents =
+      await LibraryContent.find({
 
-      Yahan apna existing LibraryContent model
-      use karna hai.
+        folder: folder._id
 
-      Example:
-      LibraryContent.find({
-        folder: folderId
-      })
-    */
+      }).sort({
+
+        createdAt: -1
+
+      });
 
 
-    const contents = await LibraryContent.find({
-
-      folder: folderId
-
-    }).sort({
-
-      createdAt: -1
-
-    });
-
+    // =========================================
+    // RESPONSE
+    // =========================================
 
     res.json({
 
@@ -313,7 +404,6 @@ const getFolderDetails = async (req, res) => {
 
     });
 
-
   } catch (error) {
 
     console.error(
@@ -325,7 +415,8 @@ const getFolderDetails = async (req, res) => {
 
       success: false,
 
-      message: 'Failed to load folder'
+      message:
+        'Failed to load folder'
 
     });
 
@@ -340,6 +431,8 @@ module.exports = {
 
   grantFolderAccess,
 
-  getUserFolderAccess
+  getUserFolderAccess,
+
+  getFolderDetails
 
 };

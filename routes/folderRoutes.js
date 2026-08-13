@@ -64,6 +64,61 @@ router.get('/:parentId', async (req, res) => {
 
 });
 
+// =====================================
+// GET SINGLE FOLDER DETAILS
+// =====================================
+
+router.get('/detail/:id', async (req, res) => {
+  try {
+
+    const folder = await Folder.findById(req.params.id);
+
+    if (!folder) {
+      return res.status(404).json({
+        success: false,
+        message: 'Folder not found'
+      });
+    }
+
+    // Sub folders
+    const subFolders = await Folder.find({
+      parentId: folder._id
+    }).sort({
+      createdAt: -1
+    });
+
+    // Folder content
+    // IMPORTANT:
+    // Yaha tumhare Content model ka exact naam/path
+    // existing project ke according set karna hoga.
+    const Content = require('../models/Content');
+
+    const contents = await Content.find({
+      folderId: folder._id
+    }).sort({
+      createdAt: -1
+    });
+
+    res.json({
+      success: true,
+      folder,
+      subFolders,
+      contents,
+      hasAccess: false
+    });
+
+  } catch (err) {
+
+    console.log('GET FOLDER DETAIL ERROR:', err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
+  }
+});
+
 
 // =====================================
 // CREATE FOLDER
