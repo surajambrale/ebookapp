@@ -2310,45 +2310,56 @@ export class AdminComponent {
 
     }
 
+    const headers = new HttpHeaders({
+      Authorization: this.token
+    });
+
     this.http.post(
-      `${this.api}/folder-access/grant`,
+      `${this.api}/api/folder-access/grant`,
       {
         userId: this.selectedUser,
         folderId: this.selectedFolder,
-
-        // 🔥 1 MONTH ACCESS
         durationDays: 30
-
-      }
-    ).subscribe({
-
-      next: () => {
-
-        alert('Folder access granted successfully ✅');
-
-        this.loadData();
-
-        this.selectedFolder = '';
-
       },
+      { headers }
+    )
+      .subscribe({
 
-      error: (error) => {
+        next: (res: any) => {
 
-        console.error(
-          'Folder access error:',
-          error
-        );
+          console.log(
+            'FOLDER ACCESS GRANTED:',
+            res
+          );
 
-        alert(
-          error?.error?.message ||
-          'Failed to grant folder access ❌'
-        );
+          alert(
+            'Folder access granted successfully ✅'
+          );
 
-      }
+          this.selectedFolder = '';
 
-    });
+          this.loadData();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Folder access error:',
+            error
+          );
+
+          alert(
+            error?.error?.message ||
+            'Failed to grant folder access ❌'
+          );
+
+        }
+
+      });
 
   }
+
 
   loadDynamicBooks() {
 
