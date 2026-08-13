@@ -5,7 +5,9 @@ import {
 
 import {
   ActivatedRoute,
-  Router
+  Router,
+  RouterLinkActive,
+  RouterLink,
 } from '@angular/router';
 
 import {
@@ -22,7 +24,9 @@ import {
   standalone: true,
 
   imports: [
-    CommonModule
+    CommonModule,
+    RouterLink,
+    RouterLinkActive
   ],
 
   templateUrl: './library-folder.component.html',
@@ -49,7 +53,7 @@ export class LibraryFolderComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
@@ -75,47 +79,47 @@ export class LibraryFolderComponent implements OnInit {
     this.http.get<any>(
       `/api/folders/detail/${this.folderId}`
     )
-    .subscribe({
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        console.log(
-          'FOLDER DETAIL:',
-          res
-        );
+          console.log(
+            'FOLDER DETAIL:',
+            res
+          );
 
-        this.folder =
-          res.folder || null;
+          this.folder =
+            res.folder || null;
 
-        this.subFolders =
-          res.subFolders || [];
+          this.subFolders =
+            res.subFolders || [];
 
-        this.contents =
-          res.contents || [];
+          this.contents =
+            res.contents || [];
 
-        this.hasAccess =
-          res.hasAccess === true;
+          this.hasAccess =
+            res.hasAccess === true;
 
-        this.loading = false;
-      },
+          this.loading = false;
+        },
 
-      error: (error) => {
+        error: (error) => {
 
-        console.error(
-          'FOLDER LOAD ERROR:',
-          error
-        );
+          console.error(
+            'FOLDER LOAD ERROR:',
+            error
+          );
 
-        this.loading = false;
+          this.loading = false;
 
-        alert(
-          'Unable to load folder'
-        );
+          alert(
+            'Unable to load folder'
+          );
 
-        this.goToLibrary();
-      }
+          this.goToLibrary();
+        }
 
-    });
+      });
   }
 
   // =====================================
