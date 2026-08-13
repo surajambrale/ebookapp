@@ -5,28 +5,36 @@ const router = express.Router();
 const {
   checkFolderAccess,
   grantFolderAccess,
-  getUserFolderAccess
+  getUserFolderAccess,
+  getFolderDetails
 } = require('../controllers/folderAccessController');
 
 
-// USER
+// CHECK CURRENT USER FOLDER ACCESS
 router.get(
   '/check/:folderId',
   checkFolderAccess
 );
 
 
-// ADMIN
+// ADMIN GRANT ACCESS
 router.post(
   '/grant',
   grantFolderAccess
 );
 
 
-// ADMIN
+// GET USER ACCESS
 router.get(
   '/user/:userId',
   getUserFolderAccess
+);
+
+
+// GET FOLDER DETAILS
+router.get(
+  '/detail/:folderId',
+  getFolderDetails
 );
 
 
