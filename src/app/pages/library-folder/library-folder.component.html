@@ -113,7 +113,7 @@
                 </div>
 
                 <small>
-                    30 Days Access
+                    {{ folder?.accessDurationDays || 30 }} Days Access
                 </small>
 
                 <button type="button" (click)="buyFolder()">

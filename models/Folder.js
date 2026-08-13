@@ -8,8 +8,6 @@ const folderSchema = new mongoose.Schema(
       trim: true
     },
 
-    // null = Main/Root folder
-    // ObjectId = kisi folder ke andar ka subfolder
     parentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Folder',
@@ -26,15 +24,6 @@ const folderSchema = new mongoose.Schema(
       default: ''
     },
 
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-
-    updatedAt: {
-      type: Date,
-      default: Date.now
-    },
     sellingPrice: {
       type: Number,
       default: 0
