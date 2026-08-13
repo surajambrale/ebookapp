@@ -15,62 +15,144 @@ const checkFolderAccess = async (req, res) => {
 
   try {
 
+    // JWT middleware se authenticated user
+    const userId = req.user?.id;
+
     const { folderId } = req.params;
 
-    if (!req.user || !req.user.id) {
+
+    // ==========================================
+    // AUTH CHECK
+    // ==========================================
+
+    if (!userId) {
 
       return res.status(401).json({
         success: false,
-        message: 'User authentication required'
+        hasAccess: false,
+        message: 'Authentication required'
       });
 
     }
 
-    const userId = req.user.id;
 
-    const access = await FolderAccess.findOne({
+    // ==========================================
+    // FOLDER CHECK
+    // ==========================================
 
-      user: userId,
+    if (!folderId) {
 
-      folder: folderId,
+      return res.status(400).json({
+        success: false,
+        hasAccess: false,
+        message: 'Folder ID required'
+      });
 
-      isActive: true,
+    }
 
-      expiryDate: {
-        $gt: new Date()
+
+    const folder =
+      await Folder.findById(folderId);
+
+
+    if (!folder) {
+
+      return res.status(404).json({
+        success: false,
+        hasAccess: false,
+        message: 'Folder not found'
+      });
+
+    }
+
+
+    // ==========================================
+    // 🔥 MOST IMPORTANT
+    // USER + FOLDER BOTH CHECK
+    // ==========================================
+
+    const access =
+      await FolderAccess.findOne({
+
+        user: userId,
+
+        folder: folderId,
+
+        isActive: true,
+
+        expiryDate: {
+          $gt: new Date()
+        }
+
+      });
+
+
+    // ==========================================
+    // NO ACCESS
+    // ==========================================
+
+    if (!access) {
+
+      return res.json({
+
+        success: true,
+
+        hasAccess: false,
+
+        access: null
+
+      });
+
+    }
+
+
+    // ==========================================
+    // ACCESS GRANTED
+    // ==========================================
+
+    return res.json({
+
+      success: true,
+
+      hasAccess: true,
+
+      access: {
+
+        _id: access._id,
+
+        startDate: access.startDate,
+
+        expiryDate: access.expiryDate,
+
+        accessType: access.accessType
+
       }
 
     });
 
-    res.json({
+  }
 
-      success: true,
-
-      hasAccess: !!access,
-
-      access: access || null
-
-    });
-
-  } catch (error) {
+  catch (error) {
 
     console.error(
       'CHECK FOLDER ACCESS ERROR:',
       error
     );
 
-    res.status(500).json({
+
+    return res.status(500).json({
 
       success: false,
 
-      message: 'Failed to check folder access'
+      hasAccess: false,
+
+      message: 'Unable to check folder access'
 
     });
 
   }
 
 };
-
 
 // =========================================================
 // GRANT FOLDER ACCESS FROM ADMIN
