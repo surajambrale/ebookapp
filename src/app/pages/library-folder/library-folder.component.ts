@@ -79,7 +79,7 @@ export class LibraryFolderComponent
     private router: Router,
     private http: HttpClient,
     private auth: AuthService
-  ) {}
+  ) { }
 
 
   // =====================================
@@ -113,104 +113,104 @@ export class LibraryFolderComponent
     this.http.get<any>(
       `${this.api}/folders/detail/${this.folderId}`
     )
-    .subscribe({
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        console.log(
-          '📂 COMPLETE FOLDER RESPONSE:',
-          res
-        );
-
-
-        // =================================
-        // FOLDER
-        // =================================
-
-        this.folder = res?.folder || null;
-
-console.log('📂 COMPLETE FOLDER:', this.folder);
-
-console.log('💰 BACKEND PRICING:', res?.pricing);
-
-        // =================================
-        // SUB FOLDERS
-        // =================================
-
-        this.subFolders =
-          Array.isArray(res?.subFolders)
-            ? res.subFolders
-            : [];
+          console.log(
+            '📂 COMPLETE FOLDER RESPONSE:',
+            res
+          );
 
 
-        // =================================
-        // CONTENT
-        // =================================
+          // =================================
+          // FOLDER
+          // =================================
 
-        this.contents =
-          Array.isArray(res?.contents)
-            ? res.contents
-            : [];
+          this.folder = res?.folder || null;
 
+          console.log('📂 COMPLETE FOLDER:', this.folder);
 
-        // =================================
-        // BACKEND ACCESS
-        // =================================
+          console.log('💰 BACKEND PRICING:', res?.pricing);
 
-        this.hasAccess =
-          res?.hasAccess === true;
+          // =================================
+          // SUB FOLDERS
+          // =================================
 
-
-        // =================================
-        // DEBUG
-        // =================================
-
-        console.log(
-          '📂 FOLDER OBJECT:',
-          this.folder
-        );
-
-        console.log(
-          '💰 SELLING PRICE:',
-          this.folder?.sellingPrice
-        );
-
-        console.log(
-          '🏷️ OFFER PRICE:',
-          this.folder?.offerPrice
-        );
-
-        console.log(
-          '💵 FINAL PRICE:',
-          this.getFinalPrice()
-        );
+          this.subFolders =
+            Array.isArray(res?.subFolders)
+              ? res.subFolders
+              : [];
 
 
-        // =================================
-        // USER ACCESS
-        // =================================
+          // =================================
+          // CONTENT
+          // =================================
 
-        this.checkFolderAccess();
-
-
-        this.loading = false;
-      },
-
-
-      error: (error) => {
-
-        console.error(
-          '❌ FOLDER LOAD ERROR:',
-          error
-        );
-
-        this.loading = false;
+          this.contents =
+            Array.isArray(res?.contents)
+              ? res.contents
+              : [];
 
 
-        this.goToLibrary();
-      }
+          // =================================
+          // BACKEND ACCESS
+          // =================================
 
-    });
+          this.hasAccess =
+            res?.hasAccess === true;
+
+
+          // =================================
+          // DEBUG
+          // =================================
+
+          console.log(
+            '📂 FOLDER OBJECT:',
+            this.folder
+          );
+
+          console.log(
+            '💰 SELLING PRICE:',
+            this.folder?.sellingPrice
+          );
+
+          console.log(
+            '🏷️ OFFER PRICE:',
+            this.folder?.offerPrice
+          );
+
+          console.log(
+            '💵 FINAL PRICE:',
+            this.getFinalPrice()
+          );
+
+
+          // =================================
+          // USER ACCESS
+          // =================================
+
+          this.checkFolderAccess();
+
+
+          this.loading = false;
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            '❌ FOLDER LOAD ERROR:',
+            error
+          );
+
+          this.loading = false;
+
+
+          this.goToLibrary();
+        }
+
+      });
   }
 
 
@@ -312,32 +312,32 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
     this.http.get<any>(
       `${this.api}/api/folder-access/check/${this.folderId}`
     )
-    .subscribe({
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        this.hasAccess =
-          res?.hasAccess === true;
-
-
-        console.log(
-          '🔐 FOLDER ACCESS:',
-          res
-        );
-      },
+          this.hasAccess =
+            res?.hasAccess === true;
 
 
-      error: (error) => {
+          console.log(
+            '🔐 FOLDER ACCESS:',
+            res
+          );
+        },
 
-        console.error(
-          '❌ FOLDER ACCESS CHECK ERROR:',
-          error
-        );
 
-        this.hasAccess = false;
-      }
+        error: (error) => {
 
-    });
+          console.error(
+            '❌ FOLDER ACCESS CHECK ERROR:',
+            error
+          );
+
+          this.hasAccess = false;
+        }
+
+      });
   }
 
 
@@ -371,34 +371,44 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
   // OPEN CONTENT
   // =====================================
 
-  openContent(
-    content: any
-  ): void {
+  openContent(content: any): void {
 
     if (!this.hasAccess) {
-
       this.buyFolder();
-
       return;
     }
 
+    console.log('📚 OPEN CONTENT:', content);
 
-    console.log(
-      '📚 OPEN CONTENT:',
-      content
-    );
+    if (!content?.url) {
+      console.error('❌ Content URL missing:', content);
+      alert('Content is not available ❌');
+      return;
+    }
 
+    switch (content.type) {
 
-    // =================================
-    // YAHAN EXISTING CONTENT LOGIC
-    // =================================
+      case 'pdf':
+        window.open(content.url, '_blank');
+        break;
 
-    /*
-      PDF / VIDEO / NOTE opening logic
-      yahan add karna hai.
-    */
+      case 'video':
+        window.open(content.url, '_blank');
+        break;
+
+      case 'note':
+        window.open(content.url, '_blank');
+        break;
+
+      default:
+        console.error(
+          '❌ Unknown content type:',
+          content.type
+        );
+
+        alert('Unsupported content type ❌');
+    }
   }
-
 
   // =====================================
   // BUY FOLDER
@@ -526,279 +536,278 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
         folderId: this.folderId
       }
     )
-    .subscribe({
+      .subscribe({
 
-      next: (order) => {
+        next: (order) => {
 
-        console.log(
-          '📦 RAZORPAY ORDER:',
-          order
-        );
-
-
-        // =================================
-        // CHECK RAZORPAY SCRIPT
-        // =================================
-
-        if (
-          typeof Razorpay === 'undefined'
-        ) {
-
-          this.buying = false;
-
-
-          console.error(
-            '❌ Razorpay script not loaded'
+          console.log(
+            '📦 RAZORPAY ORDER:',
+            order
           );
 
 
-          alert(
-            'Payment system is not loaded. Please refresh the page ❌'
-          );
-
-
-          return;
-        }
-
-
-        // =================================
-        // RAZORPAY OPTIONS
-        // =================================
-
-        const options: any = {
-
-          key:
-            environment.razorpayKey,
-
-          amount:
-            order.amount,
-
-          currency:
-            order.currency || 'INR',
-
-          name:
-            'SS Builds',
-
-          description:
-            `Folder Access - ${
-              this.folder?.name ||
-              'Learning Folder'
-            }`,
-
-          order_id:
-            order.id,
-
-
           // =================================
-          // PAYMENT SUCCESS
+          // CHECK RAZORPAY SCRIPT
           // =================================
 
-          handler:
-            (response: any) => {
-
-              console.log(
-                '💳 PAYMENT RESPONSE:',
-                response
-              );
-
-
-              // =================================
-              // VERIFY PAYMENT
-              // =================================
-
-              this.http.post<any>(
-                `${this.api}/verify-folder-payment`,
-                {
-
-                  razorpay_order_id:
-                    response.razorpay_order_id,
-
-                  razorpay_payment_id:
-                    response.razorpay_payment_id,
-
-                  razorpay_signature:
-                    response.razorpay_signature,
-
-                  userId:
-                    user._id,
-
-                  folderId:
-                    this.folderId,
-
-                  amount:
-                    finalPrice
-                }
-              )
-              .subscribe({
-
-                next:
-                  (verifyRes) => {
-
-                    console.log(
-                      '✅ PAYMENT VERIFIED:',
-                      verifyRes
-                    );
-
-
-                    if (
-                      verifyRes?.success
-                    ) {
-
-                      alert(
-                        'Folder unlocked successfully 🎉'
-                      );
-
-
-                      this.buying = false;
-
-
-                      // Reload folder
-                      this.loadFolder();
-
-                    }
-                    else {
-
-                      this.buying = false;
-
-
-                      alert(
-                        verifyRes?.message ||
-                        'Payment verification failed ❌'
-                      );
-                    }
-
-                  },
-
-
-                error:
-                  (error) => {
-
-                    this.buying = false;
-
-
-                    console.error(
-                      '❌ PAYMENT VERIFY ERROR:',
-                      error
-                    );
-
-
-                    alert(
-                      error?.error?.message ||
-                      'Payment verification failed ❌'
-                    );
-                  }
-
-              });
-
-            },
-
-
-          // =================================
-          // PAYMENT CLOSED
-          // =================================
-
-          modal: {
-
-            ondismiss: () => {
-
-              this.buying = false;
-
-              console.log(
-                'Payment popup closed'
-              );
-            }
-
-          },
-
-
-          // =================================
-          // PREFILL
-          // =================================
-
-          prefill: {
-
-            name:
-              user.name || '',
-
-            contact:
-              user.phone || ''
-
-          },
-
-
-          // =================================
-          // THEME
-          // =================================
-
-          theme: {
-
-            color:
-              '#f5c542'
-
-          }
-
-        };
-
-
-        // =================================
-        // RAZORPAY INSTANCE
-        // =================================
-
-        const razorpay =
-          new Razorpay(options);
-
-
-        // =================================
-        // PAYMENT FAILED
-        // =================================
-
-        razorpay.on(
-          'payment.failed',
-          (response: any) => {
+          if (
+            typeof Razorpay === 'undefined'
+          ) {
 
             this.buying = false;
 
 
             console.error(
-              '❌ RAZORPAY PAYMENT FAILED:',
-              response
+              '❌ Razorpay script not loaded'
             );
 
 
             alert(
-              response?.error?.description ||
-              'Payment failed ❌'
+              'Payment system is not loaded. Please refresh the page ❌'
             );
+
+
+            return;
           }
-        );
 
 
-        // =================================
-        // OPEN
-        // =================================
+          // =================================
+          // RAZORPAY OPTIONS
+          // =================================
 
-        razorpay.open();
-      },
+          const options: any = {
+
+            key:
+              environment.razorpayKey,
+
+            amount:
+              order.amount,
+
+            currency:
+              order.currency || 'INR',
+
+            name:
+              'SS Builds',
+
+            description:
+              `Folder Access - ${this.folder?.name ||
+              'Learning Folder'
+              }`,
+
+            order_id:
+              order.id,
 
 
-      error: (error) => {
+            // =================================
+            // PAYMENT SUCCESS
+            // =================================
 
-        this.buying = false;
+            handler:
+              (response: any) => {
+
+                console.log(
+                  '💳 PAYMENT RESPONSE:',
+                  response
+                );
 
 
-        console.error(
-          '❌ CREATE ORDER ERROR:',
-          error
-        );
+                // =================================
+                // VERIFY PAYMENT
+                // =================================
+
+                this.http.post<any>(
+                  `${this.api}/verify-folder-payment`,
+                  {
+
+                    razorpay_order_id:
+                      response.razorpay_order_id,
+
+                    razorpay_payment_id:
+                      response.razorpay_payment_id,
+
+                    razorpay_signature:
+                      response.razorpay_signature,
+
+                    userId:
+                      user._id,
+
+                    folderId:
+                      this.folderId,
+
+                    amount:
+                      finalPrice
+                  }
+                )
+                  .subscribe({
+
+                    next:
+                      (verifyRes) => {
+
+                        console.log(
+                          '✅ PAYMENT VERIFIED:',
+                          verifyRes
+                        );
 
 
-        alert(
-          error?.error?.message ||
-          'Unable to create payment order ❌'
-        );
-      }
+                        if (
+                          verifyRes?.success
+                        ) {
 
-    });
+                          alert(
+                            'Folder unlocked successfully 🎉'
+                          );
+
+
+                          this.buying = false;
+
+
+                          // Reload folder
+                          this.loadFolder();
+
+                        }
+                        else {
+
+                          this.buying = false;
+
+
+                          alert(
+                            verifyRes?.message ||
+                            'Payment verification failed ❌'
+                          );
+                        }
+
+                      },
+
+
+                    error:
+                      (error) => {
+
+                        this.buying = false;
+
+
+                        console.error(
+                          '❌ PAYMENT VERIFY ERROR:',
+                          error
+                        );
+
+
+                        alert(
+                          error?.error?.message ||
+                          'Payment verification failed ❌'
+                        );
+                      }
+
+                  });
+
+              },
+
+
+            // =================================
+            // PAYMENT CLOSED
+            // =================================
+
+            modal: {
+
+              ondismiss: () => {
+
+                this.buying = false;
+
+                console.log(
+                  'Payment popup closed'
+                );
+              }
+
+            },
+
+
+            // =================================
+            // PREFILL
+            // =================================
+
+            prefill: {
+
+              name:
+                user.name || '',
+
+              contact:
+                user.phone || ''
+
+            },
+
+
+            // =================================
+            // THEME
+            // =================================
+
+            theme: {
+
+              color:
+                '#f5c542'
+
+            }
+
+          };
+
+
+          // =================================
+          // RAZORPAY INSTANCE
+          // =================================
+
+          const razorpay =
+            new Razorpay(options);
+
+
+          // =================================
+          // PAYMENT FAILED
+          // =================================
+
+          razorpay.on(
+            'payment.failed',
+            (response: any) => {
+
+              this.buying = false;
+
+
+              console.error(
+                '❌ RAZORPAY PAYMENT FAILED:',
+                response
+              );
+
+
+              alert(
+                response?.error?.description ||
+                'Payment failed ❌'
+              );
+            }
+          );
+
+
+          // =================================
+          // OPEN
+          // =================================
+
+          razorpay.open();
+        },
+
+
+        error: (error) => {
+
+          this.buying = false;
+
+
+          console.error(
+            '❌ CREATE ORDER ERROR:',
+            error
+          );
+
+
+          alert(
+            error?.error?.message ||
+            'Unable to create payment order ❌'
+          );
+        }
+
+      });
   }
 
 
