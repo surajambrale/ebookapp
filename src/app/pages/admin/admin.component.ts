@@ -1838,7 +1838,7 @@ export class AdminComponent {
       });
 
     // 🔥 LIBRARY FOLDERS
-    this.http.get<any>(`${this.api}/library/folders`, { headers })
+    this.http.get<any>(`${this.api}/folders`, { headers })
       .subscribe({
         next: (res) => {
 
