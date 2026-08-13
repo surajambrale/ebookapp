@@ -7,19 +7,24 @@ import {
   ActivatedRoute,
   Router,
   RouterLinkActive,
-  RouterLink,
+  RouterLink
 } from '@angular/router';
 
 import {
   CommonModule
 } from '@angular/common';
 
-
 import {
   HttpClient
 } from '@angular/common/http';
-import { AuthService } from '../../core/services/auth.service';
-import { environment } from '../../../environments/environment.prod';
+
+import {
+  AuthService
+} from '../../core/services/auth.service';
+
+import {
+  environment
+} from '../../../environments/environment.prod';
 
 declare var Razorpay: any;
 
@@ -54,15 +59,14 @@ export class LibraryFolderComponent implements OnInit {
 
   loading = true;
 
-  
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private auth: AuthService
+  ) {}
 
-  ) { }
 
   ngOnInit(): void {
 
@@ -70,12 +74,15 @@ export class LibraryFolderComponent implements OnInit {
       this.route.snapshot.paramMap.get('id') || '';
 
     if (!this.folderId) {
+
       this.goToLibrary();
+
       return;
     }
 
     this.loadFolder();
   }
+
 
   // =====================================
   // LOAD FOLDER
@@ -88,48 +95,103 @@ export class LibraryFolderComponent implements OnInit {
     this.http.get<any>(
       `/api/folders/detail/${this.folderId}`
     )
-      .subscribe({
+    .subscribe({
 
-        next: (res) => {
+      next: (res) => {
 
-          console.log(
-            'FOLDER DETAIL:',
-            res
-          );
+        console.log(
+          '📂 FOLDER DETAIL:',
+          res
+        );
 
-          this.folder =
-            res.folder || null;
+        this.folder =
+          res.folder || null;
 
-          this.subFolders =
-            res.subFolders || [];
+        this.subFolders =
+          res.subFolders || [];
 
-          this.contents =
-            res.contents || [];
+        this.contents =
+          res.contents || [];
 
-          this.hasAccess =
-            res.hasAccess === true;
+        this.hasAccess =
+          res.hasAccess === true;
 
-          this.loading = false;
-        },
+        /*
+         * 🔥 IMPORTANT
+         * Login user ka actual folder access
+         * bhi check karo.
+         */
+        this.checkFolderAccess();
 
-        error: (error) => {
+        this.loading = false;
+      },
 
-          console.error(
-            'FOLDER LOAD ERROR:',
-            error
-          );
+      error: (error) => {
 
-          this.loading = false;
+        console.error(
+          '❌ FOLDER LOAD ERROR:',
+          error
+        );
 
-          alert(
-            'Unable to load folder'
-          );
+        this.loading = false;
 
-          this.goToLibrary();
-        }
+        alert(
+          'Unable to load folder'
+        );
 
-      });
+        this.goToLibrary();
+      }
+
+    });
   }
+
+
+  // =====================================
+  // CHECK FOLDER ACCESS
+  // =====================================
+
+  checkFolderAccess(): void {
+
+    const user =
+      this.auth.getUser();
+
+    if (!user || !user._id) {
+
+      this.hasAccess = false;
+
+      return;
+    }
+
+    this.http.get<any>(
+      `/api/folder-access/check/${this.folderId}`
+    )
+    .subscribe({
+
+      next: (res) => {
+
+        this.hasAccess =
+          res?.hasAccess === true;
+
+        console.log(
+          '🔐 FOLDER ACCESS:',
+          this.hasAccess
+        );
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          '❌ FOLDER ACCESS CHECK ERROR:',
+          error
+        );
+
+        this.hasAccess = false;
+      }
+
+    });
+  }
+
 
   // =====================================
   // OPEN SUB FOLDER
@@ -147,6 +209,7 @@ export class LibraryFolderComponent implements OnInit {
     ]);
   }
 
+
   // =====================================
   // OPEN CONTENT
   // =====================================
@@ -161,17 +224,20 @@ export class LibraryFolderComponent implements OnInit {
     }
 
     console.log(
-      'OPEN CONTENT:',
+      '📚 OPEN CONTENT:',
       content
     );
 
     /*
-      Yaha tumhara existing PDF/video/note
-      opening logic rahega.
+      Yahan tumhara existing
+      PDF / Video / Note opening logic
+      rahega.
 
-      Old content code ko abhi remove mat karo.
+      Existing content logic ko yahan
+      paste kar sakte ho.
     */
   }
+
 
   // =====================================
   // BUY FOLDER
@@ -179,112 +245,146 @@ export class LibraryFolderComponent implements OnInit {
 
   buyFolder(): void {
 
-  // =========================================
-  // 🔐 LOGIN CHECK
-  // =========================================
+    // =====================================
+    // 🔐 LOGIN CHECK
+    // =====================================
 
-  if (!this.auth.isLoggedIn()) {
+    if (!this.auth.isLoggedIn()) {
 
-    localStorage.setItem(
-      'redirectAfterLogin',
-      `/library/folder/${this.folderId}`
-    );
+      localStorage.setItem(
+        'redirectAfterLogin',
+        `/library/folder/${this.folderId}`
+      );
 
-    this.router.navigate(['/login']);
+      this.router.navigate([
+        '/login'
+      ]);
 
-    return;
-  }
-
-
-  // =========================================
-  // 👤 USER
-  // =========================================
-
-  const user =
-    this.auth.getUser();
-
-
-  if (!user || !user._id) {
-
-    alert(
-      'Please login again ❌'
-    );
-
-    this.router.navigate(['/login']);
-
-    return;
-  }
-
-
-  // =========================================
-  // 💰 PRICE
-  // =========================================
-
-  const price =
-    Number(
-      this.folder?.offerPrice > 0
-        ? this.folder.offerPrice
-        : this.folder?.sellingPrice
-    );
-
-
-  if (!price || price <= 0) {
-
-    alert(
-      'Folder price is not available ❌'
-    );
-
-    return;
-  }
-
-
-  // =========================================
-  // CREATE RAZORPAY ORDER
-  // =========================================
-
-  this.http.post<any>(
-    `/create-order`,
-    {
-      amount: price
+      return;
     }
-  )
-  .subscribe({
 
-    next: (order) => {
 
-      console.log(
-        '📦 FOLDER ORDER:',
-        order
+    // =====================================
+    // 👤 USER
+    // =====================================
+
+    const user =
+      this.auth.getUser();
+
+    if (!user || !user._id) {
+
+      alert(
+        'Please login again ❌'
+      );
+
+      this.router.navigate([
+        '/login'
+      ]);
+
+      return;
+    }
+
+
+    // =====================================
+    // 💰 DYNAMIC FOLDER PRICE
+    // =====================================
+
+    const sellingPrice =
+      Number(
+        this.folder?.sellingPrice || 0
+      );
+
+    const offerPrice =
+      Number(
+        this.folder?.offerPrice || 0
       );
 
 
-      // =====================================
-      // RAZORPAY OPTIONS
-      // =====================================
+    /*
+     * Agar offerPrice available hai
+     * aur sellingPrice se kam hai
+     * to offerPrice use hoga.
+     *
+     * Otherwise sellingPrice.
+     */
 
-      const options: any = {
-
-        key:
-          environment.razorpayKey,
-
-        amount:
-          order.amount,
-
-        currency:
-          'INR',
-
-        name:
-          'Complete Fat Loss Guide',
-
-        description:
-          `Folder Access - ${this.folder?.name}`,
-
-        order_id:
-          order.id,
+    const price =
+      offerPrice > 0 &&
+      sellingPrice > offerPrice
+        ? offerPrice
+        : sellingPrice;
 
 
-        handler:
-          (response: any) => {
+    console.log(
+      '💰 FOLDER PRICE:',
+      {
+        sellingPrice,
+        offerPrice,
+        finalPrice: price
+      }
+    );
+
+
+    if (!price || price <= 0) {
+
+      alert(
+        'Folder price is not available ❌'
+      );
+
+      return;
+    }
+
+
+    // =====================================
+    // 💳 CREATE RAZORPAY ORDER
+    // =====================================
+
+    this.http.post<any>(
+      `/create-order`,
+      {
+        amount: price
+      }
+    )
+    .subscribe({
+
+      next: (order) => {
+
+        console.log(
+          '📦 FOLDER ORDER:',
+          order
+        );
+
+
+        // =====================================
+        // RAZORPAY OPTIONS
+        // =====================================
+
+        const options: any = {
+
+          key:
+            environment.razorpayKey,
+
+          amount:
+            order.amount,
+
+          currency:
+            'INR',
+
+          name:
+            'Complete Fat Loss Guide',
+
+          description:
+            `Folder Access - ${this.folder?.name}`,
+
+          order_id:
+            order.id,
+
+
+          // =====================================
+          // PAYMENT SUCCESS
+          // =====================================
+
+          handler: (response: any) => {
 
             console.log(
               '💳 PAYMENT RESPONSE:',
@@ -292,9 +392,9 @@ export class LibraryFolderComponent implements OnInit {
             );
 
 
-            // =================================
+            // =====================================
             // VERIFY FOLDER PAYMENT
-            // =================================
+            // =====================================
 
             this.http.post<any>(
               `/verify-folder-payment`,
@@ -317,120 +417,135 @@ export class LibraryFolderComponent implements OnInit {
 
                 amount:
                   price
-
               }
             )
             .subscribe({
 
-              next:
-                (verifyRes) => {
+              next: (verifyRes) => {
 
-                  console.log(
-                    '✅ FOLDER PAYMENT VERIFIED:',
-                    verifyRes
-                  );
-
-
-                  if (
-                    verifyRes.success
-                  ) {
-
-                    alert(
-                      'Folder unlocked successfully 🎉'
-                    );
+                console.log(
+                  '✅ FOLDER PAYMENT VERIFIED:',
+                  verifyRes
+                );
 
 
-                    // =================================
-                    // RELOAD FOLDER
-                    // =================================
-
-                    this.loadFolder();
-
-                  }
-
-                },
-
-              error:
-                (error) => {
-
-                  console.error(
-                    '❌ FOLDER PAYMENT VERIFY ERROR:',
-                    error
-                  );
-
+                if (
+                  verifyRes?.success
+                ) {
 
                   alert(
-                    error?.error?.message ||
-                    'Payment verification failed ❌'
+                    'Folder unlocked successfully 🎉'
                   );
 
+
+                  /*
+                   * Reload folder and access.
+                   */
+
+                  this.loadFolder();
+
+                } else {
+
+                  alert(
+                    'Payment verification failed ❌'
+                  );
                 }
+
+              },
+
+              error: (error) => {
+
+                console.error(
+                  '❌ FOLDER PAYMENT VERIFY ERROR:',
+                  error
+                );
+
+                alert(
+                  error?.error?.message ||
+                  'Payment verification failed ❌'
+                );
+
+              }
 
             });
 
           },
 
 
-        prefill: {
+          // =====================================
+          // PREFILL USER
+          // =====================================
 
-          name:
-            user.name || '',
+          prefill: {
 
-          contact:
-            user.phone || ''
+            name:
+              user.name || '',
 
-        },
+            contact:
+              user.phone || ''
 
-
-        theme: {
-
-          color:
-            '#f5c542'
-
-        }
-
-      };
+          },
 
 
-      // =====================================
-      // OPEN RAZORPAY
-      // =====================================
+          // =====================================
+          // THEME
+          // =====================================
 
-      const razorpay =
-        new Razorpay(options);
+          theme: {
 
-        
+            color:
+              '#f5c542'
+
+          }
+
+        };
 
 
-      razorpay.open();
+        // =====================================
+        // CREATE RAZORPAY INSTANCE
+        // =====================================
 
-    },
+        const razorpay =
+          new Razorpay(options);
 
-    error:
-      (error) => {
+
+        // =====================================
+        // OPEN RAZORPAY
+        // =====================================
+
+        razorpay.open();
+
+      },
+
+
+      error: (error) => {
 
         console.error(
           '❌ CREATE FOLDER ORDER ERROR:',
           error
         );
 
-
         alert(
+          error?.error?.message ||
           'Unable to create payment order ❌'
         );
 
       }
 
-  });
+    });
 
-}
+  }
+
+
   // =====================================
   // BACK
   // =====================================
 
   goBack(): void {
 
-    if (window.history.length > 1) {
+    if (
+      window.history.length > 1
+    ) {
 
       window.history.back();
 
@@ -439,6 +554,7 @@ export class LibraryFolderComponent implements OnInit {
 
     this.goToLibrary();
   }
+
 
   // =====================================
   // LIBRARY
@@ -449,6 +565,7 @@ export class LibraryFolderComponent implements OnInit {
     this.router.navigate([
       '/library'
     ]);
+
   }
 
 }
