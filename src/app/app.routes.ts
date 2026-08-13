@@ -7,6 +7,7 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { ExploreComponent } from './pages/explore/explore.component';
 import { MyBooksComponent } from './pages/my-books/my-books.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { LibraryFolderComponent } from './pages/library-folder/library-folder.component';
 
 
 
@@ -64,6 +65,11 @@ export const routes: Routes = [
    loadComponent:() =>
    import('./pages/subscription/subscription.component')
    .then(m=>m.SubscriptionComponent)
+},
+
+{
+  path: 'library/folder/:id',
+  component: LibraryFolderComponent
 }
 
 

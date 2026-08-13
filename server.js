@@ -32,7 +32,7 @@ const cron = require('node-cron');
 const bcrypt = require('bcrypt');
 const app = express();
 const couponRoutes = require('./routes/couponRoutes');
-
+const folderAccessRoutes = require('./routes/folderAccessRoutes');
 const folderRoutes = require('./routes/folderRoutes');
 const contentRoutes =
   require('./routes/contentRoutes');
@@ -76,6 +76,10 @@ app.use('/folders', folderRoutes);
 app.use('/content', contentRoutes);
 app.use('/content', contentUploadRoutes);
 app.use('/coupon', couponRoutes);
+app.use(
+  '/api/folder-access',
+  folderAccessRoutes
+);
 
 
 

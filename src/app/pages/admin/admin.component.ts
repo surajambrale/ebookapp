@@ -14,6 +14,12 @@ import { RouterModule } from '@angular/router';
 
 export class AdminComponent {
 
+ 
+  selectedUser: string = '';
+  selectedBook: string = '';
+  selectedFolder: string = '';
+
+
   password = '';
   isLoggedIn = false;
   token = '';
@@ -23,8 +29,10 @@ export class AdminComponent {
   books: any[] = [];
   subscriptions: any[] = [];
 
-  selectedUser = '';
-  selectedBook = '';
+  
+  libraryFolders: any[] = [];
+  grantAccessType: 'book' | 'folder' = 'book';
+  grantDuration: number = 30;
 
   // 🔥 DROPDOWN
   selectedView = 'users';
@@ -44,9 +52,10 @@ export class AdminComponent {
   //testimonial code start
   testimonials: any[] = [];
   dynamicBooks: any[] = [];
-
+ 
   selectedPreviewImages: File[] = [];
   selectedLogo: File | null = null;
+
 
   currentPassword = '';
 
@@ -63,6 +72,8 @@ export class AdminComponent {
   currentPage = 1;
 
   itemsPerPage = 10;
+
+  
 
   //folder code start
   // =====================================
@@ -1070,6 +1081,8 @@ openContent(content: any) {
   }
 
 }
+
+
 
 
 
@@ -2198,41 +2211,91 @@ openContent(content: any) {
   //app setting code end
 
   // 🔥 GRANT ACCESS
-  grantAccess() {
+ grantAccess(): void {
 
-    const headers = new HttpHeaders({
+  const headers = new HttpHeaders({
+    Authorization: this.token
+  });
 
-      Authorization: this.token
-
-    });
-
-    this.http.post(`${this.api}/admin/grant-access`, {
-
+  this.http.post(
+    `${this.api}/admin/grant-access`,
+    {
       userId: this.selectedUser,
-
       bookId: this.selectedBook
+    },
+    { headers }
+  ).subscribe({
 
-    }, { headers })
+    next: () => {
 
-      .subscribe({
+      alert('Book Access Granted ✅');
 
-        next: () => {
+      this.loadData();
 
-          alert('Access Granted ✅');
+    },
 
-          this.loadData();
+    error: (error) => {
 
-        },
+      console.error(error);
 
-        error: () => {
+      alert('Already Granted ❌');
 
-          alert('Already Granted ❌');
+    }
 
-        }
+  });
 
-      });
+}
+
+// 🔥 GRANT FOLDER ACCESS
+grantFolderAccess(): void {
+
+  if (!this.selectedUser || !this.selectedFolder) {
+
+    alert('Please select user and folder');
+
+    return;
 
   }
+
+  this.http.post(
+    `${this.api}/folder-access/grant`,
+    {
+      userId: this.selectedUser,
+      folderId: this.selectedFolder,
+
+      // 🔥 1 MONTH ACCESS
+      durationDays: 30
+
+    }
+  ).subscribe({
+
+    next: () => {
+
+      alert('Folder access granted successfully ✅');
+
+      this.loadData();
+
+      this.selectedFolder = '';
+
+    },
+
+    error: (error) => {
+
+      console.error(
+        'Folder access error:',
+        error
+      );
+
+      alert(
+        error?.error?.message ||
+        'Failed to grant folder access ❌'
+      );
+
+    }
+
+  });
+
+}
 
   loadDynamicBooks() {
 

@@ -216,45 +216,50 @@ export class BookListComponent {
 
   loadLibraryFolders(parentId: string | null = null) {
 
-  this.libraryLoading = true;
+    this.libraryLoading = true;
 
-  const url = parentId
-    ? `${this.api}/folders/${parentId}`
-    : `${this.api}/folders`;
+    const url = parentId
+      ? `${this.api}/folders/${parentId}`
+      : `${this.api}/folders`;
 
-  this.http.get<any[]>(url)
-    .subscribe({
+    this.http.get<any[]>(url)
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        console.log('Folders loaded:', res);
+          console.log('Folders loaded:', res);
 
-        this.libraryFolders = res || [];
+          this.libraryFolders = res || [];
 
-        this.libraryLoading = false;
+          this.libraryLoading = false;
 
-      },
+        },
 
-      error: (err) => {
+        error: (err) => {
 
-        console.log('Library folder error:', err);
+          console.log('Library folder error:', err);
 
-        this.libraryFolders = [];
+          this.libraryFolders = [];
 
-        this.libraryLoading = false;
+          this.libraryLoading = false;
 
-      }
+        }
 
-    });
+      });
 
-}
+  }
 
 
   // ===============================
   // 📂 OPEN FOLDER
   // ===============================
 
-  openLibraryFolder(folder: any) {
+  openLibraryFolder(folder: any): void {
+
+    this.router.navigate([
+      '/library/folder',
+      folder._id
+    ]);
 
     this.currentLibraryFolder = folder;
 

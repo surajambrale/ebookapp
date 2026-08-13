@@ -751,77 +751,164 @@
 
     <!-- 🔥 GRANT ACCESS -->
     <!-- 🔥 GRANT ACCESS -->
-    <div *ngIf="selectedView === 'grant'" class="card">
+    <!-- 🔥 GRANT ACCESS -->
+<div *ngIf="selectedView === 'grant'" class="card">
 
-      <h3>Grant Book Access</h3>
+  <h3>Grant Access</h3>
 
-      <!-- USER -->
-      <select [(ngModel)]="selectedUser">
+  <!-- ================= USER ================= -->
 
-        <option value="">
-          Select User
-        </option>
+  <label class="grant-label">
+    Select User
+  </label>
 
-        <option *ngFor="let u of users" [value]="u._id">
-          {{u.name}} ({{u.phone}})
-        </option>
+  <select [(ngModel)]="selectedUser" class="grant-select">
 
-      </select>
+    <option value="">
+      Select User
+    </option>
 
-      <br><br>
+    <option *ngFor="let u of users" [value]="u._id">
+      {{ u.name }} ({{ u.phone }})
+    </option>
 
-      <h4>Select Book</h4>
+  </select>
 
-      <select [(ngModel)]="selectedBook" style="width:100%;padding:10px;border-radius:8px;">
 
-        <option value="">
-          Select Book
-        </option>
+  <!-- ================================================= -->
+  <!-- 📚 BOOK ACCESS -->
+  <!-- ================================================= -->
 
-        <option *ngFor="let b of books" [value]="b._id || b.id">
+  <div class="grant-section">
 
-          {{ b.title || b.name }} - ₹{{ b.price }}
+    <h4>
+      📚 Book Access
+    </h4>
 
-        </option>
+    <select
+      [(ngModel)]="selectedBook"
+      class="grant-select"
+    >
 
-      </select>
+      <option value="">
+        Select Book
+      </option>
 
-      <br>
+      <option
+        *ngFor="let b of books"
+        [value]="b._id || b.id"
+      >
+        {{ b.title || b.name }} - ₹{{ b.price }}
+      </option>
 
-      <button [disabled]="!selectedUser || !selectedBook" (click)="grantAccess()">
+    </select>
 
-        Give Access
 
-      </button>
+    <button
+      class="grant-btn"
+      [disabled]="!selectedUser || !selectedBook"
+      (click)="grantAccess()"
+    >
+      📚 Give Book Access
+    </button>
 
-    </div>
+  </div>
 
-    <!-- 🔥 USERS -->
-    <div *ngIf="selectedView === 'users'">
 
-      <h2 class="section-title">
-        👥 Users
-      </h2>
+  <!-- ================================================= -->
+  <!-- 📂 FOLDER ACCESS -->
+  <!-- ================================================= -->
 
-      <div *ngFor="let user of users" class="card">
+  <div class="grant-section">
 
-        <p>
-          <b>Name:</b>
-          {{ user.name }}
-        </p>
+    <h4>
+      📂 Folder Access
+    </h4>
 
-        <p>
-          <b>Phone:</b>
-          {{ user.phone }}
-        </p>
+    <select
+      [(ngModel)]="selectedFolder"
+      class="grant-select"
+    >
 
-        <button class="delete-btn" (click)="deleteUser(user._id)">
-          Delete User
-        </button>
+      <option value="">
+        Select Folder
+      </option>
 
-      </div>
+      <option
+        *ngFor="let folder of libraryFolders"
+        [value]="folder._id || folder.id"
+      >
+        {{ folder.name }}
 
-    </div>
+        <span *ngIf="folder.sellingPrice">
+          - ₹{{ folder.sellingPrice }}
+        </span>
+      </option>
+
+    </select>
+
+
+    <button
+      class="grant-btn folder-grant-btn"
+      [disabled]="!selectedUser || !selectedFolder"
+      (click)="grantFolderAccess()"
+    >
+      📂 Give Folder Access
+    </button>
+
+  </div>
+
+
+  <!-- ================================================= -->
+  <!-- ℹ️ ACCESS INFO -->
+  <!-- ================================================= -->
+
+  <div class="grant-info">
+
+    <span>
+      🔐 Admin granted access will be available to the selected user.
+    </span>
+
+  </div>
+
+</div>
+
+
+<!-- 🔥 USERS -->
+<div *ngIf="selectedView === 'users'">
+
+  <h2 class="section-title">
+    👥 Users
+  </h2>
+
+
+  <div
+    *ngFor="let user of users"
+    class="card"
+  >
+
+    <p>
+      <b>Name:</b>
+      {{ user.name }}
+    </p>
+
+
+    <p>
+      <b>Phone:</b>
+      {{ user.phone }}
+    </p>
+
+
+    <button
+      class="delete-btn"
+      (click)="deleteUser(user._id)"
+    >
+      Delete User
+    </button>
+
+  </div>
+
+</div>
 
     <!-- 🔥 PURCHASES -->
     <div *ngIf="selectedView === 'purchases'">

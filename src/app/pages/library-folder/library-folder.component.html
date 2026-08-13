@@ -1,0 +1,273 @@
+<div class="folder-page">
+
+  <!-- HEADER -->
+
+  <header class="folder-header">
+
+    <div class="folder-navigation">
+
+      <button
+        type="button"
+        (click)="goBack()">
+
+        ← Back
+
+      </button>
+
+      <button
+        type="button"
+        (click)="goToLibrary()">
+
+        📚 Library
+
+      </button>
+
+    </div>
+
+
+    <div class="folder-heading">
+
+      <div class="folder-icon">
+        📁
+      </div>
+
+      <div>
+
+        <h1>
+          {{ folder?.name }}
+        </h1>
+
+        <p>
+          {{ folder?.description }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- LOADING -->
+
+  <div
+    class="folder-loading"
+    *ngIf="loading">
+
+    <div class="spinner"></div>
+
+    <p>
+      Loading folder...
+    </p>
+
+  </div>
+
+
+  <main *ngIf="!loading">
+
+
+    <!-- =================================================
+    LOCKED FOLDER
+    ================================================= -->
+
+    <section
+      class="folder-purchase-card"
+      *ngIf="!hasAccess">
+
+      <div>
+
+        <span class="premium-label">
+          🔒 PREMIUM FOLDER
+        </span>
+
+        <h2>
+          Unlock {{ folder?.name }}
+        </h2>
+
+        <p>
+          Get access to all books, videos,
+          PDFs and learning resources inside
+          this folder for 30 days.
+        </p>
+
+      </div>
+
+
+      <div class="folder-price">
+
+        <div>
+
+          <strong>
+            ₹{{
+              folder?.offerPrice > 0
+                ? folder?.offerPrice
+                : folder?.sellingPrice
+            }}
+          </strong>
+
+          <del
+            *ngIf="
+              folder?.offerPrice > 0 &&
+              folder?.sellingPrice >
+              folder?.offerPrice
+            ">
+
+            ₹{{ folder?.sellingPrice }}
+
+          </del>
+
+        </div>
+
+        <small>
+          30 Days Access
+        </small>
+
+        <button
+          type="button"
+          (click)="buyFolder()">
+
+          Buy Folder →
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+    SUB FOLDERS
+    ================================================= -->
+
+    <section
+      class="folder-section"
+      *ngIf="subFolders.length > 0">
+
+      <div class="section-title">
+
+        <h2>
+          📂 Folders
+        </h2>
+
+        <span>
+          {{ subFolders.length }}
+        </span>
+
+      </div>
+
+
+      <div class="subfolder-grid">
+
+        <div
+          class="subfolder-card"
+          *ngFor="
+            let subFolder of subFolders
+          "
+          (click)="openSubFolder(subFolder)">
+
+          <div class="subfolder-icon">
+            📁
+          </div>
+
+          <div>
+
+            <h3>
+              {{ subFolder.name }}
+            </h3>
+
+            <p>
+              Open folder →
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+    CONTENT
+    ================================================= -->
+
+    <section
+      class="folder-section"
+      *ngIf="contents.length > 0">
+
+      <div class="section-title">
+
+        <h2>
+          📚 Learning Resources
+        </h2>
+
+      </div>
+
+
+      <div class="content-grid">
+
+        <div
+          class="content-card"
+          *ngFor="let content of contents"
+          (click)="openContent(content)">
+
+          <div class="content-icon">
+
+            <span
+              *ngIf="
+                content.type === 'pdf'
+              ">
+
+              📄
+
+            </span>
+
+            <span
+              *ngIf="
+                content.type === 'video'
+              ">
+
+              🎥
+
+            </span>
+
+            <span
+              *ngIf="
+                content.type === 'note'
+              ">
+
+              📝
+
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <span class="content-type">
+              {{ content.type | uppercase }}
+            </span>
+
+            <h3>
+              {{ content.title }}
+            </h3>
+
+          </div>
+
+
+          <span class="content-arrow">
+            →
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</div>

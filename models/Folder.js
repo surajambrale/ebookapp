@@ -34,6 +34,25 @@ const folderSchema = new mongoose.Schema(
     updatedAt: {
       type: Date,
       default: Date.now
+    },
+    sellingPrice: {
+      type: Number,
+      default: 0
+    },
+
+    offerPrice: {
+      type: Number,
+      default: 0
+    },
+
+    isPaid: {
+      type: Boolean,
+      default: false
+    },
+
+    accessDurationDays: {
+      type: Number,
+      default: 30
     }
   },
   {
