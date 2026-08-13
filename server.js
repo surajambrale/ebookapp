@@ -55,6 +55,7 @@ const nodemailer = require('nodemailer');
 
 const Folder = require('./models/Folder');
 const FolderAccess = require('./models/FolderAccess');
+const requireAuth = require('./middleware/auth');
 
 
 
@@ -76,6 +77,7 @@ app.use('/books', dynamicBookRoute);
 app.use('/notification', notificationRoutes);
 app.use('/books', bookRoutes);
 app.use('/folders', folderRoutes);
+app.use('/api/folders', folderRoutes);
 app.use('/content', contentRoutes);
 app.use('/content', contentUploadRoutes);
 app.use('/coupon', couponRoutes);
@@ -1006,6 +1008,184 @@ app.post('/create-order', async (req, res) => {
   }
 });
 
+// =========================================================
+// CREATE FOLDER PAYMENT ORDER
+// Server calculates the price from MongoDB.
+// Never trust the price sent by the browser.
+// =========================================================
+app.post('/create-folder-order', requireAuth, async (req, res) => {
+  try {
+    const { folderId } = req.body;
+
+    if (!folderId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Folder ID is required'
+      });
+    }
+
+    const folder = await Folder.findById(folderId);
+
+    if (!folder) {
+      return res.status(404).json({
+        success: false,
+        message: 'Folder not found'
+      });
+    }
+
+    const sellingPrice = Number(folder.sellingPrice) || 0;
+    const offerPrice = Number(folder.offerPrice) || 0;
+
+    let finalPrice = sellingPrice;
+
+    if (offerPrice > 0 && sellingPrice > 0 && offerPrice < sellingPrice) {
+      finalPrice = offerPrice;
+    }
+
+    if (finalPrice <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Folder price is not available'
+      });
+    }
+
+    const order = await razorpay.orders.create({
+      amount: Math.round(finalPrice * 100),
+      currency: 'INR',
+      notes: {
+        folderId: String(folder._id)
+      }
+    });
+
+    res.json({
+      success: true,
+      id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      folderId: folder._id,
+      finalPrice
+    });
+  } catch (error) {
+    console.error('CREATE FOLDER ORDER ERROR:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Unable to create folder order'
+    });
+  }
+});
+
+// =========================================================
+// VERIFY FOLDER PAYMENT
+// =========================================================
+app.post('/verify-folder-payment', requireAuth, async (req, res) => {
+  try {
+    let {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      userId,
+      folderId,
+      amount
+    } = req.body;
+
+    const authenticatedUserId = req.user.id;
+
+    if (userId && String(userId) !== String(authenticatedUserId)) {
+      return res.status(403).json({
+        success: false,
+        message: 'User authentication mismatch'
+      });
+    }
+
+    userId = authenticatedUserId;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !userId || !folderId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required payment data missing'
+      });
+    }
+
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+
+    const expectedSignature = crypto
+      .createHmac('sha256', process.env.RAZORPAY_SECRET)
+      .update(body)
+      .digest('hex');
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid payment ❌'
+      });
+    }
+
+    const folder = await Folder.findById(folderId);
+
+    if (!folder) {
+      return res.status(404).json({
+        success: false,
+        message: 'Folder not found'
+      });
+    }
+
+    const sellingPrice = Number(folder.sellingPrice) || 0;
+    const offerPrice = Number(folder.offerPrice) || 0;
+    const expectedAmount = offerPrice > 0 && offerPrice < sellingPrice
+      ? offerPrice
+      : sellingPrice;
+    const paidAmount = Number(amount);
+
+    if (!Number.isFinite(paidAmount) || paidAmount !== expectedAmount) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment amount does not match folder price'
+      });
+    }
+
+    const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    const durationDays = Number(folder.accessDurationDays) > 0
+      ? Number(folder.accessDurationDays)
+      : 30;
+    expiryDate.setDate(expiryDate.getDate() + durationDays);
+
+    let access = await FolderAccess.findOne({
+      user: userId,
+      folder: folderId
+    });
+
+    if (access) {
+      access.startDate = startDate;
+      access.expiryDate = expiryDate;
+      access.accessType = 'purchase';
+      access.isActive = true;
+      await access.save();
+    } else {
+      access = await FolderAccess.create({
+        user: userId,
+        folder: folderId,
+        accessType: 'purchase',
+        startDate,
+        expiryDate,
+        isActive: true
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Folder purchased successfully ✅',
+      access
+    });
+  } catch (error) {
+    console.error('VERIFY FOLDER PAYMENT ERROR:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Folder payment verification failed'
+    });
+  }
+});
+
 // VERIFY PAYMENT
 app.post('/verify-payment', async (req, res) => {
   try {
@@ -1041,218 +1221,6 @@ app.post('/verify-payment', async (req, res) => {
     });
 
     //verify payment code end
-
-    // =========================================================
-    // 📂 VERIFY FOLDER PAYMENT
-    // =========================================================
-
-    app.post('/verify-folder-payment', async (req, res) => {
-
-      try {
-
-        const {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-          userId,
-          folderId,
-          amount
-        } = req.body;
-
-
-        // -----------------------------
-        // REQUIRED DATA
-        // -----------------------------
-
-        if (
-          !razorpay_order_id ||
-          !razorpay_payment_id ||
-          !razorpay_signature ||
-          !userId ||
-          !folderId
-        ) {
-
-          return res.status(400).json({
-
-            success: false,
-
-            message: 'Required payment data missing'
-
-          });
-
-        }
-
-
-        // -----------------------------
-        // VERIFY SIGNATURE
-        // -----------------------------
-
-        const body =
-          razorpay_order_id +
-          "|" +
-          razorpay_payment_id;
-
-
-        const expectedSignature =
-          crypto
-            .createHmac(
-              "sha256",
-              process.env.RAZORPAY_SECRET
-            )
-            .update(body.toString())
-            .digest("hex");
-
-
-        if (
-          expectedSignature !==
-          razorpay_signature
-        ) {
-
-          return res.status(400).json({
-
-            success: false,
-
-            message: 'Invalid payment ❌'
-
-          });
-
-        }
-
-
-        // -----------------------------
-        // CHECK FOLDER
-        // -----------------------------
-
-        const folder =
-          await Folder.findById(folderId);
-
-
-        if (!folder) {
-
-          return res.status(404).json({
-
-            success: false,
-
-            message: 'Folder not found'
-
-          });
-
-        }
-
-
-        // -----------------------------
-        // PRICE
-        // -----------------------------
-
-        const finalAmount =
-          Number(amount);
-
-
-        // -----------------------------
-        // 30 DAYS ACCESS
-        // -----------------------------
-
-        const startDate =
-          new Date();
-
-
-        const expiryDate =
-          new Date(startDate);
-
-
-        expiryDate.setDate(
-          expiryDate.getDate() + 30
-        );
-
-
-        // -----------------------------
-        // CREATE / UPDATE ACCESS
-        // -----------------------------
-
-        let access =
-          await FolderAccess.findOne({
-
-            user: userId,
-
-            folder: folderId
-
-          });
-
-
-        if (access) {
-
-          access.startDate =
-            startDate;
-
-          access.expiryDate =
-            expiryDate;
-
-          access.accessType =
-            'purchase';
-
-          access.isActive =
-            true;
-
-          await access.save();
-
-        } else {
-
-          access =
-            await FolderAccess.create({
-
-              user: userId,
-
-              folder: folderId,
-
-              accessType: 'purchase',
-
-              startDate,
-
-              expiryDate,
-
-              isActive: true
-
-            });
-
-        }
-
-
-        // -----------------------------
-        // SUCCESS
-        // -----------------------------
-
-        res.json({
-
-          success: true,
-
-          message:
-            'Folder purchased successfully ✅',
-
-          access
-
-        });
-
-
-      } catch (error) {
-
-        console.error(
-          'VERIFY FOLDER PAYMENT ERROR:',
-          error
-        );
-
-
-        res.status(500).json({
-
-          success: false,
-
-          message:
-            'Folder payment verification failed'
-
-        });
-
-      }
-
-    });
 
     //gmail send code start
 

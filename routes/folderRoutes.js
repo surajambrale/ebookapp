@@ -42,40 +42,6 @@ router.get('/', async (req, res) => {
 
 
 // =====================================================
-// GET SUB FOLDERS
-// =====================================================
-
-router.get('/:parentId', async (req, res) => {
-
-  try {
-
-    const folders = await Folder.find({
-      parentId: req.params.parentId
-    })
-      .sort({
-        createdAt: -1
-      });
-
-    res.json(folders);
-
-  } catch (err) {
-
-    console.error(
-      '❌ GET SUB FOLDERS ERROR:',
-      err
-    );
-
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-
-  }
-
-});
-
-
-// =====================================================
 // GET SINGLE FOLDER DETAILS
 // IMPORTANT: This route must stay BEFORE /:parentId
 // =====================================================
@@ -251,6 +217,40 @@ router.get('/detail/:id', async (req, res) => {
 
       message: err.message
 
+    });
+
+  }
+
+});
+
+
+// =====================================================
+// GET SUB FOLDERS
+// =====================================================
+
+router.get('/:parentId', async (req, res) => {
+
+  try {
+
+    const folders = await Folder.find({
+      parentId: req.params.parentId
+    })
+      .sort({
+        createdAt: -1
+      });
+
+    res.json(folders);
+
+  } catch (err) {
+
+    console.error(
+      '❌ GET SUB FOLDERS ERROR:',
+      err
+    );
+
+    res.status(500).json({
+      success: false,
+      message: err.message
     });
 
   }

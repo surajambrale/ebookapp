@@ -24,7 +24,7 @@ import {
 
 import {
   environment
-} from '../../../environments/environment.prod';
+} from '../../../environments/environment';
 
 declare var Razorpay: any;
 
@@ -66,6 +66,8 @@ export class LibraryFolderComponent
   loading = true;
 
   buying = false;
+
+  private api = environment.apiUrl;
 
 
   // =====================================
@@ -109,7 +111,7 @@ export class LibraryFolderComponent
     this.loading = true;
 
     this.http.get<any>(
-      `/api/folders/detail/${this.folderId}`
+      `${this.api}/folders/detail/${this.folderId}`
     )
     .subscribe({
 
@@ -308,7 +310,7 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
 
 
     this.http.get<any>(
-      `/api/folder-access/check/${this.folderId}`
+      `${this.api}/api/folder-access/check/${this.folderId}`
     )
     .subscribe({
 
@@ -519,9 +521,9 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
     // =================================
 
     this.http.post<any>(
-      `/create-order`,
+      `${this.api}/create-folder-order`,
       {
-        amount: finalPrice
+        folderId: this.folderId
       }
     )
     .subscribe({
@@ -605,7 +607,7 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
               // =================================
 
               this.http.post<any>(
-                `/verify-folder-payment`,
+                `${this.api}/verify-folder-payment`,
                 {
 
                   razorpay_order_id:

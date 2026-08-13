@@ -2,6 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
+const requireAuth = require('../middleware/auth');
+
 const {
   checkFolderAccess,
   grantFolderAccess,
@@ -13,6 +15,7 @@ const {
 // CHECK CURRENT USER FOLDER ACCESS
 router.get(
   '/check/:folderId',
+  requireAuth,
   checkFolderAccess
 );
 
@@ -27,6 +30,7 @@ router.post(
 // GET USER ACCESS
 router.get(
   '/user/:userId',
+  requireAuth,
   getUserFolderAccess
 );
 
@@ -34,6 +38,7 @@ router.get(
 // GET FOLDER DETAILS
 router.get(
   '/detail/:folderId',
+  requireAuth,
   getFolderDetails
 );
 
