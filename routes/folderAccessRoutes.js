@@ -23,6 +23,7 @@ router.get(
 // ADMIN GRANT ACCESS
 router.post(
   '/grant',
+  requireAuth,
   grantFolderAccess
 );
 

@@ -227,6 +227,14 @@ export class AdminComponent {
 
   selectedPdf!: File;
 
+private getAdminHeaders(): HttpHeaders {
+
+  return new HttpHeaders({
+    Authorization: `Bearer ${this.token}`
+  });
+
+}
+
   // =============================
   // logo code start
   // =============================
@@ -2348,63 +2356,89 @@ export class AdminComponent {
   // 🔥 GRANT FOLDER ACCESS
   grantFolderAccess(): void {
 
-    if (!this.selectedUser || !this.selectedFolder) {
+  if (!this.selectedUser) {
 
-      alert('Please select user and folder');
+    alert('Please select user ❌');
 
-      return;
+    return;
+  }
+
+  if (!this.selectedFolder) {
+
+    alert('Please select folder ❌');
+
+    return;
+  }
+
+
+  const headers =
+    this.getAdminHeaders();
+
+
+  const data = {
+
+    userId: this.selectedUser,
+
+    folderId: this.selectedFolder,
+
+    durationDays: Number(
+      this.grantDuration
+    ) || 30
+
+  };
+
+
+  console.log(
+    '🔐 GRANT FOLDER ACCESS REQUEST:',
+    data
+  );
+
+
+  this.http.post<any>(
+    `${this.api}/api/folder-access/grant`,
+    data,
+    { headers }
+  )
+  .subscribe({
+
+    next: (res) => {
+
+      console.log(
+        '✅ FOLDER ACCESS GRANTED:',
+        res
+      );
+
+
+      alert(
+        'Folder access granted successfully ✅'
+      );
+
+
+      this.selectedFolder = '';
+
+      this.loadData();
+
+    },
+
+
+    error: (error) => {
+
+      console.error(
+        '❌ FOLDER ACCESS ERROR:',
+        error
+      );
+
+
+      alert(
+        error?.error?.message ||
+        'Failed to grant folder access ❌'
+      );
 
     }
 
-    const headers = new HttpHeaders({
-      Authorization: this.token
-    });
+  });
 
-    this.http.post(
-      `${this.api}/api/folder-access/grant`,
-      {
-        userId: this.selectedUser,
-        folderId: this.selectedFolder,
-        durationDays: 30
-      },
-      { headers }
-    )
-      .subscribe({
-
-        next: (res: any) => {
-
-          console.log(
-            'FOLDER ACCESS GRANTED:',
-            res
-          );
-
-          alert(
-            'Folder access granted successfully ✅'
-          );
-
-          this.selectedFolder = '';
-
-          this.loadData();
-
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Folder access error:',
-            error
-          );
-
-          alert(
-            error?.error?.message ||
-            'Failed to grant folder access ❌'
-          );
-
-        }
-
-      });
-
-  }
+}
 
 
   loadDynamicBooks() {
