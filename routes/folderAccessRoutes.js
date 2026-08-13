@@ -8,7 +8,7 @@ const {
   getUserFolderAccess
 } = require('../controllers/folderAccessController');
 
-const authMiddleware = require('../middleware/authMiddleware');
+// const authMiddleware = require('../middleware/authMiddleware');
 
 
 // USER
