@@ -8,13 +8,10 @@ const {
   getUserFolderAccess
 } = require('../controllers/folderAccessController');
 
-// const authMiddleware = require('../middleware/authMiddleware');
-
 
 // USER
 router.get(
   '/check/:folderId',
-  authMiddleware,
   checkFolderAccess
 );
 
@@ -22,7 +19,6 @@ router.get(
 // ADMIN
 router.post(
   '/grant',
-  authMiddleware,
   grantFolderAccess
 );
 
@@ -30,7 +26,6 @@ router.post(
 // ADMIN
 router.get(
   '/user/:userId',
-  authMiddleware,
   getUserFolderAccess
 );
 
