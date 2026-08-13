@@ -1762,6 +1762,48 @@ TESTIMONIAL CARD
 }
 
 
+.folder-price-section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.folder-price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.folder-offer-price {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.folder-selling-price {
+  font-size: 14px;
+  opacity: 0.55;
+}
+
+.folder-normal-price {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.folder-offer-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.folder-access-duration {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+
 /* =========================================================
 💬 FEEDBACK BUTTON
 ========================================================= */

@@ -14,9 +14,14 @@ import {
   CommonModule
 } from '@angular/common';
 
+
 import {
   HttpClient
 } from '@angular/common/http';
+import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environment.prod';
+
+declare var Razorpay: any;
 
 @Component({
   selector: 'app-library-folder',
@@ -49,10 +54,14 @@ export class LibraryFolderComponent implements OnInit {
 
   loading = true;
 
+  
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private auth: AuthService
+
   ) { }
 
   ngOnInit(): void {
@@ -170,33 +179,251 @@ export class LibraryFolderComponent implements OnInit {
 
   buyFolder(): void {
 
-    if (!this.folderId) {
-      return;
-    }
+  // =========================================
+  // 🔐 LOGIN CHECK
+  // =========================================
 
-    console.log(
-      'BUY FOLDER:',
-      this.folderId
+  if (!this.auth.isLoggedIn()) {
+
+    localStorage.setItem(
+      'redirectAfterLogin',
+      `/library/folder/${this.folderId}`
     );
 
-    /*
-      Yaha folder Razorpay purchase API connect hogi.
+    this.router.navigate(['/login']);
 
-      Example:
-
-      this.http.post(
-        '/api/folder-purchase/create-order',
-        {
-          folderId: this.folderId
-        }
-      ).subscribe(...)
-
-      Existing book Razorpay flow ko directly
-      overwrite mat karna.
-    */
-
+    return;
   }
 
+
+  // =========================================
+  // 👤 USER
+  // =========================================
+
+  const user =
+    this.auth.getUser();
+
+
+  if (!user || !user._id) {
+
+    alert(
+      'Please login again ❌'
+    );
+
+    this.router.navigate(['/login']);
+
+    return;
+  }
+
+
+  // =========================================
+  // 💰 PRICE
+  // =========================================
+
+  const price =
+    Number(
+      this.folder?.offerPrice > 0
+        ? this.folder.offerPrice
+        : this.folder?.sellingPrice
+    );
+
+
+  if (!price || price <= 0) {
+
+    alert(
+      'Folder price is not available ❌'
+    );
+
+    return;
+  }
+
+
+  // =========================================
+  // CREATE RAZORPAY ORDER
+  // =========================================
+
+  this.http.post<any>(
+    `/create-order`,
+    {
+      amount: price
+    }
+  )
+  .subscribe({
+
+    next: (order) => {
+
+      console.log(
+        '📦 FOLDER ORDER:',
+        order
+      );
+
+
+      // =====================================
+      // RAZORPAY OPTIONS
+      // =====================================
+
+      const options: any = {
+
+        key:
+          environment.razorpayKey,
+
+        amount:
+          order.amount,
+
+        currency:
+          'INR',
+
+        name:
+          'Complete Fat Loss Guide',
+
+        description:
+          `Folder Access - ${this.folder?.name}`,
+
+        order_id:
+          order.id,
+
+
+        handler:
+          (response: any) => {
+
+            console.log(
+              '💳 PAYMENT RESPONSE:',
+              response
+            );
+
+
+            // =================================
+            // VERIFY FOLDER PAYMENT
+            // =================================
+
+            this.http.post<any>(
+              `/verify-folder-payment`,
+              {
+
+                razorpay_order_id:
+                  response.razorpay_order_id,
+
+                razorpay_payment_id:
+                  response.razorpay_payment_id,
+
+                razorpay_signature:
+                  response.razorpay_signature,
+
+                userId:
+                  user._id,
+
+                folderId:
+                  this.folderId,
+
+                amount:
+                  price
+
+              }
+            )
+            .subscribe({
+
+              next:
+                (verifyRes) => {
+
+                  console.log(
+                    '✅ FOLDER PAYMENT VERIFIED:',
+                    verifyRes
+                  );
+
+
+                  if (
+                    verifyRes.success
+                  ) {
+
+                    alert(
+                      'Folder unlocked successfully 🎉'
+                    );
+
+
+                    // =================================
+                    // RELOAD FOLDER
+                    // =================================
+
+                    this.loadFolder();
+
+                  }
+
+                },
+
+              error:
+                (error) => {
+
+                  console.error(
+                    '❌ FOLDER PAYMENT VERIFY ERROR:',
+                    error
+                  );
+
+
+                  alert(
+                    error?.error?.message ||
+                    'Payment verification failed ❌'
+                  );
+
+                }
+
+            });
+
+          },
+
+
+        prefill: {
+
+          name:
+            user.name || '',
+
+          contact:
+            user.phone || ''
+
+        },
+
+
+        theme: {
+
+          color:
+            '#f5c542'
+
+        }
+
+      };
+
+
+      // =====================================
+      // OPEN RAZORPAY
+      // =====================================
+
+      const razorpay =
+        new Razorpay(options);
+
+        
+
+
+      razorpay.open();
+
+    },
+
+    error:
+      (error) => {
+
+        console.error(
+          '❌ CREATE FOLDER ORDER ERROR:',
+          error
+        );
+
+
+        alert(
+          'Unable to create payment order ❌'
+        );
+
+      }
+
+  });
+
+}
   // =====================================
   // BACK
   // =====================================

@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 const Folder = require('../models/Folder');
+const Content = require('../models/Content');
 
+const FolderAccess = require('../models/FolderAccess');
 
 // =====================================
 // GET ROOT FOLDERS
@@ -64,34 +66,43 @@ router.get('/:parentId', async (req, res) => {
 
 });
 
+
 // =====================================
 // GET SINGLE FOLDER DETAILS
 // =====================================
 
 router.get('/detail/:id', async (req, res) => {
+
   try {
 
-    const folder = await Folder.findById(req.params.id);
+    const folder = await Folder.findById(
+      req.params.id
+    );
 
     if (!folder) {
+
       return res.status(404).json({
         success: false,
         message: 'Folder not found'
       });
+
     }
 
-    // Sub folders
+
+    // =====================================
+    // SUB FOLDERS
+    // =====================================
+
     const subFolders = await Folder.find({
       parentId: folder._id
     }).sort({
       createdAt: -1
     });
 
-    // Folder content
-    // IMPORTANT:
-    // Yaha tumhare Content model ka exact naam/path
-    // existing project ke according set karna hoga.
-    const Content = require('../models/Content');
+
+    // =====================================
+    // FOLDER CONTENT
+    // =====================================
 
     const contents = await Content.find({
       folderId: folder._id
@@ -99,24 +110,82 @@ router.get('/detail/:id', async (req, res) => {
       createdAt: -1
     });
 
+
+    // =====================================
+    // USER ACCESS
+    // =====================================
+
+    let hasAccess = false;
+    let access = null;
+
+    /*
+      IMPORTANT:
+
+      Agar user login hai aur req.user available hai
+      to us user ka folder access check hoga.
+
+      Tumhare auth middleware me req.user.id
+      available hona chahiye.
+    */
+
+    if (req.user && req.user.id) {
+
+      access = await FolderAccess.findOne({
+
+        user: req.user.id,
+
+        folder: folder._id,
+
+        isActive: true,
+
+        expiryDate: {
+          $gt: new Date()
+        }
+
+      });
+
+      hasAccess = !!access;
+
+    }
+
+
+    // =====================================
+    // RESPONSE
+    // =====================================
+
     res.json({
+
       success: true,
+
       folder,
+
       subFolders,
+
       contents,
-      hasAccess: false
+
+      hasAccess,
+
+      access
+
     });
 
   } catch (err) {
 
-    console.log('GET FOLDER DETAIL ERROR:', err);
+    console.log(
+      'GET FOLDER DETAIL ERROR:',
+      err
+    );
 
     res.status(500).json({
+
       success: false,
+
       message: err.message
+
     });
 
   }
+
 });
 
 
@@ -129,22 +198,53 @@ router.post('/', async (req, res) => {
   try {
 
     const {
+
       name,
+
       parentId,
+
       description,
-      thumbnail
+
+      thumbnail,
+
+      sellingPrice,
+
+      offerPrice
+
     } = req.body;
 
+
+    // =====================================
+    // VALIDATION
+    // =====================================
 
     if (!name || !name.trim()) {
 
       return res.status(400).json({
+
         success: false,
+
         message: 'Folder name is required'
+
       });
 
     }
 
+
+    // =====================================
+    // PRICE
+    // =====================================
+
+    const finalSellingPrice =
+      Number(sellingPrice) || 0;
+
+    const finalOfferPrice =
+      Number(offerPrice) || 0;
+
+
+    // =====================================
+    // CREATE
+    // =====================================
 
     const folder = new Folder({
 
@@ -154,13 +254,21 @@ router.post('/', async (req, res) => {
 
       description: description || '',
 
-      thumbnail: thumbnail || ''
+      thumbnail: thumbnail || '',
+
+      sellingPrice: finalSellingPrice,
+
+      offerPrice: finalOfferPrice
 
     });
 
 
     await folder.save();
 
+
+    // =====================================
+    // RESPONSE
+    // =====================================
 
     res.status(201).json({
 
@@ -215,23 +323,70 @@ router.put('/:id', async (req, res) => {
     }
 
 
+    // =====================================
+    // NAME
+    // =====================================
+
     if (req.body.name !== undefined) {
 
-      folder.name = req.body.name.trim();
+      folder.name =
+        req.body.name.trim();
 
     }
 
 
-    if (req.body.description !== undefined) {
+    // =====================================
+    // DESCRIPTION
+    // =====================================
 
-      folder.description = req.body.description;
+    if (
+      req.body.description !== undefined
+    ) {
+
+      folder.description =
+        req.body.description;
 
     }
 
 
-    if (req.body.thumbnail !== undefined) {
+    // =====================================
+    // THUMBNAIL
+    // =====================================
 
-      folder.thumbnail = req.body.thumbnail;
+    if (
+      req.body.thumbnail !== undefined
+    ) {
+
+      folder.thumbnail =
+        req.body.thumbnail;
+
+    }
+
+
+    // =====================================
+    // SELLING PRICE
+    // =====================================
+
+    if (
+      req.body.sellingPrice !== undefined
+    ) {
+
+      folder.sellingPrice =
+        Number(req.body.sellingPrice) || 0;
+
+    }
+
+
+    // =====================================
+    // OFFER PRICE
+    // =====================================
+
+    if (
+      req.body.offerPrice !== undefined
+    ) {
+
+      folder.offerPrice =
+        Number(req.body.offerPrice) || 0;
 
     }
 
@@ -295,12 +450,16 @@ router.delete('/:id', async (req, res) => {
     }
 
 
-    // Check subfolders
-    const childFolders = await Folder.countDocuments({
+    // =====================================
+    // CHECK SUBFOLDERS
+    // =====================================
 
-      parentId: folder._id
+    const childFolders =
+      await Folder.countDocuments({
 
-    });
+        parentId: folder._id
+
+      });
 
 
     if (childFolders > 0) {
@@ -316,6 +475,10 @@ router.delete('/:id', async (req, res) => {
 
     }
 
+
+    // =====================================
+    // DELETE
+    // =====================================
 
     await Folder.findByIdAndDelete(
       folder._id

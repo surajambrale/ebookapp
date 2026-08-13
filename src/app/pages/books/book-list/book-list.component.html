@@ -183,70 +183,108 @@
     <!-- ===================================================== -->
 
     <!-- ===================================================== -->
-<!-- 📁 LIBRARY FOLDER GRID -->
-<!-- ===================================================== -->
+    <!-- 📁 LIBRARY FOLDER GRID -->
+    <!-- ===================================================== -->
 
-<div
-  class="library-folder-grid"
-  *ngIf="
+    <div class="library-folder-grid" *ngIf="
     !libraryLoading &&
     !currentLibraryFolder &&
     libraryFolders.length > 0
-  "
->
+  ">
 
-  <div
-    class="library-folder-card"
-    *ngFor="let folder of libraryFolders"
-    (click)="openLibraryFolder(folder)"
-  >
+      <div class="library-folder-card" *ngFor="let folder of libraryFolders" (click)="openLibraryFolder(folder)">
 
-    <!-- TOP -->
-    <div class="folder-card-top">
+        <!-- TOP -->
+        <div class="folder-card-top">
 
-      <div class="library-folder-icon">
-        📁
+          <div class="library-folder-icon">
+            📁
+          </div>
+
+          <div class="folder-card-menu">
+            •••
+          </div>
+
+        </div>
+
+        <!-- CONTENT -->
+        <div class="library-folder-info">
+
+          <h3>
+            {{ folder.name }}
+          </h3>
+
+          <p *ngIf="folder.description">
+            {{ folder.description }}
+          </p>
+
+          <p *ngIf="!folder.description">
+            Explore learning resources
+          </p>
+
+        </div>
+
+        <!-- 💰 PRICE -->
+        <div class="folder-price-section">
+
+          <!-- OFFER PRICE AVAILABLE -->
+          <ng-container *ngIf="
+        folder.offerPrice > 0 &&
+        folder.offerPrice < folder.sellingPrice;
+        else normalPrice
+      ">
+
+            <div class="folder-price-row">
+
+              <strong class="folder-offer-price">
+                ₹{{ folder.offerPrice }}
+              </strong>
+
+              <del class="folder-selling-price">
+                ₹{{ folder.sellingPrice }}
+              </del>
+
+            </div>
+
+            <span class="folder-offer-label">
+              🔥 Special Offer
+            </span>
+
+          </ng-container>
+
+
+          <!-- NORMAL PRICE -->
+          <ng-template #normalPrice>
+
+            <strong class="folder-normal-price">
+              ₹{{ folder.sellingPrice }}
+            </strong>
+
+          </ng-template>
+
+
+          <span class="folder-access-duration">
+            🔐 30 Days Access
+          </span>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="folder-card-footer">
+
+          <span class="folder-resource-label">
+            Learning Resources
+          </span>
+
+          <span class="folder-open">
+            Open →
+          </span>
+
+        </div>
+
       </div>
 
-      <div class="folder-card-menu">
-        •••
-      </div>
-
     </div>
-
-    <!-- CONTENT -->
-    <div class="library-folder-info">
-
-      <h3>
-        {{ folder.name }}
-      </h3>
-
-      <p *ngIf="folder.description">
-        {{ folder.description }}
-      </p>
-
-      <p *ngIf="!folder.description">
-        Explore learning resources
-      </p>
-
-    </div>
-
-    <!-- FOOTER -->
-    <div class="folder-card-footer">
-
-      <span class="folder-resource-label">
-        Learning Resources
-      </span>
-
-      <span class="folder-open">
-        Open →
-      </span>
-
-    </div>
-
-  </div>
-
-</div>
 
 
     <!-- ===================================================== -->

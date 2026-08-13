@@ -76,563 +76,508 @@
 
     <!-- folder code start  -->
 
-   <!-- folder code start -->
+    <!-- folder code start -->
 
 
-<!-- ========================================= -->
-<!-- 📚 LIBRARY / FOLDER MANAGEMENT -->
-<!-- ========================================= -->
+    <!-- ========================================= -->
+    <!-- 📚 LIBRARY / FOLDER MANAGEMENT -->
+    <!-- ========================================= -->
 
-<div
-  *ngIf="selectedView === 'library'"
-  class="card library-container">
+    <div *ngIf="selectedView === 'library'" class="card library-container">
 
 
-  <!-- ===================================== -->
-  <!-- HEADER -->
-  <!-- ===================================== -->
+      <!-- ===================================== -->
+      <!-- HEADER -->
+      <!-- ===================================== -->
 
-  <div class="library-header">
+      <div class="library-header">
 
-    <div>
+        <div>
 
-      <h2>
-        📚 Library Management
-      </h2>
+          <h2>
+            📚 Library Management
+          </h2>
 
-      <p>
-        Manage folders, subfolders and content
-      </p>
+          <p>
+            Manage folders, subfolders and content
+          </p>
 
-    </div>
-
-
-    <button
-      class="create-folder-btn"
-      (click)="showFolderForm = !showFolderForm">
-
-      ➕ New Folder
-
-    </button>
-
-  </div>
+        </div>
 
 
-  <!-- ===================================== -->
-  <!-- CREATE FOLDER -->
-  <!-- ===================================== -->
+        <button class="create-folder-btn" (click)="showFolderForm = !showFolderForm">
 
-  <div
-    class="folder-form"
-    *ngIf="showFolderForm">
+          ➕ New Folder
 
-    <h3>
+        </button>
 
-      📁
-      {{ currentFolderId
-        ? 'Create Subfolder'
-        : 'Create Folder'
-      }}
-
-    </h3>
+      </div>
 
 
-    <label>
-      Folder Name
-    </label>
+      <!-- ===================================== -->
+      <!-- CREATE FOLDER -->
+      <!-- ===================================== -->
 
-    <input
-      type="text"
-      [(ngModel)]="newFolderName"
-      placeholder="Enter folder name">
+      <div class="folder-form" *ngIf="showFolderForm">
+
+        <h3>
+
+          📁
+          {{ currentFolderId
+          ? 'Create Subfolder'
+          : 'Create Folder'
+          }}
+
+        </h3>
 
 
-    <label>
-      Description
-    </label>
+        <label>
+          Folder Name
+        </label>
 
-    <textarea
-      [(ngModel)]="newFolderDescription"
-      placeholder="Enter folder description">
+        <input type="text" [(ngModel)]="newFolderName" placeholder="Enter folder name">
+
+
+        <label>
+          Description
+        </label>
+
+        <textarea [(ngModel)]="newFolderDescription" placeholder="Enter folder description">
     </textarea>
 
+        <!-- SELLING PRICE -->
+        <label>
+          Selling Price (₹)
+        </label>
 
-    <div class="form-buttons">
+        <input type="number" [(ngModel)]="newFolderSellingPrice" placeholder="Enter selling price" min="0">
 
-      <button
-        class="save-btn"
-        (click)="createFolder()">
 
-        Create Folder
+        <!-- OFFER PRICE -->
+        <label>
+          Offer Price (₹)
+        </label>
+
+        <input type="number" [(ngModel)]="newFolderOfferPrice" placeholder="Enter offer price" min="0">
+
+
+        <div class="form-buttons">
+
+          <button class="save-btn" (click)="createFolder()">
+
+            Create Folder
+
+          </button>
+
+
+          <button class="cancel-btn" (click)="showFolderForm = false">
+
+            Cancel
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- BREADCRUMB -->
+      <!-- ===================================== -->
+
+      <div class="folder-breadcrumb">
+
+        <button (click)="loadFolders(null); folderPath = []; currentFolderId = null; contents = []">
+
+          🏠 Library
+
+        </button>
+
+
+        <span *ngFor="let path of folderPath">
+
+          / {{ path.name }}
+
+        </span>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- BACK -->
+      <!-- ===================================== -->
+
+      <button *ngIf="currentFolderId" class="back-folder-btn" (click)="goBackFolder()">
+
+        ← Back
 
       </button>
 
 
-      <button
-        class="cancel-btn"
-        (click)="showFolderForm = false">
+      <!-- ===================================== -->
+      <!-- 📤 UPLOAD CONTENT BUTTON -->
+      <!-- ===================================== -->
 
-        Cancel
+      <div class="library-toolbar" *ngIf="currentFolderId">
 
-      </button>
+        <button class="upload-content-btn" (click)="showContentForm = !showContentForm">
 
-    </div>
+          ⬆️ Upload Content
 
-  </div>
+        </button>
 
-
-  <!-- ===================================== -->
-  <!-- BREADCRUMB -->
-  <!-- ===================================== -->
-
-  <div class="folder-breadcrumb">
-
-    <button
-      (click)="loadFolders(null); folderPath = []; currentFolderId = null; contents = []">
-
-      🏠 Library
-
-    </button>
+      </div>
 
 
-    <span
-      *ngFor="let path of folderPath">
+      <!-- ===================================== -->
+      <!-- 📤 CONTENT FORM -->
+      <!-- ===================================== -->
 
-      / {{ path.name }}
-
-    </span>
-
-  </div>
+      <div class="content-form" *ngIf="showContentForm && currentFolderId">
 
 
-  <!-- ===================================== -->
-  <!-- BACK -->
-  <!-- ===================================== -->
-
-  <button
-    *ngIf="currentFolderId"
-    class="back-folder-btn"
-    (click)="goBackFolder()">
-
-    ← Back
-
-  </button>
+        <h3>
+          ⬆️ Add Content
+        </h3>
 
 
-  <!-- ===================================== -->
-  <!-- 📤 UPLOAD CONTENT BUTTON -->
-  <!-- ===================================== -->
+        <!-- TITLE -->
 
-  <div
-    class="library-toolbar"
-    *ngIf="currentFolderId">
+        <label>
+          Content Title
+        </label>
 
-    <button
-      class="upload-content-btn"
-      (click)="showContentForm = !showContentForm">
-
-      ⬆️ Upload Content
-
-    </button>
-
-  </div>
+        <input type="text" [(ngModel)]="contentTitle" placeholder="Enter content title">
 
 
-  <!-- ===================================== -->
-  <!-- 📤 CONTENT FORM -->
-  <!-- ===================================== -->
+        <!-- TYPE -->
 
-  <div
-    class="content-form"
-    *ngIf="showContentForm && currentFolderId">
+        <label>
+          Content Type
+        </label>
 
+        <select [(ngModel)]="contentType">
 
-    <h3>
-      ⬆️ Add Content
-    </h3>
+          <option value="pdf">
+            📄 PDF
+          </option>
 
+          <option value="video">
+            🎥 Video
+          </option>
 
-    <!-- TITLE -->
+          <option value="note">
+            📝 Note
+          </option>
 
-    <label>
-      Content Title
-    </label>
-
-    <input
-      type="text"
-      [(ngModel)]="contentTitle"
-      placeholder="Enter content title">
+        </select>
 
 
-    <!-- TYPE -->
+        <!-- ================================= -->
+        <!-- PDF / VIDEO FILE -->
+        <!-- ================================= -->
 
-    <label>
-      Content Type
-    </label>
-
-    <select
-      [(ngModel)]="contentType">
-
-      <option value="pdf">
-        📄 PDF
-      </option>
-
-      <option value="video">
-        🎥 Video
-      </option>
-
-      <option value="note">
-        📝 Note
-      </option>
-
-    </select>
-
-
-    <!-- ================================= -->
-    <!-- PDF / VIDEO FILE -->
-    <!-- ================================= -->
-
-    <div
-      *ngIf="
+        <div *ngIf="
         contentType === 'pdf' ||
         contentType === 'video'
       ">
 
 
-      <label>
-        Select File
-      </label>
+          <label>
+            Select File
+          </label>
 
 
-      <input
-        type="file"
-        (change)="onContentFileSelected($event)"
-        [accept]="
+          <input type="file" (change)="onContentFileSelected($event)" [accept]="
           contentType === 'pdf'
             ? '.pdf'
             : 'video/*'
         ">
 
-    </div>
+        </div>
 
 
-    <!-- ================================= -->
-    <!-- VIDEO THUMBNAIL -->
-    <!-- ================================= -->
+        <!-- ================================= -->
+        <!-- VIDEO THUMBNAIL -->
+        <!-- ================================= -->
 
-    <div
-      *ngIf="contentType === 'video'">
-
-
-      <label>
-        Video Thumbnail
-      </label>
+        <div *ngIf="contentType === 'video'">
 
 
-      <input
-        type="file"
-        accept="image/*"
-        (change)="onThumbnailSelected($event)">
-
-    </div>
+          <label>
+            Video Thumbnail
+          </label>
 
 
-    <!-- ================================= -->
-    <!-- NOTE -->
-    <!-- ================================= -->
+          <input type="file" accept="image/*" (change)="onThumbnailSelected($event)">
 
-    <div
-      *ngIf="contentType === 'note'">
+        </div>
 
 
-      <label>
-        Note Content
-      </label>
+        <!-- ================================= -->
+        <!-- NOTE -->
+        <!-- ================================= -->
+
+        <div *ngIf="contentType === 'note'">
 
 
-      <textarea
-        rows="8"
-        [(ngModel)]="noteContent"
-        placeholder="Write your notes here...">
+          <label>
+            Note Content
+          </label>
+
+
+          <textarea rows="8" [(ngModel)]="noteContent" placeholder="Write your notes here...">
       </textarea>
 
-    </div>
+        </div>
 
 
-    <!-- ================================= -->
-    <!-- BUTTONS -->
-    <!-- ================================= -->
+        <!-- ================================= -->
+        <!-- BUTTONS -->
+        <!-- ================================= -->
 
-    <div class="content-form-buttons">
-
-
-      <button
-        class="save-btn"
-        [disabled]="uploadingContent"
-        (click)="uploadContent()">
+        <div class="content-form-buttons">
 
 
-        {{
-          uploadingContent
+          <button class="save-btn" [disabled]="uploadingContent" (click)="uploadContent()">
+
+
+            {{
+            uploadingContent
             ? 'Uploading...'
             : 'Save Content'
-        }}
+            }}
 
 
-      </button>
+          </button>
 
 
-      <button
-        class="cancel-btn"
-        [disabled]="uploadingContent"
-        (click)="resetContentForm()">
+          <button class="cancel-btn" [disabled]="uploadingContent" (click)="resetContentForm()">
 
-        Cancel
+            Cancel
 
-      </button>
+          </button>
 
 
-    </div>
-
-  </div>
-
-
-  <!-- ===================================== -->
-  <!-- LOADING FOLDERS -->
-  <!-- ===================================== -->
-
-  <div *ngIf="loadingFolders">
-
-    Loading folders...
-
-  </div>
-
-
-  <!-- ===================================== -->
-  <!-- FOLDER LIST -->
-  <!-- ===================================== -->
-
-  <div
-    class="folder-grid"
-    *ngIf="!loadingFolders">
-
-
-    <div
-      class="folder-card"
-      *ngFor="let folder of folders"
-      (dblclick)="openFolder(folder)">
-
-
-      <div class="folder-icon">
-
-        📁
+        </div>
 
       </div>
 
 
-      <div class="folder-info">
+      <!-- ===================================== -->
+      <!-- LOADING FOLDERS -->
+      <!-- ===================================== -->
+
+      <div *ngIf="loadingFolders">
+
+        Loading folders...
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- FOLDER LIST -->
+      <!-- ===================================== -->
+
+      <div class="folder-grid" *ngIf="!loadingFolders">
+
+
+        <div class="folder-card" *ngFor="let folder of folders" (dblclick)="openFolder(folder)">
+
+
+          <div class="folder-icon">
+
+            📁
+
+          </div>
+
+
+          <div class="folder-info">
+
+            <h3>
+
+              {{ folder.name }}
+
+            </h3>
+
+
+            <p>
+
+              {{ folder.description }}
+
+            </p>
+
+          </div>
+
+
+          <div class="folder-actions">
+
+
+            <button (click)="openFolder(folder); $event.stopPropagation()">
+
+              Open
+
+            </button>
+
+
+            <button class="delete-folder" (click)="deleteFolder(folder); $event.stopPropagation()">
+
+              🗑 Delete
+
+            </button>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- 📚 CONTENT LIST -->
+      <!-- ===================================== -->
+
+      <!-- 🔥 YE HI 8th STEP HAI -->
+
+      <!-- ===================================== -->
+      <!-- 📚 CONTENT LIST -->
+      <!-- ===================================== -->
+
+      <div class="content-list" *ngIf="currentFolderId">
 
         <h3>
-
-          {{ folder.name }}
-
+          📚 Content
         </h3>
 
 
-        <p>
-
-          {{ folder.description }}
-
-        </p>
-
-      </div>
+        <div class="content-grid" *ngIf="contents.length > 0">
 
 
-      <div class="folder-actions">
+          <div class="content-card" *ngFor="let content of contents">
 
 
-        <button
-          (click)="openFolder(folder); $event.stopPropagation()">
+            <!-- ICON -->
 
-          Open
+            <div class="content-icon">
 
-        </button>
+              <span *ngIf="content.type === 'pdf'">
+                📄
+              </span>
 
+              <span *ngIf="content.type === 'video'">
+                🎥
+              </span>
 
-        <button
-          class="delete-folder"
-          (click)="deleteFolder(folder); $event.stopPropagation()">
+              <span *ngIf="content.type === 'note'">
+                📝
+              </span>
 
-          🗑 Delete
-
-        </button>
-
-
-      </div>
-
-    </div>
-
-  </div>
+            </div>
 
 
-  <!-- ===================================== -->
-  <!-- 📚 CONTENT LIST -->
-  <!-- ===================================== -->
+            <!-- CONTENT INFO -->
 
-  <!-- 🔥 YE HI 8th STEP HAI -->
+            <div class="content-info">
 
-<!-- ===================================== -->
-<!-- 📚 CONTENT LIST -->
-<!-- ===================================== -->
+              <h4>
+                {{ content.title }}
+              </h4>
 
-<div
-  class="content-list"
-  *ngIf="currentFolderId">
+              <small>
+                {{ content.type | uppercase }}
+              </small>
 
-  <h3>
-    📚 Content
-  </h3>
+            </div>
 
 
-  <div
-    class="content-grid"
-    *ngIf="contents.length > 0">
+            <!-- OPEN -->
+
+            <button class="open-content-btn" (click)="openContent(content)">
+
+              <span *ngIf="content.type === 'pdf'">
+                Open PDF
+              </span>
+
+              <span *ngIf="content.type === 'video'">
+                ▶ Play
+              </span>
+
+              <span *ngIf="content.type === 'note'">
+                Read
+              </span>
+
+            </button>
 
 
-    <div
-      class="content-card"
-      *ngFor="let content of contents">
+            <!-- DELETE -->
+
+            <button class="delete-content-btn" (click)="deleteContent(content)">
+
+              🗑
+
+            </button>
 
 
-      <!-- ICON -->
+          </div>
 
-      <div class="content-icon">
-
-        <span *ngIf="content.type === 'pdf'">
-          📄
-        </span>
-
-        <span *ngIf="content.type === 'video'">
-          🎥
-        </span>
-
-        <span *ngIf="content.type === 'note'">
-          📝
-        </span>
-
-      </div>
+        </div>
 
 
-      <!-- CONTENT INFO -->
+        <!-- EMPTY -->
 
-      <div class="content-info">
+        <div class="empty-content" *ngIf="contents.length === 0">
 
-        <h4>
-          {{ content.title }}
-        </h4>
+          <div>
+            📂
+          </div>
 
-        <small>
-          {{ content.type | uppercase }}
-        </small>
+          <p>
+            No content added yet.
+          </p>
+
+          <small>
+            Upload PDF, video or create a note.
+          </small>
+
+        </div>
 
       </div>
 
 
-      <!-- OPEN -->
+      <!-- ===================================== -->
+      <!-- EMPTY FOLDER -->
+      <!-- ===================================== -->
 
-      <button
-        class="open-content-btn"
-        (click)="openContent(content)">
-
-        <span *ngIf="content.type === 'pdf'">
-          Open PDF
-        </span>
-
-        <span *ngIf="content.type === 'video'">
-          ▶ Play
-        </span>
-
-        <span *ngIf="content.type === 'note'">
-          Read
-        </span>
-
-      </button>
-
-
-      <!-- DELETE -->
-
-      <button
-        class="delete-content-btn"
-        (click)="deleteContent(content)">
-
-        🗑
-
-      </button>
-
-
-    </div>
-
-  </div>
-
-
-  <!-- EMPTY -->
-
-  <div
-    class="empty-content"
-    *ngIf="contents.length === 0">
-
-    <div>
-      📂
-    </div>
-
-    <p>
-      No content added yet.
-    </p>
-
-    <small>
-      Upload PDF, video or create a note.
-    </small>
-
-  </div>
-
-</div>
-
-
-  <!-- ===================================== -->
-  <!-- EMPTY FOLDER -->
-  <!-- ===================================== -->
-
-  <div
-    class="empty-folder"
-    *ngIf="
+      <div class="empty-folder" *ngIf="
       !loadingFolders &&
       folders.length === 0 &&
       !currentFolderId
     ">
 
 
-    <div>
-      📂
+        <div>
+          📂
+        </div>
+
+
+        <p>
+          No folders found
+        </p>
+
+
+        <small>
+          Create your first folder
+        </small>
+
+
+      </div>
+
+
     </div>
 
 
-    <p>
-      No folders found
-    </p>
-
-
-    <small>
-      Create your first folder
-    </small>
-
-
-  </div>
-
-
-</div>
-
-
-<!-- folder code end -->
+    <!-- folder code end -->
 
     <!-- folder code end -->
 
@@ -751,163 +696,138 @@
 
 
     <!-- 🔥 GRANT ACCESS -->
-<div *ngIf="selectedView === 'grant'" class="card">
+    <div *ngIf="selectedView === 'grant'" class="card">
 
-  <h3>Grant Access</h3>
+      <h3>Grant Access</h3>
 
-  <!-- ================= USER ================= -->
+      <!-- ================= USER ================= -->
 
-  <label class="grant-label">
-    Select User
-  </label>
+      <label class="grant-label">
+        Select User
+      </label>
 
-  <select [(ngModel)]="selectedUser" class="grant-select">
+      <select [(ngModel)]="selectedUser" class="grant-select">
 
-    <option value="">
-      Select User
-    </option>
+        <option value="">
+          Select User
+        </option>
 
-    <option *ngFor="let u of users" [value]="u._id">
-      {{ u.name }} ({{ u.phone }})
-    </option>
+        <option *ngFor="let u of users" [value]="u._id">
+          {{ u.name }} ({{ u.phone }})
+        </option>
 
-  </select>
-
-
-  <!-- ================================================= -->
-  <!-- 📚 BOOK ACCESS -->
-  <!-- ================================================= -->
-
-  <div class="grant-section">
-
-    <h4>
-      📚 Book Access
-    </h4>
-
-    <select
-      [(ngModel)]="selectedBook"
-      class="grant-select"
-    >
-
-      <option value="">
-        Select Book
-      </option>
-
-      <option
-        *ngFor="let b of books"
-        [value]="b._id || b.id"
-      >
-        {{ b.title || b.name }} - ₹{{ b.price }}
-      </option>
-
-    </select>
+      </select>
 
 
-    <button
-      class="grant-btn"
-      [disabled]="!selectedUser || !selectedBook"
-      (click)="grantAccess()"
-    >
-      📚 Give Book Access
-    </button>
+      <!-- ================================================= -->
+      <!-- 📚 BOOK ACCESS -->
+      <!-- ================================================= -->
 
-  </div>
+      <div class="grant-section">
+
+        <h4>
+          📚 Book Access
+        </h4>
+
+        <select [(ngModel)]="selectedBook" class="grant-select">
+
+          <option value="">
+            Select Book
+          </option>
+
+          <option *ngFor="let b of books" [value]="b._id || b.id">
+            {{ b.title || b.name }} - ₹{{ b.price }}
+          </option>
+
+        </select>
 
 
-  <!-- ================================================= -->
-  <!-- 📂 FOLDER ACCESS -->
-  <!-- ================================================= -->
+        <button class="grant-btn" [disabled]="!selectedUser || !selectedBook" (click)="grantAccess()">
+          📚 Give Book Access
+        </button>
 
-  <div class="grant-section">
+      </div>
 
-    <h4>
-      📂 Folder Access
-    </h4>
 
-    <select
-      [(ngModel)]="selectedFolder"
-      class="grant-select"
-    >
+      <!-- ================================================= -->
+      <!-- 📂 FOLDER ACCESS -->
+      <!-- ================================================= -->
 
-      <option value="">
-        Select Folder
-      </option>
+      <div class="grant-section">
 
-      <option
-        *ngFor="let folder of libraryFolders"
-        [value]="folder._id || folder.id"
-      >
-        {{ folder.name }}
+        <h4>
+          📂 Folder Access
+        </h4>
 
-        <span *ngIf="folder.sellingPrice">
-          - ₹{{ folder.sellingPrice }}
+        <select [(ngModel)]="selectedFolder" class="grant-select">
+
+          <option value="">
+            Select Folder
+          </option>
+
+          <option *ngFor="let folder of libraryFolders" [value]="folder._id || folder.id">
+            {{ folder.name }}
+
+            <span *ngIf="folder.sellingPrice">
+              - ₹{{ folder.sellingPrice }}
+            </span>
+          </option>
+
+        </select>
+
+
+        <button class="grant-btn folder-grant-btn" [disabled]="!selectedUser || !selectedFolder"
+          (click)="grantFolderAccess()">
+          📂 Give Folder Access
+        </button>
+
+      </div>
+
+
+      <!-- ================================================= -->
+      <!-- ℹ️ ACCESS INFO -->
+      <!-- ================================================= -->
+
+      <div class="grant-info">
+
+        <span>
+          🔐 Admin granted access will be available to the selected user.
         </span>
-      </option>
 
-    </select>
+      </div>
 
-
-    <button
-      class="grant-btn folder-grant-btn"
-      [disabled]="!selectedUser || !selectedFolder"
-      (click)="grantFolderAccess()"
-    >
-      📂 Give Folder Access
-    </button>
-
-  </div>
+    </div>
 
 
-  <!-- ================================================= -->
-  <!-- ℹ️ ACCESS INFO -->
-  <!-- ================================================= -->
+    <!-- 🔥 USERS -->
+    <div *ngIf="selectedView === 'users'">
 
-  <div class="grant-info">
-
-    <span>
-      🔐 Admin granted access will be available to the selected user.
-    </span>
-
-  </div>
-
-</div>
+      <h2 class="section-title">
+        👥 Users
+      </h2>
 
 
-<!-- 🔥 USERS -->
-<div *ngIf="selectedView === 'users'">
+      <div *ngFor="let user of users" class="card">
 
-  <h2 class="section-title">
-    👥 Users
-  </h2>
-
-
-  <div
-    *ngFor="let user of users"
-    class="card"
-  >
-
-    <p>
-      <b>Name:</b>
-      {{ user.name }}
-    </p>
+        <p>
+          <b>Name:</b>
+          {{ user.name }}
+        </p>
 
 
-    <p>
-      <b>Phone:</b>
-      {{ user.phone }}
-    </p>
+        <p>
+          <b>Phone:</b>
+          {{ user.phone }}
+        </p>
 
 
-    <button
-      class="delete-btn"
-      (click)="deleteUser(user._id)"
-    >
-      Delete User
-    </button>
+        <button class="delete-btn" (click)="deleteUser(user._id)">
+          Delete User
+        </button>
 
-  </div>
+      </div>
 
-</div>
+    </div>
 
     <!-- 🔥 PURCHASES -->
     <div *ngIf="selectedView === 'purchases'">

@@ -40,7 +40,7 @@ const contentRoutes =
 const books = require('./data/books');
 
 const contentUploadRoutes =
-    require('./routes/contentUploadRoutes');
+  require('./routes/contentUploadRoutes');
 
 // multer code start
 
@@ -52,6 +52,9 @@ const fs = require('fs');
 // gmail code start
 const nodemailer = require('nodemailer');
 //gmail code end
+
+const Folder = require('./models/Folder');
+const FolderAccess = require('./models/FolderAccess');
 
 
 
@@ -1035,6 +1038,220 @@ app.post('/verify-payment', async (req, res) => {
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
       createdAt: new Date()
+    });
+
+    //verify payment code end
+
+    // =========================================================
+    // 📂 VERIFY FOLDER PAYMENT
+    // =========================================================
+
+    app.post('/verify-folder-payment', async (req, res) => {
+
+      try {
+
+        const {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          userId,
+          folderId,
+          amount
+        } = req.body;
+
+
+        // -----------------------------
+        // REQUIRED DATA
+        // -----------------------------
+
+        if (
+          !razorpay_order_id ||
+          !razorpay_payment_id ||
+          !razorpay_signature ||
+          !userId ||
+          !folderId
+        ) {
+
+          return res.status(400).json({
+
+            success: false,
+
+            message: 'Required payment data missing'
+
+          });
+
+        }
+
+
+        // -----------------------------
+        // VERIFY SIGNATURE
+        // -----------------------------
+
+        const body =
+          razorpay_order_id +
+          "|" +
+          razorpay_payment_id;
+
+
+        const expectedSignature =
+          crypto
+            .createHmac(
+              "sha256",
+              process.env.RAZORPAY_SECRET
+            )
+            .update(body.toString())
+            .digest("hex");
+
+
+        if (
+          expectedSignature !==
+          razorpay_signature
+        ) {
+
+          return res.status(400).json({
+
+            success: false,
+
+            message: 'Invalid payment ❌'
+
+          });
+
+        }
+
+
+        // -----------------------------
+        // CHECK FOLDER
+        // -----------------------------
+
+        const folder =
+          await Folder.findById(folderId);
+
+
+        if (!folder) {
+
+          return res.status(404).json({
+
+            success: false,
+
+            message: 'Folder not found'
+
+          });
+
+        }
+
+
+        // -----------------------------
+        // PRICE
+        // -----------------------------
+
+        const finalAmount =
+          Number(amount);
+
+
+        // -----------------------------
+        // 30 DAYS ACCESS
+        // -----------------------------
+
+        const startDate =
+          new Date();
+
+
+        const expiryDate =
+          new Date(startDate);
+
+
+        expiryDate.setDate(
+          expiryDate.getDate() + 30
+        );
+
+
+        // -----------------------------
+        // CREATE / UPDATE ACCESS
+        // -----------------------------
+
+        let access =
+          await FolderAccess.findOne({
+
+            user: userId,
+
+            folder: folderId
+
+          });
+
+
+        if (access) {
+
+          access.startDate =
+            startDate;
+
+          access.expiryDate =
+            expiryDate;
+
+          access.accessType =
+            'purchase';
+
+          access.isActive =
+            true;
+
+          await access.save();
+
+        } else {
+
+          access =
+            await FolderAccess.create({
+
+              user: userId,
+
+              folder: folderId,
+
+              accessType: 'purchase',
+
+              startDate,
+
+              expiryDate,
+
+              isActive: true
+
+            });
+
+        }
+
+
+        // -----------------------------
+        // SUCCESS
+        // -----------------------------
+
+        res.json({
+
+          success: true,
+
+          message:
+            'Folder purchased successfully ✅',
+
+          access
+
+        });
+
+
+      } catch (error) {
+
+        console.error(
+          'VERIFY FOLDER PAYMENT ERROR:',
+          error
+        );
+
+
+        res.status(500).json({
+
+          success: false,
+
+          message:
+            'Folder payment verification failed'
+
+        });
+
+      }
+
     });
 
     //gmail send code start

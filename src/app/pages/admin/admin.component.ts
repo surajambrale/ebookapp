@@ -29,6 +29,8 @@ export class AdminComponent {
   books: any[] = [];
   subscriptions: any[] = [];
 
+  
+
 
   libraryFolders: any[] = [];
   grantAccessType: 'book' | 'folder' = 'book';
@@ -86,9 +88,14 @@ export class AdminComponent {
 
   folderPath: any[] = [];
 
-  newFolderName = '';
+  // newFolderName = '';
+  // newFolderDescription = '';
+  newFolderName: string = '';
+  newFolderDescription: string = '';
 
-  newFolderDescription = '';
+  newFolderSellingPrice: number = 0;
+  newFolderOfferPrice: number = 0;
+
 
   showFolderForm = false;
 
@@ -486,64 +493,103 @@ export class AdminComponent {
   // CREATE FOLDER
   // =====================================
 
-  createFolder() {
+ createFolder() {
 
-    if (!this.newFolderName.trim()) {
+  if (!this.newFolderName.trim()) {
 
-      alert('Please enter folder name');
+    alert('Please enter folder name');
 
-      return;
+    return;
+
+  }
+
+
+  const data = {
+
+    name: this.newFolderName.trim(),
+
+    description: this.newFolderDescription,
+
+    parentId: this.currentFolderId,
+
+    // 💰 FOLDER PRICING
+    sellingPrice: Number(this.newFolderSellingPrice) || 0,
+
+    offerPrice: Number(this.newFolderOfferPrice) || 0
+
+  };
+
+
+  // ❌ Offer price selling price se zyada nahi hona chahiye
+
+  if (
+    data.offerPrice > 0 &&
+    data.sellingPrice > 0 &&
+    data.offerPrice > data.sellingPrice
+  ) {
+
+    alert(
+      'Offer price cannot be greater than selling price ❌'
+    );
+
+    return;
+
+  }
+
+
+  this.http.post<any>(
+
+    `${this.api}/folders`,
+
+    data
+
+  ).subscribe({
+
+    next: (res) => {
+
+      alert(
+        'Folder Created Successfully ✅'
+      );
+
+
+      this.newFolderName = '';
+
+      this.newFolderDescription = '';
+
+      this.newFolderSellingPrice = 0;
+
+      this.newFolderOfferPrice = 0;
+
+      this.showFolderForm = false;
+
+
+      this.loadFolders(
+        this.currentFolderId
+      );
+
+    },
+
+    error: (err) => {
+
+      console.log(
+        'Create Folder Error:',
+        err
+      );
+
+
+      alert(
+
+        err.error?.message ||
+
+        'Folder creation failed ❌'
+
+      );
 
     }
 
+  });
 
-    const data = {
-
-      name: this.newFolderName.trim(),
-
-      description: this.newFolderDescription,
-
-      parentId: this.currentFolderId
-
-    };
-
-
-    this.http.post<any>(
-
-      `${this.api}/folders`,
-
-      data
-
-    ).subscribe({
-
-      next: (res) => {
-
-        alert('Folder Created Successfully ✅');
-
-        this.newFolderName = '';
-
-        this.newFolderDescription = '';
-
-        this.showFolderForm = false;
-
-        this.loadFolders(this.currentFolderId);
-
-      },
-
-      error: (err) => {
-
-        console.log('Create Folder Error:', err);
-
-        alert(
-          err.error?.message ||
-          'Folder creation failed ❌'
-        );
-
-      }
-
-    });
-
-  }
+}
 
   // =====================================
   // OPEN FOLDER
