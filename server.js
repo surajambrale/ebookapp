@@ -57,6 +57,8 @@ const Folder = require('./models/Folder');
 const FolderAccess = require('./models/FolderAccess');
 const Coupon = require('./models/Coupon');
 const requireAuth = require('./middleware/auth');
+const contentAccessRoutes =
+  require('./routes/contentAccess');
 
 
 
@@ -68,6 +70,11 @@ app.use(cors({
   ],
   credentials: true
 }));
+
+app.use(
+  '/api/content-access',
+  contentAccessRoutes
+);
 
 app.use(express.json());
 // app.use('/', bookRoutes);
@@ -359,6 +366,217 @@ app.put('/admin/change-password', verifyAdmin, async (req, res) => {
 
 });
 
+// =========================================================
+// 🔐 SECURE CONTENT ACCESS
+// =========================================================
+
+app.get(
+  '/content/secure/:contentId',
+  requireAuth,
+  async (req, res) => {
+
+    try {
+
+      const { contentId } = req.params;
+
+      const userId = req.user.id;
+
+      // =========================================
+      // FIND CONTENT
+      // =========================================
+
+      const content =
+        await Content.findById(contentId);
+
+      if (!content) {
+
+        return res.status(404).json({
+
+          success: false,
+
+          message:
+            'Content not found'
+
+        });
+
+      }
+
+      // =========================================
+      // NOTE
+      // =========================================
+
+      if (content.type === 'note') {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message:
+            'Notes do not require file streaming'
+
+        });
+
+      }
+
+      // =========================================
+      // FIND FOLDER
+      // =========================================
+
+      const folder =
+        await Folder.findById(
+          content.folderId
+        );
+
+      if (!folder) {
+
+        return res.status(404).json({
+
+          success: false,
+
+          message:
+            'Folder not found'
+
+        });
+
+      }
+
+      // =========================================
+      // CHECK USER FOLDER ACCESS
+      // =========================================
+
+      const access =
+        await FolderAccess.findOne({
+
+          user: userId,
+
+          folder: folder._id,
+
+          isActive: true,
+
+          expiryDate: {
+            $gt: new Date()
+          }
+
+        });
+
+      if (!access) {
+
+        return res.status(403).json({
+
+          success: false,
+
+          message:
+            'You do not have access to this content'
+
+        });
+
+      }
+
+      // =========================================
+      // CONTENT URL
+      // =========================================
+
+      if (!content.url) {
+
+        return res.status(404).json({
+
+          success: false,
+
+          message:
+            'Content file is not available'
+
+        });
+
+      }
+
+      // =========================================
+      // FETCH CLOUDINARY FILE
+      // =========================================
+
+      const axios = require('axios');
+
+      const cloudinaryResponse =
+        await axios.get(
+          content.url,
+          {
+            responseType: 'stream'
+          }
+        );
+
+      // =========================================
+      // CONTENT TYPE
+      // =========================================
+
+      let contentType =
+        'application/octet-stream';
+
+      if (content.type === 'pdf') {
+
+        contentType =
+          'application/pdf';
+
+      }
+
+      if (content.type === 'video') {
+
+        contentType =
+          'video/mp4';
+
+      }
+
+      res.setHeader(
+        'Content-Type',
+        contentType
+      );
+
+      res.setHeader(
+        'Cache-Control',
+        'private, no-store, no-cache, must-revalidate'
+      );
+
+      res.setHeader(
+        'Pragma',
+        'no-cache'
+      );
+
+      res.setHeader(
+        'X-Content-Type-Options',
+        'nosniff'
+      );
+
+      // =========================================
+      // STREAM FILE
+      // =========================================
+
+      cloudinaryResponse.data.pipe(res);
+
+    }
+
+    catch (error) {
+
+      console.error(
+        '❌ SECURE CONTENT ERROR:',
+        error
+      );
+
+      if (!res.headersSent) {
+
+        return res.status(500).json({
+
+          success: false,
+
+          message:
+            'Unable to open content'
+
+        });
+
+      }
+
+    }
+
+  }
+);
+
 
 // ================= DB =================
 
@@ -643,6 +861,99 @@ app.put('/subscription-setting', async (req, res) => {
 });
 
 //subcription setting code end
+
+// =====================================
+// ADMIN - FOLDER PURCHASES
+// =====================================
+
+app.get('/admin/folder-purchases', async (req, res) => {
+  try {
+
+    const purchases = await FolderAccess.find({
+      accessType: 'purchase'
+    })
+      .populate('user', 'name phone email')
+      .populate('folder', 'name sellingPrice offerPrice')
+      .sort({ createdAt: -1 });
+
+    const data = purchases.map((item) => ({
+      _id: item._id,
+
+      userId: item.user?._id || '',
+      userName: item.user?.name || '',
+      userPhone: item.user?.phone || '',
+      userEmail: item.user?.email || '',
+
+      folderId: item.folder?._id || '',
+      folderName: item.folder?.name || '',
+
+      accessType: item.accessType,
+
+      amount: item.amount || 0,
+
+      paymentId: item.paymentId || '',
+      orderId: item.orderId || '',
+      couponCode: item.couponCode || '',
+
+      startDate: item.startDate,
+      expiryDate: item.expiryDate,
+
+      isActive: item.isActive,
+
+      createdAt: item.createdAt
+    }));
+
+    res.json(data);
+
+  } catch (error) {
+
+    console.error(
+      '❌ ADMIN FOLDER PURCHASES ERROR:',
+      error
+    );
+
+    res.status(500).json({
+      message: 'Unable to load folder purchases'
+    });
+
+  }
+});
+
+// =====================================
+// ADMIN - DELETE FOLDER PURCHASE
+// =====================================
+
+app.delete('/admin/folder-purchase/:id', async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const deleted = await FolderAccess.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        message: 'Folder purchase not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Folder purchase deleted successfully'
+    });
+
+  } catch (error) {
+
+    console.error(
+      '❌ DELETE FOLDER PURCHASE ERROR:',
+      error
+    );
+
+    res.status(500).json({
+      message: 'Unable to delete folder purchase'
+    });
+
+  }
+});
 
 //book reading code start
 

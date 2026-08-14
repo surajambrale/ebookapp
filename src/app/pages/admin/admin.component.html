@@ -603,7 +603,11 @@
         </option>
 
         <option value="library">
-          Library
+          Add Folder
+        </option>
+
+        <option value="folder-purchases">
+          Folder Purchases
         </option>
 
         <option value="testimonials">
@@ -907,6 +911,171 @@
       </div>
 
     </div>
+
+    <!-- folder code start -->
+
+    <!-- ===================================== -->
+<!-- 📂 FOLDER PURCHASES -->
+<!-- ===================================== -->
+
+<div
+  *ngIf="selectedView === 'folder-purchases'"
+  class="admin-section"
+>
+
+  <div class="section-header">
+
+    <div>
+      <h2>📂 Folder Purchases</h2>
+
+      <p>
+        Manage users who have purchased folder access.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="export-btn"
+      (click)="exportFolderPurchasesCSV()"
+    >
+      📥 Export CSV
+    </button>
+
+  </div>
+
+
+  <!-- NO DATA -->
+
+  <div
+    *ngIf="folderPurchases.length === 0"
+    class="empty-state"
+  >
+
+    <p>
+      No folder purchases found.
+    </p>
+
+  </div>
+
+
+  <!-- PURCHASE TABLE -->
+
+  <div
+    *ngIf="folderPurchases.length > 0"
+    class="table-wrapper"
+  >
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>User Name</th>
+
+          <th>Phone</th>
+
+          <th>Email</th>
+
+          <th>Folder</th>
+
+          <th>Purchase Date</th>
+
+          <th>Expiry</th>
+
+          <th>Action</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        <tr
+          *ngFor="
+            let purchase
+            of folderPurchases
+          "
+        >
+
+          <td>
+            {{ purchase.userName || 'N/A' }}
+          </td>
+
+
+          <td>
+            {{ purchase.userPhone || 'N/A' }}
+          </td>
+
+
+          <td>
+            {{ purchase.userEmail || 'N/A' }}
+          </td>
+
+
+          <td>
+            {{ purchase.folderName || 'N/A' }}
+          </td>
+
+
+          <td>
+            {{
+              purchase.createdAt
+                | date:'dd/MM/yyyy'
+            }}
+          </td>
+
+
+          <td>
+
+            <span
+              *ngIf="purchase.expiresAt"
+            >
+              {{
+                purchase.expiresAt
+                  | date:'dd/MM/yyyy'
+              }}
+            </span>
+
+            <span
+              *ngIf="!purchase.expiresAt"
+            >
+              Lifetime
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <button
+              type="button"
+              class="delete-btn"
+              (click)="
+                deleteFolderPurchase(
+                  purchase._id
+                )
+              "
+            >
+
+              🗑 Delete
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+    <!-- folder code end -->
 
     <!-- upload book code start -->
 

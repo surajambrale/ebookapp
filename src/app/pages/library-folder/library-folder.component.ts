@@ -380,36 +380,208 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
   // OPEN CONTENT
   // =====================================
 
-  openContent(
-    content: any
-  ): void {
+openContent(content: any): void {
 
-    if (!this.hasAccess) {
-
-      this.buyFolder();
-
-      return;
-    }
-
-
-    console.log(
-      '📚 OPEN CONTENT:',
-      content
-    );
-
-    if (!content?.url && content?.type !== 'note') {
-      alert('This resource is not available right now.');
-      return;
-    }
-
-    if (content.type === 'note') {
-      alert(content.noteContent || 'No note content available');
-      return;
-    }
-
-    window.open(content.url, '_blank', 'noopener,noreferrer');
+  if (!content?._id) {
+    alert('Invalid resource ❌');
+    return;
   }
 
+  // =====================================
+  // LOGIN CHECK
+  // =====================================
+
+  if (!this.auth.isLoggedIn()) {
+
+    localStorage.setItem(
+      'redirectAfterLogin',
+      `/library/folder/${this.folderId}`
+    );
+
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  // =====================================
+  // FRONTEND ACCESS CHECK
+  // =====================================
+
+  if (!this.hasAccess) {
+
+    alert(
+      'You do not have access to this folder. Please purchase it first.'
+    );
+
+    this.buyFolder();
+    return;
+  }
+
+  console.log(
+    '🔐 REQUESTING SECURE CONTENT:',
+    content._id
+  );
+
+  // =====================================
+  // NOTE
+  // =====================================
+
+  if (content.type === 'note') {
+
+    // IMPORTANT:
+    // Do not trust noteContent coming from the
+    // public folder response.
+    //
+    // Better to create a secure note API also.
+
+    this.http.get<any>(
+      `${this.api}/content/secure/${content._id}`
+    )
+    .subscribe({
+
+      next: (res) => {
+
+        if (res?.success && res?.noteContent) {
+
+          alert(res.noteContent);
+
+        } else {
+
+          alert(
+            'Note content is not available.'
+          );
+
+        }
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          '❌ SECURE NOTE ERROR:',
+          error
+        );
+
+        this.handleSecureContentError(error);
+
+      }
+
+    });
+
+    return;
+  }
+
+  // =====================================
+  // PDF / VIDEO / IMAGE / AUDIO
+  // =====================================
+
+  this.http.get(
+    `${this.api}/content/secure/${content._id}`,
+    {
+      responseType: 'blob'
+    }
+  )
+  .subscribe({
+
+    next: (blob: Blob) => {
+
+      if (!blob || blob.size === 0) {
+
+        alert(
+          'Resource is empty or unavailable ❌'
+        );
+
+        return;
+      }
+
+      const blobUrl =
+        window.URL.createObjectURL(blob);
+
+      const newWindow =
+        window.open(
+          blobUrl,
+          '_blank'
+        );
+
+      if (!newWindow) {
+
+        alert(
+          'Please allow popups for this website.'
+        );
+
+        window.URL.revokeObjectURL(blobUrl);
+
+        return;
+      }
+
+      // Revoke after some time
+      setTimeout(() => {
+
+        window.URL.revokeObjectURL(
+          blobUrl
+        );
+
+      }, 60000);
+
+    },
+
+    error: (error) => {
+
+      console.error(
+        '❌ SECURE CONTENT ERROR:',
+        error
+      );
+
+      this.handleSecureContentError(error);
+
+    }
+
+  });
+}
+
+
+// =====================================
+// SECURE CONTENT ERROR HANDLER
+// =====================================
+
+private handleSecureContentError(error: any): void {
+
+  if (error.status === 401) {
+
+    alert(
+      'Your login session has expired. Please login again.'
+    );
+
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    this.router.navigate(['/login']);
+
+    return;
+  }
+
+  if (error.status === 403) {
+
+    alert(
+      'You do not have permission to access this resource ❌'
+    );
+
+    return;
+  }
+
+  if (error.status === 404) {
+
+    alert(
+      'Resource not found ❌'
+    );
+
+    return;
+  }
+
+  alert(
+    error?.error?.message ||
+    'Unable to open resource ❌'
+  );
+}
 
   // =====================================
   // APPLY FOLDER COUPON

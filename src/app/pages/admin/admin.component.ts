@@ -28,7 +28,16 @@ export class AdminComponent {
   purchases: any[] = [];
   books: any[] = [];
   subscriptions: any[] = [];
+  
+  // =====================================
+// 📂 FOLDER PURCHASE / ACCESS DATA
+// =====================================
 
+folderPurchases: any[] = [];
+
+folderPurchaseSearch = '';
+
+selectedFolderPurchase: any = null;
   
 
 
@@ -449,6 +458,46 @@ export class AdminComponent {
   }
 
   //edit book code end 
+
+
+  loadFolderPurchases(): void {
+
+  const headers = new HttpHeaders({
+    Authorization: this.token
+  });
+
+  this.http.get<any[]>(
+    `${this.api}/admin/folder-purchases`,
+    { headers }
+  )
+  .subscribe({
+
+    next: (res) => {
+
+      this.folderPurchases = Array.isArray(res)
+        ? res
+        : [];
+
+      console.log(
+        '📂 Folder Purchases:',
+        this.folderPurchases
+      );
+
+    },
+
+    error: (err) => {
+
+      console.error(
+        '❌ Folder Purchases Load Error:',
+        err
+      );
+
+      this.folderPurchases = [];
+
+    }
+
+  });
+}
 
   //load folder code start 
 
@@ -1827,6 +1876,8 @@ export class AdminComponent {
 
           this.loadData();
           this.loadGrantData();
+          this.loadFolderPurchases();
+
 
         },
 
@@ -1921,6 +1972,41 @@ export class AdminComponent {
         this.users = res;
 
       });
+
+      // =====================================
+// 📂 LOAD FOLDER PURCHASES
+// =====================================
+
+this.http.get<any[]>(
+  `${this.api}/admin/folder-purchases`,
+  { headers }
+).subscribe({
+
+  next: (res) => {
+
+    this.folderPurchases = Array.isArray(res)
+      ? res
+      : [];
+
+    console.log(
+      '📂 Folder Purchases:',
+      this.folderPurchases
+    );
+
+  },
+
+  error: (err) => {
+
+    console.error(
+      '❌ Folder Purchase Load Error:',
+      err
+    );
+
+    this.folderPurchases = [];
+
+  }
+
+});
 
     // 🔥 LIBRARY FOLDERS
     this.http.get<any>(`${this.api}/folders`, { headers })
@@ -2495,6 +2581,7 @@ export class AdminComponent {
 
       Authorization: this.token
 
+
     });
 
     this.http.delete(`${this.api}/admin/purchase/${id}`, { headers })
@@ -2508,6 +2595,195 @@ export class AdminComponent {
       });
 
   }
+
+  // =====================================
+// 🗑 DELETE FOLDER ACCESS
+// =====================================
+
+deleteFolderPurchase(id: string): void {
+
+  if (!id) {
+
+    return;
+
+  }
+
+  const confirmDelete =
+    confirm(
+      'Are you sure you want to remove this folder access?'
+    );
+
+  if (!confirmDelete) {
+
+    return;
+
+  }
+
+  const headers = new HttpHeaders({
+
+    Authorization: this.token
+
+  });
+
+  this.http.delete<any>(
+    `${this.api}/admin/folder-purchase/${id}`,
+    { headers }
+  )
+  .subscribe({
+
+    next: (res) => {
+
+      alert(
+        res?.message ||
+        'Folder access removed successfully ✅'
+      );
+
+      this.loadData();
+
+    },
+
+    error: (err) => {
+
+      console.error(
+        '❌ Delete Folder Access Error:',
+        err
+      );
+
+      alert(
+        err?.error?.message ||
+        'Unable to remove folder access ❌'
+      );
+
+    }
+
+  });
+
+}
+
+// =====================================
+// 📥 EXPORT FOLDER PURCHASES CSV
+// =====================================
+
+exportFolderPurchasesCSV(): void {
+
+  const data =
+    this.searchFolderPurchases();
+
+  if (!data.length) {
+
+    alert(
+      'No folder purchase data available.'
+    );
+
+    return;
+
+  }
+
+  const csvRows: any[] = [];
+
+  csvRows.push([
+
+    'User Name',
+    'Phone',
+    'Email',
+    'Folder',
+    'Access Type',
+    'Amount',
+    'Payment ID',
+    'Order ID',
+    'Coupon Code',
+    'Start Date',
+    'Expiry Date',
+    'Active'
+
+  ]);
+
+  data.forEach((item: any) => {
+
+    csvRows.push([
+
+      item.user?.name || '',
+
+      item.user?.phone || '',
+
+      item.user?.email || '',
+
+      item.folder?.name || '',
+
+      item.accessType || '',
+
+      item.amount || 0,
+
+      item.paymentId || '',
+
+      item.orderId || '',
+
+      item.couponCode || '',
+
+      item.startDate
+        ? new Date(
+            item.startDate
+          ).toLocaleDateString()
+        : '',
+
+      item.expiryDate
+        ? new Date(
+            item.expiryDate
+          ).toLocaleDateString()
+        : '',
+
+      item.isActive
+        ? 'Yes'
+        : 'No'
+
+    ]);
+
+  });
+
+  const csvContent =
+    csvRows
+      .map(row =>
+        row
+          .map((value: any) => {
+
+            const text =
+              String(value ?? '');
+
+            return `"${text.replace(
+              /"/g,
+              '""'
+            )}"`;
+
+          })
+          .join(',')
+      )
+      .join('\n');
+
+  const blob =
+    new Blob(
+      [csvContent],
+      {
+        type:
+          'text/csv;charset=utf-8;'
+      }
+    );
+
+  const url =
+    window.URL.createObjectURL(blob);
+
+  const a =
+    document.createElement('a');
+
+  a.href = url;
+
+  a.download =
+    'folder-purchases.csv';
+
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+
+}
 
   loadSubscriptions() {
 
@@ -2544,6 +2820,54 @@ export class AdminComponent {
       });
 
   }
+
+  // =====================================
+// 🔍 SEARCH FOLDER PURCHASE
+// =====================================
+
+searchFolderPurchases(): any[] {
+
+  const search =
+    this.folderPurchaseSearch
+      .trim()
+      .toLowerCase();
+
+  if (!search) {
+
+    return this.folderPurchases;
+
+  }
+
+  return this.folderPurchases.filter(
+    (item: any) => {
+
+      const name =
+        String(item.user?.name || '')
+          .toLowerCase();
+
+      const phone =
+        String(item.user?.phone || '')
+          .toLowerCase();
+
+      const email =
+        String(item.user?.email || '')
+          .toLowerCase();
+
+      const folder =
+        String(item.folder?.name || '')
+          .toLowerCase();
+
+      return (
+        name.includes(search) ||
+        phone.includes(search) ||
+        email.includes(search) ||
+        folder.includes(search)
+      );
+
+    }
+  );
+
+}
 
   // subscription setting code start
 
