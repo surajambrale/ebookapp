@@ -972,21 +972,21 @@ app.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
+  {
+    id: String(user._id),
+    role: 'user'
+  },
+  SECRET,
+  {
+    expiresIn: '7d'
+  }
+);
 
-      { id: user._id },
-
-      SECRET
-
-    );
-
-    res.json({
-
-      token,
-
-      user
-
-    });
-
+   res.json({
+  success: true,
+  token,
+  user
+});
   }
 
   catch (err) {
