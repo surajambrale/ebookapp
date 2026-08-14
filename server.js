@@ -369,7 +369,6 @@ app.put('/admin/change-password', verifyAdmin, async (req, res) => {
 // =========================================================
 // 🔐 SECURE CONTENT ACCESS
 // =========================================================
-
 app.get(
   '/content/secure/:contentId',
   requireAuth,
@@ -378,116 +377,102 @@ app.get(
     try {
 
       const { contentId } = req.params;
-
       const userId = req.user.id;
 
       // =========================================
       // FIND CONTENT
       // =========================================
 
-      const content =
-        await Content.findById(contentId);
+      const content = await Content.findById(contentId);
 
       if (!content) {
-
         return res.status(404).json({
-
           success: false,
-
-          message:
-            'Content not found'
-
+          message: 'Content not found'
         });
-
       }
 
       // =========================================
-      // NOTE
+      // NOTES
       // =========================================
 
       if (content.type === 'note') {
-
         return res.status(400).json({
-
           success: false,
-
-          message:
-            'Notes do not require file streaming'
-
+          message: 'Notes do not require file streaming'
         });
-
       }
 
       // =========================================
       // FIND FOLDER
       // =========================================
 
-      const folder =
-        await Folder.findById(
-          content.folderId
-        );
+      const folder = await Folder.findById(
+        content.folderId
+      );
 
       if (!folder) {
-
         return res.status(404).json({
-
           success: false,
-
-          message:
-            'Folder not found'
-
+          message: 'Folder not found'
         });
-
       }
 
       // =========================================
-      // CHECK USER FOLDER ACCESS
+      // 🔐 USER FOLDER ACCESS
       // =========================================
 
-      const access =
-        await FolderAccess.findOne({
-
-          user: userId,
-
-          folder: folder._id,
-
-          isActive: true,
-
-          expiryDate: {
-            $gt: new Date()
-          }
-
-        });
+      const access = await FolderAccess.findOne({
+        user: userId,
+        folder: folder._id,
+        isActive: true,
+        expiryDate: {
+          $gt: new Date()
+        }
+      });
 
       if (!access) {
 
+        console.log(
+          '🚫 CONTENT ACCESS DENIED:',
+          {
+            userId,
+            folderId: folder._id.toString(),
+            contentId
+          }
+        );
+
         return res.status(403).json({
-
           success: false,
-
-          message:
-            'You do not have access to this content'
-
+          message: 'You do not have access to this content'
         });
-
       }
 
       // =========================================
       // CONTENT URL
       // =========================================
 
-      if (!content.url) {
+      if (
+        !content.url ||
+        typeof content.url !== 'string'
+      ) {
 
         return res.status(404).json({
-
           success: false,
-
-          message:
-            'Content file is not available'
-
+          message: 'Content file is not available'
         });
-
       }
+
+      console.log(
+        '🔐 SECURE FILE REQUEST:',
+        {
+          contentId,
+          userId,
+          folderId: folder._id.toString(),
+          type: content.type,
+          url: content.url
+        }
+      );
 
       // =========================================
       // FETCH CLOUDINARY FILE
@@ -495,13 +480,38 @@ app.get(
 
       const axios = require('axios');
 
-      const cloudinaryResponse =
-        await axios.get(
+      let cloudinaryResponse;
+
+      try {
+
+        cloudinaryResponse = await axios.get(
           content.url,
           {
-            responseType: 'stream'
+            responseType: 'stream',
+            timeout: 30000,
+            validateStatus: (status) =>
+              status >= 200 && status < 300
           }
         );
+
+      } catch (cloudinaryError) {
+
+        console.error(
+          '❌ CLOUDINARY FETCH ERROR:',
+          {
+            message: cloudinaryError.message,
+            status: cloudinaryError.response?.status,
+            statusText:
+              cloudinaryError.response?.statusText,
+            url: content.url
+          }
+        );
+
+        return res.status(502).json({
+          success: false,
+          message: 'Unable to fetch content file'
+        });
+      }
 
       // =========================================
       // CONTENT TYPE
@@ -511,18 +521,16 @@ app.get(
         'application/octet-stream';
 
       if (content.type === 'pdf') {
-
-        contentType =
-          'application/pdf';
-
+        contentType = 'application/pdf';
       }
 
       if (content.type === 'video') {
-
-        contentType =
-          'video/mp4';
-
+        contentType = 'video/mp4';
       }
+
+      // =========================================
+      // RESPONSE HEADERS
+      // =========================================
 
       res.setHeader(
         'Content-Type',
@@ -540,8 +548,38 @@ app.get(
       );
 
       res.setHeader(
+        'Expires',
+        '0'
+      );
+
+      res.setHeader(
         'X-Content-Type-Options',
         'nosniff'
+      );
+
+      // =========================================
+      // STREAM ERROR
+      // =========================================
+
+      cloudinaryResponse.data.on(
+        'error',
+        (streamError) => {
+
+          console.error(
+            '❌ CLOUDINARY STREAM ERROR:',
+            streamError
+          );
+
+          if (!res.headersSent) {
+            res.status(500).json({
+              success: false,
+              message: 'File streaming failed'
+            });
+          } else {
+            res.destroy(streamError);
+          }
+
+        }
       );
 
       // =========================================
@@ -550,9 +588,7 @@ app.get(
 
       cloudinaryResponse.data.pipe(res);
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
       console.error(
         '❌ SECURE CONTENT ERROR:',
@@ -562,12 +598,8 @@ app.get(
       if (!res.headersSent) {
 
         return res.status(500).json({
-
           success: false,
-
-          message:
-            'Unable to open content'
-
+          message: 'Unable to open content'
         });
 
       }

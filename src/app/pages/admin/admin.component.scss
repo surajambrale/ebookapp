@@ -811,6 +811,62 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
 }
 
 
+/* ===================================== */
+/* 📂 FOLDER PURCHASES SCROLL */
+/* ===================================== */
+
+.folder-purchases-table {
+  width: 100%;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+/* Table */
+
+.folder-purchases-table table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+/* Sticky Header */
+
+.folder-purchases-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Header */
+
+.folder-purchases-table th {
+  white-space: nowrap;
+}
+
+/* Cells */
+
+.folder-purchases-table td {
+  white-space: nowrap;
+}
+
+/* Scrollbar */
+
+.folder-purchases-table::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.folder-purchases-table::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+
+.folder-purchases-table::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+
 //grant access scss code end
 
 
