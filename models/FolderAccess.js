@@ -24,6 +24,26 @@ const folderAccessSchema = new mongoose.Schema(
       default: 'purchase'
     },
 
+    amount: {
+      type: Number,
+      default: 0
+    },
+
+    paymentId: {
+      type: String,
+      default: ''
+    },
+
+    orderId: {
+      type: String,
+      default: ''
+    },
+
+    couponCode: {
+      type: String,
+      default: ''
+    },
+
     startDate: {
       type: Date,
       default: Date.now
@@ -45,11 +65,18 @@ const folderAccessSchema = new mongoose.Schema(
 );
 
 folderAccessSchema.index(
-  { user: 1, folder: 1 },
-  { unique: true }
+  {
+    user: 1,
+    folder: 1
+  },
+  {
+    unique: true
+  }
 );
 
-module.exports = mongoose.model(
-  'FolderAccess',
-  folderAccessSchema
-);
+module.exports =
+  mongoose.models.FolderAccess ||
+  mongoose.model(
+    'FolderAccess',
+    folderAccessSchema
+  );
