@@ -1,56 +1,15 @@
 const express = require('express');
-
 const router = express.Router();
 
 const subscriptionController = require('../controllers/subscriptionController');
+const requireAuth = require('../middleware/auth');
+const verifyAdmin = require('../middleware/verifyAdmin');
 
-
-// ========================================
-// CHECK SUBSCRIPTION STATUS
-// ========================================
-
-router.get(
-    '/status/:userId',
-    subscriptionController.checkSubscription
-);
-
-
-// ========================================
-// GET USER SUBSCRIPTION
-// ========================================
-
-router.get(
-    '/user/:userId',
-    subscriptionController.getUserSubscription
-);
-
-
-// ========================================
-// GET ALL SUBSCRIPTIONS (ADMIN)
-// ========================================
-
-router.get(
-    '/all',
-    subscriptionController.getAllSubscriptions
-);
-
-router.post(
-    '/create-order',
-    subscriptionController.createSubscriptionOrder
-);
-
-router.post(
-    '/verify-payment',
-    subscriptionController.verifySubscriptionPayment
-);
-
-router.delete(
-
-    '/delete/:id',
-
-    subscriptionController.deleteSubscription
-
-);
-
+router.get('/status', requireAuth, subscriptionController.checkSubscription);
+router.get('/user/:userId', verifyAdmin, subscriptionController.getUserSubscription);
+router.get('/all', verifyAdmin, subscriptionController.getAllSubscriptions);
+router.post('/create-order', requireAuth, subscriptionController.createSubscriptionOrder);
+router.post('/verify-payment', requireAuth, subscriptionController.verifySubscriptionPayment);
+router.delete('/delete/:id', verifyAdmin, subscriptionController.deleteSubscription);
 
 module.exports = router;

@@ -55,6 +55,7 @@ const nodemailer = require('nodemailer');
 
 const Folder = require('./models/Folder');
 const FolderAccess = require('./models/FolderAccess');
+const Coupon = require('./models/Coupon');
 const requireAuth = require('./middleware/auth');
 
 
@@ -767,6 +768,24 @@ app.get('/admin/users', verifyAdmin, async (req, res) => {
   }
 });
 
+// =========================================================
+// ADMIN GRANT ACCESS DATA
+// =========================================================
+app.get('/admin/grant-data', verifyAdmin, async (req, res) => {
+  try {
+    const [users, dynamicBooks, folders] = await Promise.all([
+      User.find().select('_id name phone email').sort({ name: 1 }),
+      DynamicBook.find().sort({ createdAt: -1 }),
+      Folder.find().sort({ createdAt: -1 })
+    ]);
+
+    res.json({ success: true, users, books: books || [], dynamicBooks, folders });
+  } catch (err) {
+    console.error('ADMIN GRANT DATA ERROR:', err);
+    res.status(500).json({ success: false, message: 'Unable to load grant access data' });
+  }
+});
+
 // 💳 PURCHASES (WITH USER NAME)
 app.get('/admin/purchases', verifyAdmin, async (req, res) => {
   try {
@@ -1010,67 +1029,56 @@ app.post('/create-order', async (req, res) => {
 
 // =========================================================
 // CREATE FOLDER PAYMENT ORDER
-// Server calculates the price from MongoDB.
-// Never trust the price sent by the browser.
 // =========================================================
 app.post('/create-folder-order', requireAuth, async (req, res) => {
   try {
-    const { folderId } = req.body;
+    const userId = req.user?.id;
+    const { folderId, couponCode = '' } = req.body;
 
-    if (!folderId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Folder ID is required'
-      });
-    }
+    if (!userId) return res.status(401).json({ success: false, message: 'Authentication required' });
+    if (!folderId) return res.status(400).json({ success: false, message: 'Folder ID is required' });
 
     const folder = await Folder.findById(folderId);
+    if (!folder) return res.status(404).json({ success: false, message: 'Folder not found' });
 
-    if (!folder) {
-      return res.status(404).json({
-        success: false,
-        message: 'Folder not found'
-      });
-    }
+    const existingAccess = await FolderAccess.findOne({ user: userId, folder: folderId, isActive: true, expiryDate: { $gt: new Date() } });
+    const subscription = await Subscription.findOne({ userId: String(userId), status: 'active', expiryDate: { $gt: new Date() } });
+    if (existingAccess || subscription) return res.status(400).json({ success: false, alreadyHasAccess: true, message: 'Folder access is already active' });
 
     const sellingPrice = Number(folder.sellingPrice) || 0;
     const offerPrice = Number(folder.offerPrice) || 0;
+    const basePrice = offerPrice > 0 && offerPrice < sellingPrice ? offerPrice : sellingPrice;
+    if (basePrice <= 0) return res.status(400).json({ success: false, message: 'Folder price is not available' });
 
-    let finalPrice = sellingPrice;
-
-    if (offerPrice > 0 && sellingPrice > 0 && offerPrice < sellingPrice) {
-      finalPrice = offerPrice;
+    let coupon = null, discount = 0, finalPrice = basePrice;
+    if (couponCode) {
+      coupon = await Coupon.findOne({ code: String(couponCode).trim().toUpperCase(), active: true });
+      if (!coupon) return res.status(400).json({ success: false, message: 'Invalid Coupon' });
+      if (coupon.expiryDate && coupon.expiryDate <= new Date()) return res.status(400).json({ success: false, message: 'Coupon Expired' });
+      if (coupon.usedCount >= coupon.usageLimit) return res.status(400).json({ success: false, message: 'Coupon Limit Reached' });
+      if (basePrice < Number(coupon.minimumOrder || 0)) return res.status(400).json({ success: false, message: `Minimum Order ₹${coupon.minimumOrder}` });
+      discount = coupon.discountType === 'flat' ? Number(coupon.discountValue || 0) : (basePrice * Number(coupon.discountValue || 0)) / 100;
+      discount = Math.min(Math.max(discount, 0), basePrice);
+      finalPrice = Math.max(basePrice - discount, 0);
     }
 
-    if (finalPrice <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Folder price is not available'
-      });
+    if (finalPrice === 0) {
+      const startDate = new Date();
+      const expiryDate = new Date(startDate);
+      const durationDays = Number(folder.accessDurationDays) > 0 ? Number(folder.accessDurationDays) : 30;
+      expiryDate.setDate(expiryDate.getDate() + durationDays);
+      let access = await FolderAccess.findOne({ user: userId, folder: folderId });
+      const data = { startDate, expiryDate, accessType: 'purchase', amount: 0, paymentId: 'coupon_free', orderId: 'coupon_free', couponCode: coupon?.code || '', isActive: true };
+      if (access) { Object.assign(access, data); await access.save(); } else { access = await FolderAccess.create({ user: userId, folder: folderId, ...data }); }
+      if (coupon) await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
+      return res.json({ success: true, free: true, message: 'Folder unlocked with coupon 🎉', finalPrice: 0, discount, folderId: folder._id });
     }
 
-    const order = await razorpay.orders.create({
-      amount: Math.round(finalPrice * 100),
-      currency: 'INR',
-      notes: {
-        folderId: String(folder._id)
-      }
-    });
-
-    res.json({
-      success: true,
-      id: order.id,
-      amount: order.amount,
-      currency: order.currency,
-      folderId: folder._id,
-      finalPrice
-    });
+    const order = await razorpay.orders.create({ amount: Math.round(finalPrice * 100), currency: 'INR', notes: { folderId: String(folder._id), userId: String(userId), couponCode: coupon?.code || '' } });
+    res.json({ success: true, id: order.id, amount: order.amount, currency: order.currency, folderId: folder._id, basePrice, discount, finalPrice, couponCode: coupon?.code || '' });
   } catch (error) {
     console.error('CREATE FOLDER ORDER ERROR:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Unable to create folder order'
-    });
+    res.status(400).json({ success: false, message: error.message || 'Unable to create folder order' });
   }
 });
 
@@ -1079,110 +1087,54 @@ app.post('/create-folder-order', requireAuth, async (req, res) => {
 // =========================================================
 app.post('/verify-folder-payment', requireAuth, async (req, res) => {
   try {
-    let {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      userId,
-      folderId,
-      amount
-    } = req.body;
-
-    const authenticatedUserId = req.user.id;
-
-    if (userId && String(userId) !== String(authenticatedUserId)) {
-      return res.status(403).json({
-        success: false,
-        message: 'User authentication mismatch'
-      });
-    }
-
-    userId = authenticatedUserId;
-
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !userId || !folderId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Required payment data missing'
-      });
-    }
+    const userId = req.user?.id;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, folderId, couponCode = '' } = req.body;
+    if (!userId) return res.status(401).json({ success: false, message: 'Authentication required' });
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !folderId) return res.status(400).json({ success: false, message: 'Required payment data missing' });
 
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
-
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_SECRET)
-      .update(body)
-      .digest('hex');
-
-    if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid payment ❌'
-      });
-    }
+    const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET).update(body).digest('hex');
+    if (expectedSignature !== razorpay_signature) return res.status(400).json({ success: false, message: 'Invalid payment ❌' });
 
     const folder = await Folder.findById(folderId);
-
-    if (!folder) {
-      return res.status(404).json({
-        success: false,
-        message: 'Folder not found'
-      });
-    }
+    if (!folder) return res.status(404).json({ success: false, message: 'Folder not found' });
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    if (!order || String(order.notes?.folderId || '') !== String(folderId)) return res.status(400).json({ success: false, message: 'Order and folder mismatch' });
+    if (order.notes?.userId && String(order.notes.userId) !== String(userId)) return res.status(403).json({ success: false, message: 'Order belongs to another user' });
 
     const sellingPrice = Number(folder.sellingPrice) || 0;
     const offerPrice = Number(folder.offerPrice) || 0;
-    const expectedAmount = offerPrice > 0 && offerPrice < sellingPrice
-      ? offerPrice
-      : sellingPrice;
-    const paidAmount = Number(amount);
-
-    if (!Number.isFinite(paidAmount) || paidAmount !== expectedAmount) {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment amount does not match folder price'
-      });
+    const basePrice = offerPrice > 0 && offerPrice < sellingPrice ? offerPrice : sellingPrice;
+    let coupon = null, discount = 0, expectedAmount = basePrice;
+    const actualCouponCode = couponCode || order.notes?.couponCode || '';
+    if (actualCouponCode) {
+      coupon = await Coupon.findOne({ code: String(actualCouponCode).trim().toUpperCase(), active: true });
+      if (!coupon) return res.status(400).json({ success: false, message: 'Invalid Coupon' });
+      if (coupon.expiryDate && coupon.expiryDate <= new Date()) return res.status(400).json({ success: false, message: 'Coupon Expired' });
+      if (coupon.usedCount >= coupon.usageLimit) return res.status(400).json({ success: false, message: 'Coupon Limit Reached' });
+      if (basePrice < Number(coupon.minimumOrder || 0)) return res.status(400).json({ success: false, message: `Minimum Order ₹${coupon.minimumOrder}` });
+      discount = coupon.discountType === 'flat' ? Number(coupon.discountValue || 0) : (basePrice * Number(coupon.discountValue || 0)) / 100;
+      discount = Math.min(Math.max(discount, 0), basePrice);
+      expectedAmount = Math.max(basePrice - discount, 0);
     }
+
+    if (Number(order.amount) !== Math.round(expectedAmount * 100)) return res.status(400).json({ success: false, message: 'Payment amount does not match folder price' });
+    const duplicate = await FolderAccess.findOne({ $or: [{ paymentId: razorpay_payment_id }, { orderId: razorpay_order_id }] });
+    if (duplicate) return res.json({ success: true, message: 'Folder purchase already verified', access: duplicate });
 
     const startDate = new Date();
     const expiryDate = new Date(startDate);
-    const durationDays = Number(folder.accessDurationDays) > 0
-      ? Number(folder.accessDurationDays)
-      : 30;
+    const durationDays = Number(folder.accessDurationDays) > 0 ? Number(folder.accessDurationDays) : 30;
     expiryDate.setDate(expiryDate.getDate() + durationDays);
+    let access = await FolderAccess.findOne({ user: userId, folder: folderId });
+    const data = { startDate, expiryDate, accessType: 'purchase', amount: expectedAmount, paymentId: razorpay_payment_id, orderId: razorpay_order_id, couponCode: coupon?.code || '', isActive: true };
+    if (access) { Object.assign(access, data); await access.save(); } else { access = await FolderAccess.create({ user: userId, folder: folderId, ...data }); }
+    if (coupon) await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
 
-    let access = await FolderAccess.findOne({
-      user: userId,
-      folder: folderId
-    });
-
-    if (access) {
-      access.startDate = startDate;
-      access.expiryDate = expiryDate;
-      access.accessType = 'purchase';
-      access.isActive = true;
-      await access.save();
-    } else {
-      access = await FolderAccess.create({
-        user: userId,
-        folder: folderId,
-        accessType: 'purchase',
-        startDate,
-        expiryDate,
-        isActive: true
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'Folder purchased successfully ✅',
-      access
-    });
+    res.json({ success: true, message: 'Folder purchased successfully ✅', access, basePrice, discount, finalPrice: expectedAmount });
   } catch (error) {
     console.error('VERIFY FOLDER PAYMENT ERROR:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Folder payment verification failed'
-    });
+    res.status(400).json({ success: false, message: error.message || 'Folder payment verification failed' });
   }
 });
 

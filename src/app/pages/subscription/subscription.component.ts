@@ -3,13 +3,14 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.prod';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 declare var Razorpay:any;
 
 @Component({
   selector: 'app-subscription',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.scss']
 })
@@ -17,9 +18,17 @@ export class SubscriptionComponent implements OnInit {
 
   API = environment.apiUrl;
 
+  couponCode = '';
+  couponDiscount = 0;
+  couponFinalPrice: number | null = null;
+  couponApplied = false;
+  couponMessage = '';
+
   subscriptionSetting = {
 
   planName: "Premium Membership",
+
+  offerPrice: 0,
 
   price: 99,
 
@@ -78,11 +87,14 @@ export class SubscriptionComponent implements OnInit {
       next:(res)=>{
 
         if(res.alreadySubscribed){
-
           alert("Subscription Already Active");
-
           return;
+        }
 
+        if (res.free) {
+          alert('Subscription Activated Successfully 🎉');
+          this.router.navigate(['/my-books']);
+          return;
         }
 
         this.openRazorpay(res.order,user);
@@ -156,7 +168,9 @@ export class SubscriptionComponent implements OnInit {
 
         razorpay_signature:response.razorpay_signature,
 
-        userId:user._id
+        couponCode: this.couponApplied
+          ? this.couponCode.trim().toUpperCase()
+          : ''
 
       }
 
@@ -178,6 +192,43 @@ export class SubscriptionComponent implements OnInit {
 
     });
 
+  }
+
+  applyCoupon() {
+    const code = this.couponCode.trim().toUpperCase();
+    if (!code) {
+      this.couponMessage = 'Enter coupon code';
+      return;
+    }
+
+    const basePrice = Number(this.subscriptionSetting.offerPrice) > 0 &&
+      Number(this.subscriptionSetting.offerPrice) < Number(this.subscriptionSetting.price)
+      ? Number(this.subscriptionSetting.offerPrice)
+      : Number(this.subscriptionSetting.price);
+
+    this.http.post<any>(`${this.API}/coupon/verify`, {
+      code,
+      amount: basePrice
+    }).subscribe({
+      next: (res) => {
+        if (!res?.success) {
+          this.couponApplied = false;
+          this.couponDiscount = 0;
+          this.couponFinalPrice = null;
+          this.couponMessage = res?.message || 'Invalid Coupon';
+          return;
+        }
+
+        this.couponApplied = true;
+        this.couponDiscount = Number(res.discount || 0);
+        this.couponFinalPrice = Number(res.finalPrice || 0);
+        this.couponMessage = `Coupon applied. You save ₹${this.couponDiscount}`;
+      },
+      error: (err) => {
+        this.couponApplied = false;
+        this.couponMessage = err?.error?.message || 'Coupon verification failed';
+      }
+    });
   }
 
   loadSubscriptionSetting() {

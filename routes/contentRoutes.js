@@ -1,39 +1,17 @@
 const express = require('express');
-
 const router = express.Router();
 
-const contentController =
-    require('../controllers/contentController');
+const contentController = require('../controllers/contentController');
+const requireAuth = require('../middleware/auth');
 
-
-// =====================================
-// CREATE NOTE
-// =====================================
-
-router.post(
-    '/note',
-    contentController.createNote
-);
-
-
-// =====================================
-// GET CONTENTS OF FOLDER
-// =====================================
+router.post('/note', contentController.createNote);
 
 router.get(
     '/folder/:folderId',
+    requireAuth,
     contentController.getFolderContents
 );
 
-
-// =====================================
-// DELETE CONTENT
-// =====================================
-
-router.delete(
-    '/:id',
-    contentController.deleteContent
-);
-
+router.delete('/:id', contentController.deleteContent);
 
 module.exports = router;

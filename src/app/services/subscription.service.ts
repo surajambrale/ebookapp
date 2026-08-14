@@ -11,24 +11,23 @@ export class SubscriptionService {
 
   constructor(private http: HttpClient) {}
 
-  createOrder(userId:any){
+  createOrder(couponCode: string = '') {
     return this.http.post<any>(
       `${this.api}/subscription/create-order`,
-      { userId }
+      { couponCode }
     );
   }
 
-  verifyPayment(data:any){
+  verifyPayment(data: any) {
     return this.http.post<any>(
       `${this.api}/subscription/verify-payment`,
       data
     );
   }
 
-  checkSubscription(userId:any){
+  checkSubscription() {
     return this.http.get<any>(
-      `${this.api}/subscription/check/${userId}`
+      `${this.api}/subscription/status`
     );
   }
-
 }

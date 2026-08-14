@@ -227,14 +227,6 @@ export class AdminComponent {
 
   selectedPdf!: File;
 
-private getAdminHeaders(): HttpHeaders {
-
-  return new HttpHeaders({
-    Authorization: `Bearer ${this.token}`
-  });
-
-}
-
   // =============================
   // logo code start
   // =============================
@@ -1834,6 +1826,7 @@ private getAdminHeaders(): HttpHeaders {
           this.isLoggedIn = true;
 
           this.loadData();
+          this.loadGrantData();
 
         },
 
@@ -1845,6 +1838,44 @@ private getAdminHeaders(): HttpHeaders {
 
       });
 
+  }
+
+  // =====================================================
+  // 🔥 GRANT ACCESS CATALOG
+  // =====================================================
+  loadGrantData() {
+    const headers = new HttpHeaders({
+      Authorization: this.token
+    });
+
+    this.http.get<any>(`${this.api}/admin/grant-data`, { headers })
+      .subscribe({
+        next: (res) => {
+          this.users = Array.isArray(res?.users) ? res.users : [];
+
+          const staticBooks = Array.isArray(res?.books) ? res.books : [];
+          const dynamicBooks = Array.isArray(res?.dynamicBooks) ? res.dynamicBooks : [];
+
+          const map = new Map<string, any>();
+          [...staticBooks, ...dynamicBooks].forEach((book: any) => {
+            const id = String(book?._id ?? book?.id ?? '');
+            if (id) map.set(id, book);
+          });
+          this.books = Array.from(map.values());
+
+          this.libraryFolders = Array.isArray(res?.folders) ? res.folders : [];
+
+          console.log('✅ Grant users:', this.users.length);
+          console.log('✅ Grant books:', this.books.length);
+          console.log('✅ Grant folders:', this.libraryFolders.length);
+        },
+        error: (err) => {
+          console.error('❌ Grant data load failed:', err);
+          this.users = [];
+          this.books = [];
+          this.libraryFolders = [];
+        }
+      });
   }
 
   // 🔥 LOAD DATA
@@ -2356,89 +2387,63 @@ private getAdminHeaders(): HttpHeaders {
   // 🔥 GRANT FOLDER ACCESS
   grantFolderAccess(): void {
 
-  if (!this.selectedUser) {
+    if (!this.selectedUser || !this.selectedFolder) {
 
-    alert('Please select user ❌');
+      alert('Please select user and folder');
 
-    return;
-  }
-
-  if (!this.selectedFolder) {
-
-    alert('Please select folder ❌');
-
-    return;
-  }
-
-
-  const headers =
-    this.getAdminHeaders();
-
-
-  const data = {
-
-    userId: this.selectedUser,
-
-    folderId: this.selectedFolder,
-
-    durationDays: Number(
-      this.grantDuration
-    ) || 30
-
-  };
-
-
-  console.log(
-    '🔐 GRANT FOLDER ACCESS REQUEST:',
-    data
-  );
-
-
-  this.http.post<any>(
-    `${this.api}/api/folder-access/grant`,
-    data,
-    { headers }
-  )
-  .subscribe({
-
-    next: (res) => {
-
-      console.log(
-        '✅ FOLDER ACCESS GRANTED:',
-        res
-      );
-
-
-      alert(
-        'Folder access granted successfully ✅'
-      );
-
-
-      this.selectedFolder = '';
-
-      this.loadData();
-
-    },
-
-
-    error: (error) => {
-
-      console.error(
-        '❌ FOLDER ACCESS ERROR:',
-        error
-      );
-
-
-      alert(
-        error?.error?.message ||
-        'Failed to grant folder access ❌'
-      );
+      return;
 
     }
 
-  });
+    const headers = new HttpHeaders({
+      Authorization: this.token
+    });
 
-}
+    this.http.post(
+      `${this.api}/api/folder-access/grant`,
+      {
+        userId: this.selectedUser,
+        folderId: this.selectedFolder,
+        durationDays: Number(this.grantDuration) > 0 ? Number(this.grantDuration) : 30
+      },
+      { headers }
+    )
+      .subscribe({
+
+        next: (res: any) => {
+
+          console.log(
+            'FOLDER ACCESS GRANTED:',
+            res
+          );
+
+          alert(
+            'Folder access granted successfully ✅'
+          );
+
+          this.selectedFolder = '';
+
+          this.loadData();
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Folder access error:',
+            error
+          );
+
+          alert(
+            error?.error?.message ||
+            'Failed to grant folder access ❌'
+          );
+
+        }
+
+      });
+
+  }
 
 
   loadDynamicBooks() {

@@ -1,8 +1,8 @@
 const express = require('express');
-
 const router = express.Router();
 
 const requireAuth = require('../middleware/auth');
+const verifyAdmin = require('../middleware/verifyAdmin');
 
 const {
   checkFolderAccess,
@@ -11,37 +11,12 @@ const {
   getFolderDetails
 } = require('../controllers/folderAccessController');
 
+router.get('/check/:folderId', requireAuth, checkFolderAccess);
 
-// CHECK CURRENT USER FOLDER ACCESS
-router.get(
-  '/check/:folderId',
-  requireAuth,
-  checkFolderAccess
-);
+router.post('/grant', verifyAdmin, grantFolderAccess);
 
+router.get('/user/:userId', verifyAdmin, getUserFolderAccess);
 
-// ADMIN GRANT ACCESS
-router.post(
-  '/grant',
-  requireAuth,
-  grantFolderAccess
-);
-
-
-// GET USER ACCESS
-router.get(
-  '/user/:userId',
-  requireAuth,
-  getUserFolderAccess
-);
-
-
-// GET FOLDER DETAILS
-router.get(
-  '/detail/:folderId',
-  requireAuth,
-  getFolderDetails
-);
-
+router.get('/detail/:folderId', requireAuth, getFolderDetails);
 
 module.exports = router;

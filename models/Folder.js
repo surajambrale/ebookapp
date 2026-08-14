@@ -1,47 +1,58 @@
 const mongoose = require('mongoose');
 
-const folderSchema = new mongoose.Schema(
+const folderAccessSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     },
 
-    parentId: {
+    folder: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Folder',
-      default: null
+      required: true
     },
 
-    description: {
+    accessType: {
       type: String,
-      default: ''
+      enum: ['purchase', 'admin', 'subscription'],
+      default: 'purchase'
     },
 
-    thumbnail: {
-      type: String,
-      default: ''
-    },
-
-    sellingPrice: {
+    amount: {
       type: Number,
       default: 0
     },
 
-    offerPrice: {
-      type: Number,
-      default: 0
+    paymentId: {
+      type: String,
+      default: ''
     },
 
-    isPaid: {
+    orderId: {
+      type: String,
+      default: ''
+    },
+
+    couponCode: {
+      type: String,
+      default: ''
+    },
+
+    startDate: {
+      type: Date,
+      default: Date.now
+    },
+
+    expiryDate: {
+      type: Date,
+      required: true
+    },
+
+    isActive: {
       type: Boolean,
-      default: false
-    },
-
-    accessDurationDays: {
-      type: Number,
-      default: 30
+      default: true
     }
   },
   {
@@ -49,4 +60,9 @@ const folderSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Folder', folderSchema);
+folderAccessSchema.index(
+  { user: 1, folder: 1 },
+  { unique: true }
+);
+
+module.exports = mongoose.model('FolderAccess', folderAccessSchema);

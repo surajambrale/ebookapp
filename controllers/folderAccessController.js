@@ -1,520 +1,238 @@
 const FolderAccess = require('../models/FolderAccess');
 const Folder = require('../models/Folder');
+const Subscription = require('../models/Subscription');
+const Content = require('../models/Content');
 
-// IMPORTANT:
-// Apne actual content model ka path/name yaha rakho.
-// Agar model ka naam LibraryContent hai:
-const LibraryContent = require('../models/Content');
+const isSubscriptionActive = async (userId) => {
+  if (!userId) return false;
 
+  const subscription = await Subscription.findOne({
+    userId: String(userId),
+    status: 'active',
+    expiryDate: { $gt: new Date() }
+  });
 
-// =========================================================
-// CHECK FOLDER ACCESS
-// =========================================================
+  return !!subscription;
+};
 
 const checkFolderAccess = async (req, res) => {
-
   try {
-
-    // JWT middleware se authenticated user
     const userId = req.user?.id;
-
     const { folderId } = req.params;
 
-
-    // ==========================================
-    // AUTH CHECK
-    // ==========================================
-
     if (!userId) {
-
       return res.status(401).json({
         success: false,
         hasAccess: false,
         message: 'Authentication required'
       });
-
     }
 
-
-    // ==========================================
-    // FOLDER CHECK
-    // ==========================================
-
     if (!folderId) {
-
       return res.status(400).json({
         success: false,
         hasAccess: false,
         message: 'Folder ID required'
       });
-
     }
 
+    const subscriptionActive = await isSubscriptionActive(userId);
 
-    const folder =
-      await Folder.findById(folderId);
-
-
-    if (!folder) {
-
-      return res.status(404).json({
-        success: false,
-        hasAccess: false,
-        message: 'Folder not found'
-      });
-
-    }
-
-
-    // ==========================================
-    // 🔥 MOST IMPORTANT
-    // USER + FOLDER BOTH CHECK
-    // ==========================================
-
-    const access =
-      await FolderAccess.findOne({
-
-        user: userId,
-
-        folder: folderId,
-
-        isActive: true,
-
-        expiryDate: {
-          $gt: new Date()
-        }
-
-      });
-
-
-    // ==========================================
-    // NO ACCESS
-    // ==========================================
-
-    if (!access) {
-
-      return res.json({
-
-        success: true,
-
-        hasAccess: false,
-
-        access: null
-
-      });
-
-    }
-
-
-    // ==========================================
-    // ACCESS GRANTED
-    // ==========================================
+    const access = await FolderAccess.findOne({
+      user: userId,
+      folder: folderId,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
+    });
 
     return res.json({
-
       success: true,
-
-      hasAccess: true,
-
-      access: {
-
-        _id: access._id,
-
-        startDate: access.startDate,
-
-        expiryDate: access.expiryDate,
-
-        accessType: access.accessType
-
-      }
-
+      hasAccess: subscriptionActive || !!access,
+      subscriptionActive,
+      access: access || null
     });
-
-  }
-
-  catch (error) {
-
-    console.error(
-      'CHECK FOLDER ACCESS ERROR:',
-      error
-    );
-
-
+  } catch (error) {
+    console.error('CHECK FOLDER ACCESS ERROR:', error);
     return res.status(500).json({
-
       success: false,
-
       hasAccess: false,
-
-      message: 'Unable to check folder access'
-
+      message: 'Failed to check folder access'
     });
-
   }
-
 };
-
-// =========================================================
-// GRANT FOLDER ACCESS FROM ADMIN
-// =========================================================
 
 const grantFolderAccess = async (req, res) => {
-
   try {
-
-    const {
-      userId,
-      folderId,
-      durationDays = 30
-    } = req.body;
-
+    const { userId, folderId, durationDays = 30 } = req.body;
 
     if (!userId || !folderId) {
-
       return res.status(400).json({
-
         success: false,
-
         message: 'User and folder are required'
-
       });
-
     }
 
-
-    // Check user/folder actually exist
-
-    const folder = await Folder.findById(
-      folderId
-    );
-
+    const folder = await Folder.findById(folderId);
     if (!folder) {
-
       return res.status(404).json({
-
         success: false,
-
         message: 'Folder not found'
-
       });
-
     }
-
 
     const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    const days = Number(durationDays) > 0 ? Number(durationDays) : 30;
+    expiryDate.setDate(expiryDate.getDate() + days);
 
-    const expiryDate = new Date(
-      startDate
-    );
-
-    expiryDate.setDate(
-      expiryDate.getDate() +
-      Number(durationDays)
-    );
-
-
-    let access =
-      await FolderAccess.findOne({
-
-        user: userId,
-
-        folder: folderId
-
-      });
-
+    let access = await FolderAccess.findOne({
+      user: userId,
+      folder: folderId
+    });
 
     if (access) {
-
-      access.startDate =
-        startDate;
-
-      access.expiryDate =
-        expiryDate;
-
-      access.accessType =
-        'admin';
-
-      access.isActive =
-        true;
-
+      access.startDate = startDate;
+      access.expiryDate = expiryDate;
+      access.accessType = 'admin';
+      access.amount = 0;
+      access.paymentId = 'admin_manual';
+      access.orderId = 'admin_manual';
+      access.couponCode = '';
+      access.isActive = true;
       await access.save();
-
     } else {
-
-      access =
-        await FolderAccess.create({
-
-          user: userId,
-
-          folder: folderId,
-
-          accessType: 'admin',
-
-          startDate,
-
-          expiryDate,
-
-          isActive: true
-
-        });
-
+      access = await FolderAccess.create({
+        user: userId,
+        folder: folderId,
+        accessType: 'admin',
+        amount: 0,
+        paymentId: 'admin_manual',
+        orderId: 'admin_manual',
+        startDate,
+        expiryDate,
+        isActive: true
+      });
     }
 
-
-    res.json({
-
+    return res.json({
       success: true,
-
-      message:
-        'Folder access granted successfully',
-
+      message: 'Folder access granted successfully',
       access
-
     });
-
   } catch (error) {
-
-    console.error(
-      'GRANT FOLDER ACCESS ERROR:',
-      error
-    );
-
-    res.status(500).json({
-
+    console.error('GRANT FOLDER ACCESS ERROR:', error);
+    return res.status(500).json({
       success: false,
-
-      message:
-        'Failed to grant folder access'
-
+      message: 'Failed to grant folder access'
     });
-
   }
-
 };
-
-
-// =========================================================
-// GET USER FOLDER ACCESS
-// =========================================================
 
 const getUserFolderAccess = async (req, res) => {
-
   try {
+    const accesses = await FolderAccess.find({
+      user: req.params.userId,
+      expiryDate: { $gt: new Date() },
+      isActive: true
+    })
+      .populate('folder', 'name description sellingPrice offerPrice parentId')
+      .sort({ createdAt: -1 });
 
-    const userId =
-      req.params.userId;
-
-
-    const accesses =
-      await FolderAccess
-        .find({
-
-          user: userId,
-
-          expiryDate: {
-            $gt: new Date()
-          },
-
-          isActive: true
-
-        })
-        .populate(
-          'folder',
-          'name description sellingPrice offerPrice parentId'
-        )
-        .sort({
-          createdAt: -1
-        });
-
-
-    res.json({
-
-      success: true,
-
-      accesses
-
-    });
-
+    return res.json({ success: true, accesses });
   } catch (error) {
-
-    console.error(
-      'GET USER FOLDER ACCESS ERROR:',
-      error
-    );
-
-    res.status(500).json({
-
+    console.error('GET USER FOLDER ACCESS ERROR:', error);
+    return res.status(500).json({
       success: false,
-
-      message:
-        'Failed to get folder access'
-
+      message: 'Failed to get folder access'
     });
-
   }
-
 };
-
-
-// =========================================================
-// GET FOLDER DETAILS
-// =========================================================
 
 const getFolderDetails = async (req, res) => {
-
   try {
+    const { folderId } = req.params;
+    const userId = req.user?.id;
 
-    const {
-      folderId
-    } = req.params;
-
-
-    const userId =
-      req.user
-        ? req.user.id
-        : null;
-
-
-    // =========================================
-    // MAIN FOLDER
-    // =========================================
-
-    const folder =
-      await Folder.findById(
-        folderId
-      );
-
-
-    if (!folder) {
-
-      return res.status(404).json({
-
+    if (!userId) {
+      return res.status(401).json({
         success: false,
-
-        message:
-          'Folder not found'
-
+        message: 'Authentication required'
       });
-
     }
 
-
-    // =========================================
-    // SUB FOLDERS
-    // =========================================
-
-    const subFolders =
-      await Folder.find({
-
-        parentId: folder._id
-
-      }).sort({
-
-        createdAt: -1
-
+    const folder = await Folder.findById(folderId);
+    if (!folder) {
+      return res.status(404).json({
+        success: false,
+        message: 'Folder not found'
       });
+    }
 
+    const subFolders = await Folder.find({
+      parentId: folder._id
+    }).sort({ createdAt: -1 });
 
-    // =========================================
-    // ACCESS
-    // =========================================
+    const sellingPrice = Number(folder.sellingPrice) || 0;
+    const offerPrice = Number(folder.offerPrice) || 0;
+    const finalPrice =
+      offerPrice > 0 && offerPrice < sellingPrice
+        ? offerPrice
+        : sellingPrice;
 
-    let hasAccess = false;
+    const subscriptionActive = await isSubscriptionActive(userId);
 
-    let access = null;
+    const access = await FolderAccess.findOne({
+      user: userId,
+      folder: folder._id,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
+    });
 
+    const hasAccess = subscriptionActive || !!access;
 
-    if (userId) {
+    // Metadata can be shown on the page, but protected content URLs
+    // should not be exposed until the user has valid access.
+    const rawContents = await Content.find({
+      folderId: folder._id,
+      active: true
+    }).sort({ createdAt: -1 });
 
-      access =
-        await FolderAccess.findOne({
-
-          user: userId,
-
-          folder: folder._id,
-
-          isActive: true,
-
-          expiryDate: {
-
-            $gt: new Date()
-
-          }
-
+    const contents = hasAccess
+      ? rawContents
+      : rawContents.map(item => {
+          const obj = item.toObject();
+          delete obj.url;
+          delete obj.noteContent;
+          return obj;
         });
 
-
-      hasAccess =
-        !!access;
-
-    }
-
-
-    // =========================================
-    // CONTENT
-    // =========================================
-
-    const contents =
-      await LibraryContent.find({
-
-        folder: folder._id
-
-      }).sort({
-
-        createdAt: -1
-
-      });
-
-
-    // =========================================
-    // RESPONSE
-    // =========================================
-
-    res.json({
-
+    return res.json({
       success: true,
-
       folder,
-
+      pricing: {
+        sellingPrice,
+        offerPrice,
+        finalPrice
+      },
       subFolders,
-
       contents,
-
       hasAccess,
-
+      subscriptionActive,
       access
-
     });
-
   } catch (error) {
-
-    console.error(
-      'GET FOLDER DETAILS ERROR:',
-      error
-    );
-
-    res.status(500).json({
-
+    console.error('GET FOLDER DETAILS ERROR:', error);
+    return res.status(500).json({
       success: false,
-
-      message:
-        'Failed to load folder'
-
+      message: 'Failed to load folder'
     });
-
   }
-
 };
 
-
 module.exports = {
-
   checkFolderAccess,
-
   grantFolderAccess,
-
   getUserFolderAccess,
-
-  getFolderDetails
-
+  getFolderDetails,
+  isSubscriptionActive
 };

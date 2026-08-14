@@ -28,6 +28,20 @@
 
   </ul>
 
+  <div class="subscription-coupon">
+    <input
+      type="text"
+      [(ngModel)]="couponCode"
+      placeholder="Coupon code"
+      [disabled]="!subscriptionSetting.active"
+    />
+    <button type="button" (click)="applyCoupon()" [disabled]="!couponCode.trim()">
+      Apply
+    </button>
+  </div>
+
+  <p *ngIf="couponMessage">{{ couponMessage }}</p>
+
   <button class="subscribe-btn" (click)="subscribe()" [disabled]="!subscriptionSetting.active">
 
     {{ subscriptionSetting.active ? 'Subscribe Now' : 'Subscription Closed' }}

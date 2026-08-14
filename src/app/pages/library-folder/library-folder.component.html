@@ -116,8 +116,28 @@
                     {{ folder?.accessDurationDays || 30 }} Days Access
                 </small>
 
-                <button type="button" (click)="buyFolder()">
-                    Buy Folder →
+                <div class="folder-coupon">
+                    <input
+                        type="text"
+                        [(ngModel)]="couponCode"
+                        placeholder="Coupon code"
+                        [disabled]="buying"
+                    />
+                    <button
+                        type="button"
+                        (click)="applyCoupon()"
+                        [disabled]="buying || !couponCode.trim()"
+                    >
+                        Apply
+                    </button>
+                </div>
+
+                <small *ngIf="couponMessage">
+                    {{ couponMessage }}
+                </small>
+
+                <button type="button" (click)="buyFolder()" [disabled]="buying">
+                    {{ buying ? 'Processing...' : 'Buy Folder →' }}
                 </button>
 
             </div>

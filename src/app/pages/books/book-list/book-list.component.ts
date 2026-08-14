@@ -89,9 +89,11 @@ export class BookListComponent {
       )
       .subscribe({
 
-        next: (res) => {
+        next: (res: any) => {
 
-          this.contents = res;
+          this.contents = Array.isArray(res)
+            ? res
+            : (Array.isArray(res?.contents) ? res.contents : []);
 
         },
 
@@ -535,7 +537,7 @@ export class BookListComponent {
     if (!user) return;
 
     this.http.get<any>(
-      `${this.api}/subscription/status/${user._id}`
+      `${this.api}/subscription/status`
     ).subscribe({
 
       next: (res) => {

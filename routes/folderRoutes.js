@@ -5,6 +5,8 @@ const router = express.Router();
 const Folder = require('../models/Folder');
 const Content = require('../models/Content');
 const FolderAccess = require('../models/FolderAccess');
+const Subscription = require('../models/Subscription');
+const requireAuth = require('../middleware/auth');
 
 
 // =====================================================
@@ -15,8 +17,10 @@ router.get('/', async (req, res) => {
 
   try {
 
+    const parentId = req.query.parentId || null;
+
     const folders = await Folder.find({
-      parentId: null
+      parentId
     })
       .sort({
         createdAt: -1
@@ -46,7 +50,7 @@ router.get('/', async (req, res) => {
 // IMPORTANT: This route must stay BEFORE /:parentId
 // =====================================================
 
-router.get('/detail/:id', async (req, res) => {
+router.get('/detail/:id', requireAuth, async (req, res) => {
 
   try {
 
@@ -89,14 +93,10 @@ router.get('/detail/:id', async (req, res) => {
     // CONTENT
     // -------------------------------------------------
 
-    const contents = await Content.find({
-
-      folderId: folder._id
-
-    })
-      .sort({
-        createdAt: -1
-      });
+    const rawContents = await Content.find({
+      folderId: folder._id,
+      active: true
+    }).sort({ createdAt: -1 });
 
 
     // -------------------------------------------------
@@ -168,6 +168,23 @@ router.get('/detail/:id', async (req, res) => {
 
     }
 
+    const subscriptionActive = !!(await Subscription.exists({
+      userId: String(req.user.id),
+      status: 'active',
+      expiryDate: { $gt: new Date() }
+    }));
+
+    hasAccess = hasAccess || subscriptionActive;
+
+    const contents = hasAccess
+      ? rawContents
+      : rawContents.map(item => {
+          const obj = item.toObject();
+          delete obj.url;
+          delete obj.noteContent;
+          return obj;
+        });
+
 
     // -------------------------------------------------
     // RESPONSE
@@ -199,6 +216,8 @@ router.get('/detail/:id', async (req, res) => {
       contents,
 
       hasAccess,
+
+      subscriptionActive,
 
       access
 
