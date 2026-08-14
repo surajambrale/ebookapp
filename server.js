@@ -38,7 +38,7 @@ const contentRoutes =
   require('./routes/contentRoutes');
 // const books = require('./data/books');
 const books = require('./data/books');
-
+const Content = require('./models/Content');
 const contentUploadRoutes =
   require('./routes/contentUploadRoutes');
 
