@@ -65,4 +65,4 @@ folderAccessSchema.index(
   { unique: true }
 );
 
-module.exports = mongoose.model('FolderAccess', folderAccessSchema);
+// module.exports = mongoose.model('FolderAccess', folderAccessSchema);
