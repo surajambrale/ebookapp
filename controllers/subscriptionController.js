@@ -105,6 +105,61 @@ exports.createSubscriptionOrder = async (req, res) => {
                 status: 'active'
             });
 
+            // =====================================
+            // 🔐 GRANT ALL FOLDER ACCESS
+            // FOR ACTIVE SUBSCRIPTION
+            // =====================================
+
+            const subscriptionUserId =
+                new mongoose.Types.ObjectId(userId);
+
+            const allFolders =
+                await Folder.find({});
+
+            for (const folder of allFolders) {
+
+                await FolderAccess.findOneAndUpdate(
+
+                    {
+                        user: subscriptionUserId,
+                        folder: folder._id
+                    },
+
+                    {
+                        $set: {
+
+                            accessType: 'subscription',
+
+                            amount: 0,
+
+                            paymentId: 'coupon_free',
+
+                            orderId: 'coupon_free',
+
+                            startDate: startDate,
+
+                            expiryDate: expiryDate,
+
+                            isActive: true
+
+                        }
+                    },
+
+                    {
+                        upsert: true,
+                        new: true,
+                        setDefaultsOnInsert: true
+                    }
+
+                );
+
+            }
+
+            console.log(
+                '✅ Subscription folder access granted:',
+                allFolders.length
+            );
+
             if (coupon) {
                 await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
             }
