@@ -2,72 +2,31 @@
 
   <h1>👤 My Profile</h1>
 
-  <!-- 🔥 ROLE SELECT -->
-
   <div class="role-box">
-
-    <label>
-      Select Account Type
-    </label>
-
+    <label>Select Account Type</label>
     <select [(ngModel)]="selectedRole">
-
-      <option value="user">
-        User
-      </option>
-
-      <option value="admin">
-        Admin
-      </option>
-
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
     </select>
-
   </div>
 
-
-  <!-- 🔥 USER SECTION -->
-
   <div *ngIf="selectedRole === 'user'">
-
-    <!-- 🔥 LOGIN -->
-
     <div class="login-box" *ngIf="!isLoggedIn">
-
-      <h3>
-        Login to Continue
-      </h3>
-
-      <button class="login-btn" (click)="goLogin()">
-        Login
-      </button>
-
+      <h3>Login to Continue</h3>
+      <button class="login-btn" (click)="goLogin()">Login</button>
     </div>
 
-    <!-- 🔥 PROFILE -->
-
     <div *ngIf="isLoggedIn">
-
       <div class="profile-card">
-
         <div class="profile-top">
-
           <div class="profile-image">
             <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile picture">
             <span *ngIf="!profileImagePreview">👤</span>
           </div>
-
           <div class="profile-info">
-
-            <h2>
-              {{ user?.name }}
-            </h2>
-
-            <p>
-              {{ user?.phone }}
-            </p>
-
+            <h2>{{ user?.name }}</h2>
+            <p>{{ user?.phone }}</p>
           </div>
-
           <div class="profile-edit">
             <label for="profile-image">Profile picture (optional)</label>
             <input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" (change)="onProfileImageSelected($event)">
@@ -75,9 +34,7 @@
               {{ profileSaving ? 'Saving...' : 'Save Profile Picture' }}
             </button>
           </div>
-
         </div>
-
       </div>
 
       <!-- 🔥 MENU -->
@@ -85,107 +42,31 @@
       <!-- Subscription code start -->
 
       <div class="subscription-card" *ngIf="subscription">
-
         <h3>⭐ Premium Membership</h3>
-
-        <p>
-          Plan :
-          <b>{{subscription.plan}}</b>
-        </p>
-
-        <p>
-          Expiry :
-          <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
-        </p>
-
-        <p *ngIf="subscription.amount !== undefined">
-          Paid : <b>₹{{ subscription.amount }}</b>
-        </p>
-
-        <p class="active">
-          ✅ Active Membership
-        </p>
-
+        <p>Plan: <b>{{ subscription.plan }}</b></p>
+        <p>Expiry: <b>{{ subscription.expiryDate | date:'dd MMM yyyy' }}</b></p>
+        <p *ngIf="subscription.amount !== undefined">Paid: <b>₹{{ subscription.amount }}</b></p>
+        <p class="active">✅ Active Membership</p>
       </div>
-
 
       <div class="subscription-card" *ngIf="!subscription">
-
         <h3>No Active Membership</h3>
-
-        <button (click)="subscribeNow()">
-          Subscribe ₹{{ subscriptionSetting?.price }}/month
-        </button>
-
+        <button (click)="subscribeNow()">Subscribe ₹{{ subscriptionSetting?.price }}/month</button>
       </div>
 
-      <!-- subscription code end -->
-
-
-      <!-- 🔥 QUICK STATS -->
-
       <div class="menu-card">
-
-        <!-- MY BOOKS -->
-
         <div class="menu-item" routerLink="/my-books">
-
-          <!-- addedd start -->
-
-          <!-- PURCHASE COUNT -->
-
-          <div class="menu-item">
-
-            <span>🛒</span>
-
-            <p>
-              Purchased:
-              {{ purchasedBooksCount }}
-            </p>
-
-          </div>
-
-          <!-- CONTINUE READING -->
-
-          <div class="menu-item" (click)="continueReading()">
-
-            <span>📖</span>
-
-            <p>Continue Reading</p>
-
-          </div>
-
-          <!-- addedd end -->
-
           <span>📚</span>
-
-          <p>My Books</p>
-
+          <p>My Books ({{ purchasedBooksCount }})</p>
         </div>
-
-        <!-- PURCHASE COUNT -->
-
-        <div class="menu-item">
-
-          <span>🛒</span>
-
-          <p>
-            Purchased:
-            {{ purchasedBooksCount }}
-          </p>
-
-        </div>
-
-        <!-- CONTINUE READING -->
-
         <div class="menu-item" (click)="continueReading()">
-
           <span>📖</span>
-
           <p>Continue Reading</p>
-
         </div>
-
+        <div class="menu-item">
+          <span>📂</span>
+          <p>Folders Purchased: {{ folderPayments.length }}</p>
+        </div>
       </div>
 
       <!-- 🔥 PAYMENTS -->

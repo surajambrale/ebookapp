@@ -1,6 +1,28 @@
 <div class="my-books-page">
 
-  <h1>📚 My Purchased Books</h1>
+  <h1>📚 My Books</h1>
+
+  <div class="library-summary">
+    <div><strong>{{ purchasedBooks.length }}</strong><span>Books</span></div>
+    <div><strong>{{ purchasedFolders.length }}</strong><span>Folders</span></div>
+  </div>
+
+  <section class="owned-section" *ngIf="purchasedFolders.length > 0">
+    <h2>📂 Purchased Folders</h2>
+    <div class="folder-box" *ngFor="let access of purchasedFolders" (click)="openFolder(access)">
+      <div class="folder-box-icon">📁</div>
+      <div class="folder-info">
+        <h3>{{ access.folder.name }}</h3>
+        <p>{{ access.folder.description || 'Learning resources' }}</p>
+        <small>{{ access.accessType === 'subscription' ? 'Premium subscription access' : 'Individual purchase' }}</small>
+      </div>
+      <span class="folder-arrow">Open →</span>
+    </div>
+  </section>
+
+  <section class="owned-section" *ngIf="purchasedBooks.length > 0">
+    <h2>📚 Purchased Books</h2>
+  </section>
 
   <div
     class="book-box"
@@ -59,7 +81,7 @@
 
   <div
     class="empty"
-    *ngIf="purchasedBooks.length === 0"
+    *ngIf="purchasedBooks.length === 0 && purchasedFolders.length === 0"
   >
 
     No Purchased Books Found 📚

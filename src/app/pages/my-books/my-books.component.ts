@@ -21,6 +21,7 @@ export class MyBooksComponent implements OnInit {
 
   purchasedBooks: any[] = [];
   purchasedFolders: any[] = [];
+  subscriptionActive = false;
   api = environment.apiUrl;
 
   user: any;
@@ -100,6 +101,7 @@ export class MyBooksComponent implements OnInit {
               folder: access.folder || null
             })).filter((access: any) => !!access.folder)
           : [];
+        this.subscriptionActive = !!res?.subscriptionActive;
         console.log('Purchased Folders:', this.purchasedFolders);
       },
       error: (err) => {

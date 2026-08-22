@@ -26,6 +26,9 @@ export class ReadBookComponent implements OnDestroy {
   currentProgress = 0;
 
   private keyListener: any;
+  private copyListener: any;
+  private cutListener: any;
+  private dragListener: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,6 +59,13 @@ export class ReadBookComponent implements OnDestroy {
       'keydown',
       this.keyListener
     );
+
+    this.copyListener = (e: ClipboardEvent) => e.preventDefault();
+    this.cutListener = (e: ClipboardEvent) => e.preventDefault();
+    this.dragListener = (e: DragEvent) => e.preventDefault();
+    document.addEventListener('copy', this.copyListener);
+    document.addEventListener('cut', this.cutListener);
+    document.addEventListener('dragstart', this.dragListener);
 
     this.user = this.auth.getUser();
 
@@ -170,6 +180,9 @@ export class ReadBookComponent implements OnDestroy {
       'keydown',
       this.keyListener
     );
+    document.removeEventListener('copy', this.copyListener);
+    document.removeEventListener('cut', this.cutListener);
+    document.removeEventListener('dragstart', this.dragListener);
 
     // 🔥 REMOVE SCROLL
     window.removeEventListener(

@@ -150,13 +150,40 @@ const getUserFolderAccess = async (req, res) => {
 
 const getMyFolderAccess = async (req, res) => {
   try {
-    const accesses = await FolderAccess.find({
-      user: req.user.id
+    const userId = req.user.id;
+    const subscriptionActive = await isSubscriptionActive(userId);
+    const activeAccesses = await FolderAccess.find({
+      user: userId,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
     })
       .populate('folder', 'name description sellingPrice offerPrice parentId')
       .sort({ createdAt: -1 });
 
-    return res.json({ success: true, accesses });
+    if (!subscriptionActive) {
+      return res.json({
+        success: true,
+        subscriptionActive: false,
+        accesses: activeAccesses.filter(access => access.accessType === 'purchase')
+      });
+    }
+
+    const folders = await Folder.find({})
+      .select('name description sellingPrice offerPrice parentId')
+      .sort({ createdAt: -1 });
+    const accessByFolder = new Map(
+      activeAccesses.map(access => [String(access.folder?._id), access])
+    );
+    const accesses = folders.map(folder => accessByFolder.get(String(folder._id)) || {
+      folder,
+      accessType: 'subscription',
+      amount: 0,
+      startDate: new Date(),
+      expiryDate: null,
+      isActive: true
+    });
+
+    return res.json({ success: true, subscriptionActive: true, accesses });
   } catch (error) {
     console.error('GET MY FOLDER ACCESS ERROR:', error);
     return res.status(500).json({

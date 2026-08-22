@@ -16,6 +16,81 @@ h1 {
   margin-bottom: 25px;
 }
 
+.library-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.library-summary div {
+  display: grid;
+  gap: 3px;
+  padding: 14px;
+  border: 1px solid #292929;
+  border-radius: 14px;
+  background: #111;
+}
+
+.library-summary strong {
+  color: gold;
+  font-size: 1.5rem;
+}
+
+.library-summary span {
+  color: #aaa;
+}
+
+.owned-section {
+  margin-bottom: 28px;
+}
+
+.owned-section h2 {
+  margin: 0 0 14px;
+  font-size: 1.2rem;
+}
+
+.folder-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 15px;
+  margin-bottom: 12px;
+  border: 1px solid #292929;
+  border-radius: 14px;
+  background: #111;
+  cursor: pointer;
+}
+
+.folder-box-icon {
+  font-size: 2rem;
+}
+
+.folder-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.folder-info h3,
+.folder-info p,
+.folder-info small {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.folder-info p,
+.folder-info small {
+  display: block;
+  margin-top: 4px;
+  color: #aaa;
+}
+
+.folder-arrow {
+  color: gold;
+  white-space: nowrap;
+}
+
 .book-box {
 
   display: flex;
@@ -171,6 +246,46 @@ button {
   margin: 0;
 
   transition: 0.3s;
+}
+
+@media (max-width: 600px) {
+  .my-books-page {
+    padding: 14px;
+    padding-bottom: 105px;
+  }
+
+  .my-books-page h1 {
+    font-size: 1.5rem;
+  }
+
+  .book-box {
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .book-box img {
+    width: 72px;
+    height: 104px;
+  }
+
+  .book-info h3 {
+    overflow-wrap: anywhere;
+  }
+
+  .book-info button {
+    width: 100%;
+    padding: 11px 8px;
+  }
+
+  .folder-box {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .folder-arrow {
+    font-size: .8rem;
+  }
 }
 
 /* 🔥 HOVER */
