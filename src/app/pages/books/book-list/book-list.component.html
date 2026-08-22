@@ -486,6 +486,8 @@
 
               {{ content.type | uppercase }}
 
+              <span *ngIf="content.type === 'note'" class="premium-content-badge">PREMIUM</span>
+
             </span>
 
 
@@ -860,6 +862,13 @@
 
       <textarea [(ngModel)]="testimonialMessage" placeholder="Write your feedback"></textarea>
 
+      <label class="testimonial-photo-field">
+        <span>Passport-size photo (optional)</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp" (change)="onTestimonialImageSelected($event)">
+      </label>
+
+      <img *ngIf="testimonialImagePreview" class="testimonial-image-preview" [src]="testimonialImagePreview" alt="Selected testimonial photo">
+
 
       <select [(ngModel)]="testimonialRating">
 
@@ -901,6 +910,8 @@
       <div class="testimonial-card" *ngFor="let t of testimonials">
 
         <div class="testimonial-top">
+
+          <img *ngIf="t.imageUrl" class="testimonial-photo" [src]="t.imageUrl" alt="{{ t.name }}">
 
           <div>
 

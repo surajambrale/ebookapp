@@ -542,6 +542,8 @@ export class BookListComponent {
   testimonialName = '';
   testimonialMessage = '';
   testimonialRating = 5;
+  testimonialImage: File | null = null;
+  testimonialImagePreview = '';
 
   // 🔥 TESTIMONIAL LIST
   testimonials: any[] = [];
@@ -581,15 +583,15 @@ export class BookListComponent {
 
     }
 
-    this.http.post(`${this.api}/testimonial`, {
+    const formData = new FormData();
+    formData.append('name', this.testimonialName.trim());
+    formData.append('message', this.testimonialMessage.trim());
+    formData.append('rating', String(this.testimonialRating));
+    if (this.testimonialImage) {
+      formData.append('image', this.testimonialImage);
+    }
 
-      name: this.testimonialName,
-
-      message: this.testimonialMessage,
-
-      rating: this.testimonialRating
-
-    })
+    this.http.post(`${this.api}/testimonial`, formData)
 
       .subscribe({
 
@@ -601,6 +603,8 @@ export class BookListComponent {
           this.testimonialName = '';
           this.testimonialMessage = '';
           this.testimonialRating = 5;
+          this.testimonialImage = null;
+          this.testimonialImagePreview = '';
 
           // RELOAD
           this.loadTestimonials();
@@ -615,6 +619,19 @@ export class BookListComponent {
 
       });
 
+  }
+
+  onTestimonialImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      input.value = '';
+      return;
+    }
+    this.testimonialImage = file;
+    this.testimonialImagePreview = URL.createObjectURL(file);
   }
 
 

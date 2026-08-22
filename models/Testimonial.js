@@ -15,6 +15,11 @@ const testimonialSchema = new mongoose.Schema({
   message: {
     type: String,
     required: true
+  },
+
+  imageUrl: {
+    type: String,
+    default: ''
   }
 
 }, {

@@ -52,7 +52,8 @@
         <div class="profile-top">
 
           <div class="profile-image">
-            👤
+            <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile picture">
+            <span *ngIf="!profileImagePreview">👤</span>
           </div>
 
           <div class="profile-info">
@@ -65,6 +66,14 @@
               {{ user?.phone }}
             </p>
 
+          </div>
+
+          <div class="profile-edit">
+            <label for="profile-image">Profile picture (optional)</label>
+            <input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" (change)="onProfileImageSelected($event)">
+            <button type="button" (click)="saveProfile()" [disabled]="profileSaving || !profileImage">
+              {{ profileSaving ? 'Saving...' : 'Save Profile Picture' }}
+            </button>
           </div>
 
         </div>

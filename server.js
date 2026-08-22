@@ -1271,6 +1271,34 @@ app.post('/register', async (req, res) => {
 
 });
 
+app.put('/profile', requireAuth, upload.single('image'), async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (req.body.name !== undefined) {
+      const name = String(req.body.name).trim();
+      if (!name) {
+        return res.status(400).json({ success: false, message: 'Name is required' });
+      }
+      user.name = name;
+    }
+
+    if (req.file?.path) {
+      user.profileImage = req.file.path;
+    }
+
+    await user.save();
+    return res.json({ success: true, user });
+  } catch (err) {
+    console.error('PROFILE UPDATE ERROR:', err);
+    return res.status(500).json({ success: false, message: 'Unable to update profile' });
+  }
+});
+
 // LOGIN
 app.post('/login', async (req, res) => {
 
@@ -2763,11 +2791,24 @@ const testimonialSchema = new mongoose.Schema({
 
 
 // 🔥 SAVE TESTIMONIAL
-app.post('/testimonial', async (req, res) => {
+app.post('/testimonial', requireAuth, upload.single('image'), async (req, res) => {
 
   try {
 
-    const testimonial = new Testimonial(req.body);
+    const name = String(req.body.name || '').trim();
+    const message = String(req.body.message || '').trim();
+    const rating = Number(req.body.rating);
+
+    if (!name || !message || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ success: false, message: 'Name, review, and valid rating are required' });
+    }
+
+    const testimonial = new Testimonial({
+      name,
+      message,
+      rating,
+      imageUrl: req.file?.path || ''
+    });
 
     await testimonial.save();
 

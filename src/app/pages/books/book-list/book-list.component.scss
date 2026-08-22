@@ -2804,3 +2804,65 @@ ANIMATIONS
     font-size: 12px;
   }
 }
+
+.testimonial-photo-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid #292929;
+  border-radius: 10px;
+  color: #aaa;
+  font-size: 11px;
+}
+
+.testimonial-photo-field input {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+}
+
+.testimonial-image-preview {
+  width: 72px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #f5c542;
+  margin-bottom: 12px;
+}
+
+.testimonial-photo {
+  width: 48px;
+  height: 58px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+.premium-content-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #f5c542;
+  color: #111;
+  font-size: 9px;
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+@media (max-width: 700px) {
+  .testimonial-form {
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-form button {
+    min-height: 44px;
+  }
+
+  .testimonial-card {
+    min-width: min(280px, calc(100vw - 42px));
+    max-width: min(280px, calc(100vw - 42px));
+  }
+}

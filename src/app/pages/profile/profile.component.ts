@@ -37,6 +37,9 @@ export class ProfileComponent implements OnInit {
   payments: any[] = [];
   folderPayments: any[] = [];
   subscriptionPayments: any[] = [];
+  profileImagePreview = '';
+  profileImage: File | null = null;
+  profileSaving = false;
 
   books: any[] = [];
 
@@ -110,6 +113,7 @@ export class ProfileComponent implements OnInit {
 
       this.user =
         JSON.parse(storedUser);
+      this.profileImagePreview = this.user?.profileImage || '';
 
       this.isLoggedIn = true;
 
@@ -232,6 +236,40 @@ subscribeNow() {
 
     this.router.navigate(['/subscription']);
 
+  }
+
+  onProfileImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      input.value = '';
+      return;
+    }
+    this.profileImage = file;
+    this.profileImagePreview = URL.createObjectURL(file);
+  }
+
+  saveProfile() {
+    if (!this.profileImage && !this.user?.name) return;
+    const formData = new FormData();
+    formData.append('name', this.user.name);
+    if (this.profileImage) formData.append('image', this.profileImage);
+    this.profileSaving = true;
+    this.http.put<any>(`${environment.apiUrl}/profile`, formData).subscribe({
+      next: (res) => {
+        this.user = res.user;
+        localStorage.setItem('user', JSON.stringify(res.user));
+        this.profileImage = null;
+        this.profileSaving = false;
+        alert('Profile updated successfully');
+      },
+      error: (err) => {
+        this.profileSaving = false;
+        alert(err.error?.message || 'Unable to update profile');
+      }
+    });
   }
 
   

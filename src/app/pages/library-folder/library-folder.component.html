@@ -260,6 +260,7 @@
 
                         <span class="content-type">
                             {{ content.type | uppercase }}
+                            <span *ngIf="content.type === 'note'" class="premium-content-badge">PREMIUM</span>
                         </span>
 
                         <h3>

@@ -20,6 +20,19 @@
 
 }
 
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 .admin::-webkit-scrollbar{
 
 width:8px;
@@ -1058,7 +1071,54 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
 }
 
 @media (max-width: 768px) {
+  .admin {
+    padding: 14px 12px 96px;
+  }
+
+  .top-bar,
+  .section-header {
+    align-items: stretch;
+  }
+
+  .top-bar > *,
+  .section-header > * {
+    max-width: 100%;
+  }
+
+  .content-form,
+  .folder-form,
+  .book-form,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .content-form button,
+  .folder-form button,
+  .book-form button {
+    width: 100%;
+  }
+
   .folder-purchases-table {
     height: 55vh;
+  }
+}
+
+@media (max-width: 500px) {
+  .admin h1,
+  .admin h2 {
+    font-size: 1.35rem;
+  }
+
+  .admin h3 {
+    font-size: 1.05rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-box {
+    margin-top: 35px;
+    padding: 20px 16px;
   }
 }
