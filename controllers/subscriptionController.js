@@ -233,6 +233,22 @@ exports.checkSubscription = async (req, res) => {
     }
 };
 
+exports.getMySubscriptionHistory = async (req, res) => {
+    try {
+        const subscriptions = await Subscription.find({
+            userId: String(req.user.id)
+        }).sort({ createdAt: -1 });
+
+        return res.json({ success: true, subscriptions });
+    } catch (err) {
+        console.error('GET SUBSCRIPTION HISTORY ERROR:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to load subscription history'
+        });
+    }
+};
+
 // ======================================
 // GET USER SUBSCRIPTION - ADMIN ONLY
 // ======================================

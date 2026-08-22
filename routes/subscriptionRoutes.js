@@ -6,6 +6,7 @@ const requireAuth = require('../middleware/auth');
 const verifyAdmin = require('../middleware/verifyAdmin');
 
 router.get('/status', requireAuth, subscriptionController.checkSubscription);
+router.get('/history', requireAuth, subscriptionController.getMySubscriptionHistory);
 router.get('/user/:userId', verifyAdmin, subscriptionController.getUserSubscription);
 router.get('/all', verifyAdmin, subscriptionController.getAllSubscriptions);
 router.post('/create-order', requireAuth, subscriptionController.createSubscriptionOrder);

@@ -89,6 +89,10 @@
           <b>{{subscription.expiryDate | date:'dd MMM yyyy'}}</b>
         </p>
 
+        <p *ngIf="subscription.amount !== undefined">
+          Paid : <b>₹{{ subscription.amount }}</b>
+        </p>
+
         <p class="active">
           ✅ Active Membership
         </p>
@@ -190,8 +194,13 @@
           </h4>
 
           <p>
-            ₹{{ payment.amount }}
+            Book payment: ₹{{ payment.amount }}
           </p>
+
+          <small>
+            {{ payment.createdAt | date:'dd MMM yyyy, h:mm a' }}
+            <span *ngIf="payment.paymentId"> • Payment ID: {{ payment.paymentId }}</span>
+          </small>
 
         </div>
 
@@ -201,10 +210,21 @@
           <small>
             Purchased {{ payment.startDate | date:'dd MMM yyyy' }}
             • Expires {{ payment.expiryDate | date:'dd MMM yyyy' }}
+            <span *ngIf="payment.paymentId"> • Payment ID: {{ payment.paymentId }}</span>
           </small>
         </div>
 
-        <div class="empty-payment" *ngIf="payments.length === 0">
+        <div class="payment-card subscription-payment-card" *ngFor="let payment of subscriptionPayments">
+          <h4>⭐ {{ payment.planName || 'Premium Subscription' }}</h4>
+          <p>Subscription payment: ₹{{ payment.amount || 0 }}</p>
+          <small>
+            {{ payment.createdAt | date:'dd MMM yyyy, h:mm a' }}
+            • Status: {{ payment.status }}
+            <span *ngIf="payment.paymentId"> • Payment ID: {{ payment.paymentId }}</span>
+          </small>
+        </div>
+
+        <div class="empty-payment" *ngIf="payments.length === 0 && folderPayments.length === 0 && subscriptionPayments.length === 0">
 
           No Payments Found
 

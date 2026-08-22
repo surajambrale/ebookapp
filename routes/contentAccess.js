@@ -5,6 +5,7 @@ const requireAuth = require('../middleware/auth');
 
 const Content = require('../models/Content');
 const FolderAccess = require('../models/FolderAccess');
+const Subscription = require('../models/Subscription');
 
 
 // ============================================
@@ -64,7 +65,13 @@ router.get(
           }
         });
 
-        if (!access) {
+        const subscription = await Subscription.findOne({
+          userId: String(userId),
+          status: 'active',
+          expiryDate: { $gt: new Date() }
+        });
+
+        if (!access && !subscription) {
 
           return res.status(403).json({
             success: false,
@@ -102,8 +109,13 @@ router.get(
 
       });
 
+      const subscription = await Subscription.findOne({
+        userId: String(userId),
+        status: 'active',
+        expiryDate: { $gt: new Date() }
+      });
 
-      if (!access) {
+      if (!access && !subscription) {
 
         return res.status(403).json({
 
@@ -151,7 +163,6 @@ router.get(
       return res.status(500).json({
 
         success: false,
-
         message: 'Unable to open content'
 
       });

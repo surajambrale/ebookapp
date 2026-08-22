@@ -1917,9 +1917,16 @@ app.get('/my-books/:userId', async (req, res) => {
 
 // ================= PAYMENTS =================
 
-app.get('/payments/:userId', async (req, res) => {
+app.get('/payments/:userId', requireAuth, async (req, res) => {
 
   try {
+
+    if (String(req.user.id) !== String(req.params.userId)) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only view your own payment history'
+      });
+    }
 
     const purchases = await Purchase.find({
       userId: req.params.userId
@@ -1946,15 +1953,16 @@ app.get('/payments/:userId', async (req, res) => {
       return {
 
         paymentId: p.paymentId,
+        orderId: p.orderId,
+        type: 'book',
+        createdAt: p.createdAt,
 
         bookTitle:
           book?.title ||
           book?.name ||
           "Unknown Book",
 
-        amount:
-          book?.price ||
-          p.amount
+        amount: Number(p.amount || 0)
 
       };
 

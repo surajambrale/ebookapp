@@ -148,6 +148,24 @@ const getUserFolderAccess = async (req, res) => {
   }
 };
 
+const getMyFolderAccess = async (req, res) => {
+  try {
+    const accesses = await FolderAccess.find({
+      user: req.user.id
+    })
+      .populate('folder', 'name description sellingPrice offerPrice parentId')
+      .sort({ createdAt: -1 });
+
+    return res.json({ success: true, accesses });
+  } catch (error) {
+    console.error('GET MY FOLDER ACCESS ERROR:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to get payment history'
+    });
+  }
+};
+
 const getFolderDetails = async (req, res) => {
   try {
     const { folderId } = req.params;
@@ -233,6 +251,7 @@ module.exports = {
   checkFolderAccess,
   grantFolderAccess,
   getUserFolderAccess,
+  getMyFolderAccess,
   getFolderDetails,
   isSubscriptionActive
 };

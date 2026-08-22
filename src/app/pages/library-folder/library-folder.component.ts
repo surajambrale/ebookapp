@@ -420,7 +420,7 @@ openContent(content: any): void {
     // Better to create a secure note API also.
 
     this.http.get<any>(
-      `${this.api}/content/secure/${content._id}`
+      `${this.api}/api/content-access/${content._id}`
     )
     .subscribe({
 

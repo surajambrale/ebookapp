@@ -8,6 +8,7 @@ const {
   checkFolderAccess,
   grantFolderAccess,
   getUserFolderAccess,
+  getMyFolderAccess,
   getFolderDetails
 } = require('../controllers/folderAccessController');
 
@@ -16,6 +17,8 @@ router.get('/check/:folderId', requireAuth, checkFolderAccess);
 router.post('/grant', verifyAdmin, grantFolderAccess);
 
 router.get('/user/:userId', verifyAdmin, getUserFolderAccess);
+
+router.get('/my', requireAuth, getMyFolderAccess);
 
 router.get('/detail/:folderId', requireAuth, getFolderDetails);
 

@@ -36,6 +36,7 @@ export class ProfileComponent implements OnInit {
 
   payments: any[] = [];
   folderPayments: any[] = [];
+  subscriptionPayments: any[] = [];
 
   books: any[] = [];
 
@@ -116,6 +117,7 @@ export class ProfileComponent implements OnInit {
       this.loadFolderPayments();
 
       this.loadSubscription();
+      this.loadSubscriptionHistory();
 
       this.loadBooks();
 
@@ -159,6 +161,22 @@ export class ProfileComponent implements OnInit {
 
   });
 
+}
+
+loadSubscriptionHistory() {
+  this.http.get<any>(
+    `${environment.apiUrl}/subscription/history`
+  ).subscribe({
+    next: (res: any) => {
+      this.subscriptionPayments = Array.isArray(res?.subscriptions)
+        ? res.subscriptions
+        : [];
+    },
+    error: (err: any) => {
+      console.log('Subscription payments:', err);
+      this.subscriptionPayments = [];
+    }
+  });
 }
 
 loadSubscriptionSetting() {
