@@ -2337,6 +2337,24 @@ this.http.get<any[]>(
 
   }
 
+  exportApplicationData() {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    this.http.get(`${environment.apiUrl}/admin/export-xlsx`, {
+      headers,
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'ebookapp-export.xlsx';
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => alert('Unable to export application data')
+    });
+  }
+
   deleteBook(id: string) {
 
     if (!confirm("Delete this book?")) {

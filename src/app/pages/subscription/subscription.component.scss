@@ -18,6 +18,26 @@ text-align:center;
 
 }
 
+@media (max-width: 600px) {
+  .subscription-container {
+    width: calc(100% - 28px);
+    max-width: none;
+    margin-top: 18px;
+    margin-bottom: 90px;
+    padding: 22px 16px;
+    box-sizing: border-box;
+    border-radius: 14px;
+  }
+
+  .price {
+    font-size: clamp(2.5rem, 13vw, 3.2rem);
+  }
+
+  li {
+    font-size: 1rem;
+  }
+}
+
 .price{
 
 font-size:50px;

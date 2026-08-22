@@ -17,6 +17,26 @@
 
   </div>
 
+  <section class="folder-section" *ngIf="folders.length > 0">
+    <div class="section-header">
+      <div>
+        <span class="section-label">LEARNING LIBRARY</span>
+        <h2>Explore Folders</h2>
+      </div>
+      <span>{{ folders.length }} folders</span>
+    </div>
+    <div class="folder-grid">
+      <article class="folder-card" *ngFor="let folder of folders" (click)="openFolder(folder)">
+        <div class="folder-icon">📁</div>
+        <div>
+          <h3>{{ folder.name }}</h3>
+          <p>{{ folder.description || 'Books and premium learning resources' }}</p>
+        </div>
+        <span class="folder-link">Open →</span>
+      </article>
+    </div>
+  </section>
+
   <!-- BOOKS -->
 
   <div

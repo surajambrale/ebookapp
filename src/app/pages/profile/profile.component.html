@@ -190,6 +190,26 @@
 
       <!-- 🔥 PAYMENTS -->
 
+      <div class="purchase-summary-grid">
+        <section class="purchase-summary">
+          <h3>📂 Purchased Folders <span>{{ folderPayments.length }}</span></h3>
+          <p *ngIf="folderPayments.length === 0">No folder purchases yet.</p>
+          <div class="summary-item" *ngFor="let payment of folderPayments">
+            <strong>{{ payment.folder?.name || 'Folder Purchase' }}</strong>
+            <small>₹{{ payment.amount || 0 }} · Expires {{ payment.expiryDate | date:'dd MMM yyyy' }}</small>
+          </div>
+        </section>
+
+        <section class="purchase-summary">
+          <h3>📚 Purchased Books <span>{{ payments.length }}</span></h3>
+          <p *ngIf="payments.length === 0">No book purchases yet.</p>
+          <div class="summary-item" *ngFor="let payment of payments">
+            <strong>{{ payment.bookTitle || getBookName(payment.bookId) }}</strong>
+            <small>₹{{ payment.amount || 0 }} · {{ payment.createdAt | date:'dd MMM yyyy' }}</small>
+          </div>
+        </section>
+      </div>
+
       <div class="payments-box">
 
         <h3>

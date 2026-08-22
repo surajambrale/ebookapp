@@ -179,6 +179,50 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.purchase-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.purchase-summary {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #292929;
+  border-radius: 16px;
+  background: #111;
+}
+
+.purchase-summary h3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 1rem;
+}
+
+.purchase-summary h3 span {
+  color: gold;
+}
+
+.purchase-summary > p {
+  color: #888;
+  margin: 0;
+}
+
+.summary-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid #252525;
+  overflow-wrap: anywhere;
+}
+
+.summary-item small {
+  color: #aaa;
+}
+
 @media (max-width: 600px) {
   .profile-page {
     padding: 14px;
@@ -201,6 +245,24 @@ h1 {
 
   .profile-edit button {
     width: 100%;
+  }
+
+  .purchase-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .payments-box,
+  .purchase-summary,
+  .profile-card,
+  .subscription-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .payment-card {
+    padding: 13px;
+    border-radius: 11px;
   }
 }
 

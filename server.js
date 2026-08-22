@@ -13,6 +13,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const XLSX = require('xlsx');
 const path = require('path');
 const axios = require('axios');
 const Testimonial = require('./models/Testimonial');
@@ -278,6 +279,57 @@ app.get('/admin-verify', verifyAdmin, (req, res) => {
 
   });
 
+});
+
+app.get('/admin/export-xlsx', verifyAdmin, async (req, res) => {
+  try {
+    const [users, booksData, purchases, folderAccess, subscriptions, folders, content, coupons, testimonials, appSettings, subscriptionSettings, notificationSettings] = await Promise.all([
+      User.find().select('-password').lean(),
+      DynamicBook.find().lean(),
+      Purchase.find().lean(),
+      FolderAccess.find().populate('user', 'name email phone').populate('folder', 'name').lean(),
+      Subscription.find().lean(),
+      Folder.find().lean(),
+      Content.find().select('-url -noteContent').lean(),
+      Coupon.find().lean(),
+      Testimonial.find().lean(),
+      AppSetting.find().select('-password').lean(),
+      SubscriptionSetting.find().lean(),
+      NotificationSetting.find().lean()
+    ]);
+
+    const workbook = XLSX.utils.book_new();
+    const addSheet = (name, rows) => {
+      const safeRows = rows.length ? rows : [{ message: 'No records found' }];
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(safeRows), name);
+    };
+
+    addSheet('Users', users);
+    addSheet('Books', booksData);
+    addSheet('Book Purchases', purchases);
+    addSheet('Folder Access', folderAccess.map(item => ({
+      ...item,
+      userName: item.user?.name || '',
+      userEmail: item.user?.email || '',
+      folderName: item.folder?.name || ''
+    })));
+    addSheet('Subscriptions', subscriptions);
+    addSheet('Folders', folders);
+    addSheet('Content', content);
+    addSheet('Coupons', coupons);
+    addSheet('Testimonials', testimonials);
+    addSheet('App Settings', appSettings);
+    addSheet('Subscription Settings', subscriptionSettings);
+    addSheet('Notification Settings', notificationSettings);
+
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="ebookapp-export.xlsx"');
+    return res.send(buffer);
+  } catch (err) {
+    console.error('ADMIN XLSX EXPORT ERROR:', err);
+    return res.status(500).json({ success: false, message: 'Unable to export application data' });
+  }
 });
 
 // ===============================

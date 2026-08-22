@@ -310,6 +310,64 @@ background:#ffcc00;
   margin-bottom: 25px;
 }
 
+.dashboard-export-btn {
+  width: auto;
+  margin-left: auto;
+  padding: 11px 16px;
+  background: #168a52;
+}
+
+.folder-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  padding: 20px;
+  margin: 18px 0;
+  border: 1px solid #3b3b3b;
+  border-radius: 14px;
+  background: #151515;
+}
+
+.folder-form h3,
+.folder-form label,
+.folder-form textarea,
+.folder-form .form-buttons {
+  grid-column: 1 / -1;
+}
+
+.folder-form input,
+.folder-form textarea,
+.folder-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #333;
+  border-radius: 9px;
+  background: #0d0d0d;
+  color: white;
+}
+
+.folder-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.folder-form label {
+  margin-top: 4px;
+  color: #bbb;
+  font-size: .85rem;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-buttons button {
+  flex: 1 1 150px;
+  min-height: 42px;
+}
+
 /* CARD */
 
 .card {
@@ -1120,5 +1178,14 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
   .login-box {
     margin-top: 35px;
     padding: 20px 16px;
+  }
+
+  .dashboard-export-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .folder-form {
+    padding: 15px;
   }
 }
