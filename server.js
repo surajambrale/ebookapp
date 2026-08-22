@@ -280,86 +280,6 @@ app.get('/admin-verify', verifyAdmin, (req, res) => {
 
 });
 
-// =========================================================
-// APP SETTING
-// =========================================================
-
-// GET APP SETTING
-app.get('/app-setting', async (req, res) => {
-  try {
-
-    let setting = await AppSetting.findOne();
-
-    // Agar setting database me nahi hai
-    if (!setting) {
-
-      setting = await AppSetting.create({
-        appName: 'SS Builds',
-        password: process.env.ADMIN_PASSWORD || 'admin123'
-      });
-
-    }
-
-    res.json({
-      success: true,
-      setting
-    });
-
-  } catch (error) {
-
-    console.error('❌ APP SETTING ERROR:', error);
-
-    res.status(500).json({
-      success: false,
-      message: 'Unable to load app setting'
-    });
-
-  }
-});
-
-
-// =========================================================
-// SUBSCRIPTION SETTING
-// =========================================================
-
-// GET SUBSCRIPTION SETTING
-app.get('/subscription-setting', async (req, res) => {
-  try {
-
-    let setting = await SubscriptionSetting.findOne();
-
-    // Agar setting database me nahi hai
-    if (!setting) {
-
-      setting = await SubscriptionSetting.create({
-        planName: 'Monthly Premium',
-        amount: 99,
-        durationDays: 30,
-        active: true
-      });
-
-    }
-
-    res.json({
-      success: true,
-      setting
-    });
-
-  } catch (error) {
-
-    console.error(
-      '❌ SUBSCRIPTION SETTING ERROR:',
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message: 'Unable to load subscription setting'
-    });
-
-  }
-});
-
 // ===============================
 // 🔐 CHANGE ADMIN PASSWORD
 // ===============================
@@ -453,9 +373,15 @@ app.get(
   '/content/secure/:contentId',
   requireAuth,
   async (req, res) => {
+
     try {
+
       const { contentId } = req.params;
       const userId = req.user.id;
+
+      // =========================================
+      // FIND CONTENT
+      // =========================================
 
       const content = await Content.findById(contentId);
 
@@ -466,14 +392,24 @@ app.get(
         });
       }
 
-      if (!content.active) {
-        return res.status(403).json({
+      // =========================================
+      // NOTES
+      // =========================================
+
+      if (content.type === 'note') {
+        return res.status(400).json({
           success: false,
-          message: 'Content is not available'
+          message: 'Notes do not require file streaming'
         });
       }
 
-      const folder = await Folder.findById(content.folderId);
+      // =========================================
+      // FIND FOLDER
+      // =========================================
+
+      const folder = await Folder.findById(
+        content.folderId
+      );
 
       if (!folder) {
         return res.status(404).json({
@@ -482,91 +418,479 @@ app.get(
         });
       }
 
-      const now = new Date();
+      // =========================================
+      // 🔐 USER FOLDER ACCESS
+      // =========================================
 
-      const folderAccess = await FolderAccess.findOne({
+      const access = await FolderAccess.findOne({
         user: userId,
         folder: folder._id,
         isActive: true,
-        expiryDate: { $gt: now }
+        expiryDate: {
+          $gt: new Date()
+        }
       });
 
-      const subscription = await Subscription.findOne({
-        userId: String(userId),
-        status: 'active',
-        expiryDate: { $gt: now }
-      });
+      if (!access) {
 
-      const hasAccess = !!folderAccess || !!subscription;
+        console.log(
+          '🚫 CONTENT ACCESS DENIED:',
+          {
+            userId,
+            folderId: folder._id.toString(),
+            contentId
+          }
+        );
 
-      console.log('🔐 CONTENT ACCESS CHECK:', {
-        userId: String(userId),
-        folderId: String(folder._id),
-        contentId: String(contentId),
-        folderAccess: !!folderAccess,
-        subscriptionActive: !!subscription,
-        hasAccess
-      });
-
-      if (!hasAccess) {
         return res.status(403).json({
           success: false,
-          message: 'You do not have permission to access this resource'
+          message: 'You do not have access to this content'
         });
       }
 
-      // Notes are protected too, but they are JSON, not file streams.
-      if (content.type === 'note') {
-        return res.json({
-          success: true,
-          type: 'note',
-          title: content.title,
-          noteContent: content.noteContent || ''
-        });
-      }
+      // =========================================
+      // CONTENT URL
+      // =========================================
 
-      if (!content.url || typeof content.url !== 'string') {
+      if (
+        !content.url ||
+        typeof content.url !== 'string'
+      ) {
+
         return res.status(404).json({
           success: false,
           message: 'Content file is not available'
         });
       }
 
-      const cloudinaryResponse = await axios.get(content.url, {
-        responseType: 'stream',
-        timeout: 30000,
-        validateStatus: status => status >= 200 && status < 300
-      });
+      console.log(
+        '🔐 SECURE FILE REQUEST:',
+        {
+          contentId,
+          userId,
+          folderId: folder._id.toString(),
+          type: content.type,
+          url: content.url
+        }
+      );
 
-      let contentType = 'application/octet-stream';
+      // =========================================
+      // FETCH CLOUDINARY FILE
+      // =========================================
 
-      if (content.type === 'pdf') contentType = 'application/pdf';
-      if (content.type === 'video') contentType = 'video/mp4';
-      if (content.type === 'image') contentType = 'image/*';
-      if (content.type === 'audio') contentType = 'audio/mpeg';
+      const axios = require('axios');
 
-      res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Disposition', 'inline');
+      let cloudinaryResponse;
+
+      try {
+
+        cloudinaryResponse = await axios.get(
+          content.url,
+          {
+            responseType: 'stream',
+            timeout: 30000,
+            validateStatus: (status) =>
+              status >= 200 && status < 300
+          }
+        );
+
+      } catch (cloudinaryError) {
+
+        console.error(
+          '❌ CLOUDINARY FETCH ERROR:',
+          {
+            message: cloudinaryError.message,
+            status: cloudinaryError.response?.status,
+            statusText:
+              cloudinaryError.response?.statusText,
+            url: content.url
+          }
+        );
+
+        return res.status(502).json({
+          success: false,
+          message: 'Unable to fetch content file'
+        });
+      }
+
+      // =========================================
+      // CONTENT TYPE
+      // =========================================
+
+      let contentType =
+        'application/octet-stream';
+
+      if (content.type === 'pdf') {
+        contentType = 'application/pdf';
+      }
+
+      if (content.type === 'video') {
+        contentType = 'video/mp4';
+      }
+
+      // =========================================
+      // RESPONSE HEADERS
+      // =========================================
+
+      res.setHeader(
+        'Content-Type',
+        contentType
+      );
+
       res.setHeader(
         'Cache-Control',
         'private, no-store, no-cache, must-revalidate'
       );
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('X-Content-Type-Options', 'nosniff');
+
+      res.setHeader(
+        'Pragma',
+        'no-cache'
+      );
+
+      res.setHeader(
+        'Expires',
+        '0'
+      );
+
+      res.setHeader(
+        'X-Content-Type-Options',
+        'nosniff'
+      );
+
+      // =========================================
+      // STREAM ERROR
+      // =========================================
+
+      cloudinaryResponse.data.on(
+        'error',
+        (streamError) => {
+
+          console.error(
+            '❌ CLOUDINARY STREAM ERROR:',
+            streamError
+          );
+
+          if (!res.headersSent) {
+            res.status(500).json({
+              success: false,
+              message: 'File streaming failed'
+            });
+          } else {
+            res.destroy(streamError);
+          }
+
+        }
+      );
+
+      // =========================================
+      // STREAM FILE
+      // =========================================
 
       cloudinaryResponse.data.pipe(res);
+
     } catch (error) {
-      console.error('❌ SECURE CONTENT ERROR:', error);
+
+      console.error(
+        '❌ SECURE CONTENT ERROR:',
+        error
+      );
 
       if (!res.headersSent) {
+
         return res.status(500).json({
           success: false,
           message: 'Unable to open content'
         });
+
       }
+
     }
+
   }
 );
+
+
+// ================= DB =================
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch(err => console.log(err));
+
+
+
+//subcription setting code start
+async function createDefaultSubscription() {
+
+  const exist = await SubscriptionSetting.findOne();
+
+  if (!exist) {
+
+    await SubscriptionSetting.create({
+
+      planName: "Premium",
+
+      price: 99,
+
+      duration: 30,
+
+      active: true
+
+    });
+
+    console.log("Default Subscription Created ✅");
+
+  }
+
+}
+
+createDefaultSubscription();
+
+// ===============================
+// GET SUBSCRIPTION SETTINGS
+// ===============================
+
+app.get('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOne();
+
+    res.json(setting);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  }
+
+});
+
+
+// ===============================
+// GET APP SETTINGS
+// ===============================
+
+app.get("/app-setting", async (req, res) => {
+
+  try {
+
+    let setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      setting = await AppSetting.create({});
+
+    }
+
+    res.json(setting);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
+
+  }
+
+});
+
+
+// put api
+
+app.put("/app-setting", async (req, res) => {
+
+  try {
+
+    let setting = await AppSetting.findOne();
+
+    if (!setting) {
+
+      setting = new AppSetting();
+
+    }
+
+    setting.appName = req.body.appName;
+    setting.logo = req.body.logo;
+
+    setting.settings = req.body.settings || [];
+
+    // Password ko kabhi overwrite mat karo
+    if (req.body.password !== undefined) {
+      setting.password = req.body.password;
+    }
+
+    await setting.save();
+
+    res.json({
+
+      success: true,
+      message: "Updated Successfully",
+      setting
+
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false,
+      message: "Server Error"
+
+    });
+
+  }
+
+});
+
+app.post("/app-setting", async (req, res) => {
+
+  const { settings } = req.body;
+
+  let appSetting = await AppSetting.findOne();
+
+  if (!appSetting) {
+
+    appSetting = new AppSetting();
+
+  }
+
+  appSetting.settings = settings;
+
+  await appSetting.save();
+
+  res.json({
+    success: true
+  });
+
+});
+
+// ===============================
+// UPDATE SUBSCRIPTION SETTINGS
+// ===============================
+
+app.put('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const {
+
+      planName,
+
+      price,
+
+      duration,
+
+      active
+
+    } = req.body;
+
+    const setting = await SubscriptionSetting.findOne();
+
+    setting.planName = planName;
+    setting.price = price;
+    setting.duration = duration;
+    setting.active = active;
+
+    await setting.save();
+
+    res.json({
+
+      success: true,
+
+      message: "Subscription Updated"
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false
+
+    });
+
+  }
+
+});
+
+app.get('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOne();
+
+    res.json(setting);
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      success: false
+    });
+
+  }
+
+});
+
+app.put('/subscription-setting', async (req, res) => {
+
+  try {
+
+    const setting = await SubscriptionSetting.findOneAndUpdate(
+
+      {},
+
+      req.body,
+
+      {
+
+        new: true,
+
+        upsert: true
+
+      }
+
+    );
+
+    res.json({
+
+      success: true,
+
+      setting
+
+    });
+
+  }
+
+  catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+
+      success: false
+
+    });
+
+  }
+
+});
 
 //subcription setting code end
 
@@ -574,7 +898,7 @@ app.get(
 // ADMIN - FOLDER PURCHASES
 // =====================================
 
-app.get('/admin/folder-purchases', verifyAdmin, async (req, res) => {
+app.get('/admin/folder-purchases', async (req, res) => {
   try {
 
     const purchases = await FolderAccess.find({
@@ -586,24 +910,29 @@ app.get('/admin/folder-purchases', verifyAdmin, async (req, res) => {
 
     const data = purchases.map((item) => ({
       _id: item._id,
+
       userId: item.user?._id || '',
       userName: item.user?.name || '',
       userPhone: item.user?.phone || '',
       userEmail: item.user?.email || '',
+
       folderId: item.folder?._id || '',
       folderName: item.folder?.name || '',
+
       accessType: item.accessType,
+
       amount: item.amount || 0,
+
       paymentId: item.paymentId || '',
       orderId: item.orderId || '',
       couponCode: item.couponCode || '',
+
       startDate: item.startDate,
       expiryDate: item.expiryDate,
-      expiresAt: item.expiryDate,
+
       isActive: item.isActive,
-      createdAt: item.createdAt,
-      user: item.user || null,
-      folder: item.folder || null
+
+      createdAt: item.createdAt
     }));
 
     res.json(data);
@@ -626,7 +955,7 @@ app.get('/admin/folder-purchases', verifyAdmin, async (req, res) => {
 // ADMIN - DELETE FOLDER PURCHASE
 // =====================================
 
-app.delete('/admin/folder-purchase/:id', verifyAdmin, async (req, res) => {
+app.delete('/admin/folder-purchase/:id', async (req, res) => {
   try {
 
     const { id } = req.params;
@@ -1042,23 +1371,6 @@ app.post('/create-order', async (req, res) => {
 });
 
 // =========================================================
-// 📅 FOLDER ACCESS EXPIRY
-// Default 30-day access means the same calendar date next month.
-// =========================================================
-function getFolderExpiryDate(startDate, durationDays = 30) {
-  const expiryDate = new Date(startDate);
-  const days = Number(durationDays) > 0 ? Number(durationDays) : 30;
-
-  if (days === 30) {
-    expiryDate.setMonth(expiryDate.getMonth() + 1);
-  } else {
-    expiryDate.setDate(expiryDate.getDate() + days);
-  }
-
-  return expiryDate;
-}
-
-// =========================================================
 // CREATE FOLDER PAYMENT ORDER
 // =========================================================
 app.post('/create-folder-order', requireAuth, async (req, res) => {
@@ -1095,16 +1407,13 @@ app.post('/create-folder-order', requireAuth, async (req, res) => {
 
     if (finalPrice === 0) {
       const startDate = new Date();
+      const expiryDate = new Date(startDate);
       const durationDays = Number(folder.accessDurationDays) > 0 ? Number(folder.accessDurationDays) : 30;
-      const expiryDate = getFolderExpiryDate(startDate, durationDays);
+      expiryDate.setDate(expiryDate.getDate() + durationDays);
       let access = await FolderAccess.findOne({ user: userId, folder: folderId });
       const data = { startDate, expiryDate, accessType: 'purchase', amount: 0, paymentId: 'coupon_free', orderId: 'coupon_free', couponCode: coupon?.code || '', isActive: true };
       if (access) { Object.assign(access, data); await access.save(); } else { access = await FolderAccess.create({ user: userId, folder: folderId, ...data }); }
       if (coupon) await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
-
-      const freeFolderUser = await User.findById(userId);
-      await sendTelegram(`📂 New Folder Purchase 🚀\n\n👤 User: ${freeFolderUser?.name || 'Unknown'}\n📱 Phone: ${freeFolderUser?.phone || 'N/A'}\n📁 Folder: ${folder.name}\n💰 Amount: ₹0\n🎟️ Coupon: ${coupon?.code || 'FREE'}\n📅 Expiry: ${expiryDate.toLocaleDateString()}`);
-
       return res.json({ success: true, free: true, message: 'Folder unlocked with coupon 🎉', finalPrice: 0, discount, folderId: folder._id });
     }
 
@@ -1157,15 +1466,13 @@ app.post('/verify-folder-payment', requireAuth, async (req, res) => {
     if (duplicate) return res.json({ success: true, message: 'Folder purchase already verified', access: duplicate });
 
     const startDate = new Date();
+    const expiryDate = new Date(startDate);
     const durationDays = Number(folder.accessDurationDays) > 0 ? Number(folder.accessDurationDays) : 30;
-    const expiryDate = getFolderExpiryDate(startDate, durationDays);
+    expiryDate.setDate(expiryDate.getDate() + durationDays);
     let access = await FolderAccess.findOne({ user: userId, folder: folderId });
     const data = { startDate, expiryDate, accessType: 'purchase', amount: expectedAmount, paymentId: razorpay_payment_id, orderId: razorpay_order_id, couponCode: coupon?.code || '', isActive: true };
     if (access) { Object.assign(access, data); await access.save(); } else { access = await FolderAccess.create({ user: userId, folder: folderId, ...data }); }
     if (coupon) await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
-
-    const folderUser = await User.findById(userId);
-    await sendTelegram(`📂 New Folder Purchase 🚀\n\n👤 User: ${folderUser?.name || 'Unknown'}\n📱 Phone: ${folderUser?.phone || 'N/A'}\n📁 Folder: ${folder.name}\n💰 Amount: ₹${expectedAmount}\n💳 Payment: ${razorpay_payment_id}\n🎟️ Coupon: ${coupon?.code || 'None'}\n📅 Expiry: ${expiryDate.toLocaleDateString()}`);
 
     res.json({ success: true, message: 'Folder purchased successfully ✅', access, basePrice, discount, finalPrice: expectedAmount });
   } catch (error) {
