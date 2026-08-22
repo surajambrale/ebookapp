@@ -726,7 +726,23 @@ app.get(
 // ================= DB =================
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
+  .then(async () => {
+    console.log("MongoDB Connected ✅");
+
+    const legacyPurchases = await Purchase.find({
+      expiryDate: { $exists: false }
+    });
+
+    for (const purchase of legacyPurchases) {
+      const startDate = purchase.createdAt || new Date();
+      const expiryDate = new Date(startDate);
+      expiryDate.setMonth(expiryDate.getMonth() + 1);
+      purchase.startDate = startDate;
+      purchase.expiryDate = expiryDate;
+      purchase.isActive = expiryDate > new Date();
+      await purchase.save();
+    }
+  })
   .catch(err => console.log(err));
 
 
@@ -2137,6 +2153,9 @@ app.get('/payments/:userId', requireAuth, async (req, res) => {
         orderId: p.orderId,
         type: 'book',
         createdAt: p.createdAt,
+        startDate: p.startDate || p.createdAt,
+        expiryDate: p.expiryDate,
+        isActive: p.isActive !== false && p.expiryDate > new Date(),
 
         bookTitle:
           book?.title ||
@@ -2187,7 +2206,7 @@ app.post('/verify-free-book', requireAuth, async (req, res) => {
 
     });
 
-    if (alreadyPurchased) {
+    if (alreadyPurchased && alreadyPurchased.isActive && alreadyPurchased.expiryDate > new Date()) {
 
       return res.json({
 
@@ -2200,6 +2219,15 @@ app.post('/verify-free-book', requireAuth, async (req, res) => {
     const startDate = new Date();
     const expiryDate = new Date(startDate);
     expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+    if (alreadyPurchased) {
+      alreadyPurchased.startDate = startDate;
+      alreadyPurchased.expiryDate = expiryDate;
+      alreadyPurchased.isActive = true;
+      alreadyPurchased.accessType = 'purchase';
+      await alreadyPurchased.save();
+      return res.json({ success: true });
+    }
 
     await Purchase.create({
 

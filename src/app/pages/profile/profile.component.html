@@ -109,6 +109,8 @@
 
           <small>
             {{ payment.createdAt | date:'dd MMM yyyy, h:mm a' }}
+            • Expires {{ payment.expiryDate | date:'dd MMM yyyy' }}
+            • {{ payment.isActive ? 'Active access' : 'Expired access' }}
             <span *ngIf="payment.paymentId"> • Payment ID: {{ payment.paymentId }}</span>
           </small>
 

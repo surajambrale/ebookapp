@@ -79,7 +79,7 @@ COUPON SECTION
   [disabled]="isLoading">
 
   <span *ngIf="!isLoading">
-    🛒 Buy Now
+    {{ accessExpired ? 'Purchase Again' : '🛒 Buy Now' }}
   </span>
 
   <span *ngIf="isLoading" class="btn-loader"></span>
