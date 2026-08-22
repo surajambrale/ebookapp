@@ -1871,6 +1871,7 @@ selectedFolderPurchase: any = null;
         next: (res: any) => {
 
           this.token = res.token;
+          localStorage.setItem('adminToken', res.token);
 
           this.isLoggedIn = true;
 
@@ -2338,7 +2339,8 @@ this.http.get<any[]>(
   }
 
   exportApplicationData() {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
+    const token = this.token || localStorage.getItem('adminToken') || '';
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     this.http.get(`${environment.apiUrl}/admin/export-xlsx`, {
       headers,
       responseType: 'blob'
@@ -2955,6 +2957,7 @@ searchFolderPurchases(): any[] {
     this.token = '';
 
     this.password = '';
+    localStorage.removeItem('adminToken');
 
   }
 

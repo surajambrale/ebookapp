@@ -31,6 +31,13 @@
 
     </div>
 
+    <div class="admin-quick-search" *ngIf="selectedView === 'users' || selectedView === 'purchases' || selectedView === 'uploadBook' || selectedView === 'folder-purchases'">
+      <input *ngIf="selectedView === 'users' || selectedView === 'purchases'" type="text" [(ngModel)]="searchPhone" placeholder="Search users or purchases by phone">
+      <input *ngIf="selectedView === 'uploadBook'" type="text" [(ngModel)]="searchBook" (input)="searchBooks()" placeholder="Search uploaded books">
+      <input *ngIf="selectedView === 'folder-purchases'" type="text" [(ngModel)]="folderPurchaseSearch" placeholder="Search folder purchases">
+      <button *ngIf="selectedView === 'users' || selectedView === 'purchases'" type="button" (click)="searchUser()">Search</button>
+    </div>
+
     <!-- 🔥 ANALYTICS -->
     <div class="stats-grid">
 
@@ -646,17 +653,6 @@
 
     </div>
 
-    <!-- 🔥 SEARCH -->
-    <div class="search-area">
-
-      <input type="text" [(ngModel)]="searchPhone" placeholder="Search by phone number...">
-
-      <button (click)="searchUser()">
-        GO
-      </button>
-
-    </div>
-
     <!-- 🔥 SEARCH RESULT -->
     <div *ngIf="searchedPurchases.length > 0">
 
@@ -999,7 +995,7 @@
         <tr
           *ngFor="
             let purchase
-            of folderPurchases
+            of searchFolderPurchases()
           "
         >
 
@@ -1137,13 +1133,6 @@
       <hr>
 
       <h2>📚 Uploaded Books</h2>
-
-      <input type="text" placeholder="🔍 Search Book..." [(ngModel)]="searchBook" (input)="searchBooks()" style="
-width:100%;
-padding:12px;
-margin-bottom:20px;
-border-radius:8px;
-border:1px solid #ccc;">
 
       <div class="uploaded-book-card" *ngFor="let book of paginatedBooks">
 

@@ -248,6 +248,20 @@ button {
   transition: 0.3s;
 }
 
+/* Match the book-list navigation on every viewport. */
+.bottom-navbar { height: 68px; padding: 0; box-sizing: border-box; background: rgba(10, 10, 10, .94); border-top: 1px solid #242424; backdrop-filter: blur(15px); }
+.bottom-navbar .nav-item { height: 100%; gap: 3px; color: #666; font-size: 9px; }
+.bottom-navbar .nav-item span { font-size: 19px; }
+.bottom-navbar .nav-item p { font-size: 9px; font-weight: 600; }
+.bottom-navbar .nav-item.active, .bottom-navbar .nav-item.active span, .bottom-navbar .nav-item.active p { color: #f5c542 !important; }
+.bottom-navbar .nav-item.active span { transform: translateY(-1px); }
+
+@media (max-width: 600px) {
+  .bottom-navbar { height: 62px; }
+  .bottom-navbar .nav-item span { font-size: 17px; }
+  .bottom-navbar .nav-item p { font-size: 8px; }
+}
+
 @media (max-width: 600px) {
   .my-books-page {
     padding: 14px;

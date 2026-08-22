@@ -231,7 +231,10 @@ app.post('/admin-login', async (req, res) => {
 
 const verifyAdmin = (req, res, next) => {
 
-  const token = req.headers.authorization;
+  const authorization = req.headers.authorization || '';
+  const token = authorization.startsWith('Bearer ')
+    ? authorization.substring(7)
+    : authorization;
 
   if (!token) {
 

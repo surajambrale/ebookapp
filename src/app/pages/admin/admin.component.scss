@@ -151,6 +151,33 @@ background:#ffcc00;
   }
 }
 
+.admin-quick-search {
+  display: flex;
+  gap: 10px;
+  width: min(100%, 720px);
+  margin: 0 0 20px;
+}
+
+.admin-quick-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #191919;
+  color: white;
+}
+
+.admin-quick-search button {
+  min-width: 90px;
+  border: 0;
+  border-radius: 10px;
+  background: gold;
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .logout-btn {
 
   padding: 10px 18px;
@@ -1183,6 +1210,15 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
   .dashboard-export-btn {
     width: 100%;
     margin-left: 0;
+  }
+
+  .admin-quick-search {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-quick-search button {
+    min-height: 42px;
   }
 
   .folder-form {
