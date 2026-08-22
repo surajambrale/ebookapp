@@ -625,6 +625,10 @@
           Testimonials
         </option>
 
+        <option value="banners">
+          Banners
+        </option>
+
         <option value="uploadBook">
           Upload Book
         </option>
@@ -651,6 +655,22 @@
 
       </select>
 
+    </div>
+
+    <div *ngIf="selectedView === 'banners'" class="card banner-admin-card">
+      <h2>Manage Banners</h2>
+      <div class="banner-form">
+        <input [(ngModel)]="bannerTitle" placeholder="Banner title">
+        <textarea [(ngModel)]="bannerMessage" placeholder="Offer or festival message"></textarea>
+        <input [(ngModel)]="bannerLink" placeholder="Optional link">
+        <input type="file" accept="image/*" (change)="onBannerImageSelected($event)">
+        <button type="button" (click)="createBanner()">Create Banner</button>
+      </div>
+      <div class="banner-admin-row" *ngFor="let banner of banners">
+        <span>{{ banner.title }} <small>{{ banner.active ? 'Active' : 'Stopped' }}</small></span>
+        <button type="button" (click)="toggleBanner(banner._id)">{{ banner.active ? 'Stop' : 'Start' }}</button>
+        <button type="button" (click)="deleteBanner(banner._id)">Remove</button>
+      </div>
     </div>
 
     <!-- 🔥 SEARCH RESULT -->

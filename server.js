@@ -57,6 +57,7 @@ const nodemailer = require('nodemailer');
 const Folder = require('./models/Folder');
 const FolderAccess = require('./models/FolderAccess');
 const Coupon = require('./models/Coupon');
+const Banner = require('./models/Banner');
 const requireAuth = require('./middleware/auth');
 const contentAccessRoutes =
   require('./routes/contentAccess');
@@ -286,7 +287,7 @@ app.get('/admin-verify', verifyAdmin, (req, res) => {
 
 app.get('/admin/export-xlsx', verifyAdmin, async (req, res) => {
   try {
-    const [users, booksData, purchases, folderAccess, subscriptions, folders, content, coupons, testimonials, appSettings, subscriptionSettings, notificationSettings] = await Promise.all([
+    const [users, booksData, purchases, folderAccess, subscriptions, folders, content, coupons, testimonials, appSettings, subscriptionSettings, notificationSettings, banners] = await Promise.all([
       User.find().select('-password').lean(),
       DynamicBook.find().lean(),
       Purchase.find().lean(),
@@ -298,7 +299,8 @@ app.get('/admin/export-xlsx', verifyAdmin, async (req, res) => {
       Testimonial.find().lean(),
       AppSetting.find().select('-password').lean(),
       SubscriptionSetting.find().lean(),
-      NotificationSetting.find().lean()
+      NotificationSetting.find().lean(),
+      Banner.find().lean()
     ]);
 
     const workbook = XLSX.utils.book_new();
@@ -324,6 +326,7 @@ app.get('/admin/export-xlsx', verifyAdmin, async (req, res) => {
     addSheet('App Settings', appSettings);
     addSheet('Subscription Settings', subscriptionSettings);
     addSheet('Notification Settings', notificationSettings);
+    addSheet('Banners', banners);
 
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -333,6 +336,53 @@ app.get('/admin/export-xlsx', verifyAdmin, async (req, res) => {
     console.error('ADMIN XLSX EXPORT ERROR:', err);
     return res.status(500).json({ success: false, message: 'Unable to export application data' });
   }
+});
+
+app.get('/banners', async (req, res) => {
+  try {
+    const now = new Date();
+    const banners = await Banner.find({
+      active: true,
+      startsAt: { $lte: now },
+      $or: [{ endsAt: null }, { endsAt: { $gt: now } }]
+    }).sort({ createdAt: -1 }).lean();
+    return res.json(banners);
+  } catch (err) {
+    return res.status(500).json({ message: 'Unable to load banners' });
+  }
+});
+
+app.get('/admin/banners', verifyAdmin, async (req, res) => {
+  return res.json(await Banner.find().sort({ createdAt: -1 }).lean());
+});
+
+app.post('/admin/banners', verifyAdmin, upload.single('image'), async (req, res) => {
+  try {
+    const { title, message = '', link = '', startsAt, endsAt } = req.body;
+    if (!title?.trim()) return res.status(400).json({ message: 'Banner title is required' });
+    const banner = await Banner.create({
+      title: title.trim(), message, link,
+      imageUrl: req.file?.path || '',
+      startsAt: startsAt || new Date(),
+      endsAt: endsAt || null
+    });
+    return res.json({ success: true, banner });
+  } catch (err) {
+    return res.status(400).json({ message: err.message || 'Unable to create banner' });
+  }
+});
+
+app.patch('/admin/banners/:id/toggle', verifyAdmin, async (req, res) => {
+  const banner = await Banner.findById(req.params.id);
+  if (!banner) return res.status(404).json({ message: 'Banner not found' });
+  banner.active = !banner.active;
+  await banner.save();
+  return res.json({ success: true, banner });
+});
+
+app.delete('/admin/banners/:id', verifyAdmin, async (req, res) => {
+  await Banner.findByIdAndDelete(req.params.id);
+  return res.json({ success: true });
 });
 
 // ===============================
@@ -1445,13 +1495,18 @@ const razorpay = new Razorpay({
 //live key
 
 // CREATE ORDER
-app.post('/create-order', async (req, res) => {
+app.post('/create-order', requireAuth, async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, bookId } = req.body;
+
+    if (!bookId || !Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+      return res.status(400).json({ message: 'Valid book and amount are required' });
+    }
 
     const order = await razorpay.orders.create({
       amount: amount * 100,
-      currency: "INR"
+      currency: "INR",
+      notes: { bookId: String(bookId), userId: String(req.user.id) }
     });
 
     res.json(order);
@@ -1573,16 +1628,16 @@ app.post('/verify-folder-payment', requireAuth, async (req, res) => {
 });
 
 // VERIFY PAYMENT
-app.post('/verify-payment', async (req, res) => {
+app.post('/verify-payment', requireAuth, async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      userId,
       bookId,
       amount
     } = req.body;
+    const userId = req.user.id;
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -1596,14 +1651,29 @@ app.post('/verify-payment', async (req, res) => {
       return res.status(400).json({ message: 'Invalid payment ❌' });
     }
 
+    const order = await razorpay.orders.fetch(razorpay_order_id);
+    if (!order || String(order.notes?.userId || '') !== String(userId) || String(order.notes?.bookId || '') !== String(bookId)) {
+      return res.status(403).json({ message: 'Order does not belong to this user or book' });
+    }
+
+    if (Number(order.amount) !== Math.round(Number(amount) * 100)) {
+      return res.status(400).json({ message: 'Payment amount does not match book price' });
+    }
+
+    const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    expiryDate.setMonth(expiryDate.getMonth() + 1);
+
     await Purchase.create({
       userId,
       bookId,
-      amount,
+      amount: Number(amount),
       // bookId: Number(bookId),
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
-      createdAt: new Date()
+      startDate,
+      expiryDate,
+      isActive: true
     });
 
     //verify payment code end
@@ -1646,15 +1716,21 @@ app.post('/verify-payment', async (req, res) => {
 
 // ================= BOOK =================
 
-app.get('/check/:userId/:bookId', async (req, res) => {
+app.get('/check/:userId/:bookId', requireAuth, async (req, res) => {
 
   try {
+
+    if (String(req.user.id) !== String(req.params.userId)) {
+      return res.status(403).json({ access: false });
+    }
 
     const purchase = await Purchase.findOne({
 
       userId: req.params.userId,
 
-      bookId: req.params.bookId
+      bookId: req.params.bookId,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
 
     });
 
@@ -1713,11 +1789,15 @@ app.get('/ping', (req, res) => {
 
 //uptime robot
 
-app.get('/book/:userId/:bookId', async (req, res) => {
+app.get('/book/:userId/:bookId', requireAuth, async (req, res) => {
 
   try {
 
     const { userId, bookId } = req.params;
+
+    if (String(req.user.id) !== String(userId)) {
+      return res.status(403).json({ message: 'You can only read your own books' });
+    }
 
     // =====================================
     // CHECK PURCHASE
@@ -1727,7 +1807,9 @@ app.get('/book/:userId/:bookId', async (req, res) => {
 
       userId,
 
-      bookId
+      bookId,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
 
     });
 
@@ -1952,11 +2034,15 @@ async function sendTelegram(msg) {
 
 // ================= MY BOOKS =================
 
-app.get('/my-books/:userId', async (req, res) => {
+app.get('/my-books/:userId', requireAuth, async (req, res) => {
 
   try {
 
     const { userId } = req.params;
+
+    if (String(req.user.id) !== String(userId)) {
+      return res.status(403).json({ message: 'You can only view your own books' });
+    }
 
     const subscription = await Subscription.findOne({
       userId,
@@ -1974,7 +2060,11 @@ app.get('/my-books/:userId', async (req, res) => {
     }
 
     // Purchase books
-    const purchases = await Purchase.find({ userId });
+    const purchases = await Purchase.find({
+      userId,
+      isActive: true,
+      expiryDate: { $gt: new Date() }
+    });
 
     const purchasedIds = purchases.map(p => p.bookId);
 
@@ -2071,11 +2161,15 @@ app.get('/payments/:userId', requireAuth, async (req, res) => {
 
 //free book code start
 
-app.post('/verify-free-book', async (req, res) => {
+app.post('/verify-free-book', requireAuth, async (req, res) => {
 
   try {
 
     const { userId, bookId } = req.body;
+
+    if (String(req.user.id) !== String(userId)) {
+      return res.status(403).json({ success: false, message: 'Invalid user' });
+    }
 
     const alreadyPurchased = await Purchase.findOne({
 
@@ -2095,6 +2189,10 @@ app.post('/verify-free-book', async (req, res) => {
 
     }
 
+    const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    expiryDate.setMonth(expiryDate.getMonth() + 1);
+
     await Purchase.create({
 
       userId,
@@ -2107,7 +2205,9 @@ app.post('/verify-free-book', async (req, res) => {
 
       orderId: "FREE-COUPON",
 
-      createdAt: new Date()
+      startDate,
+      expiryDate,
+      isActive: true
 
     });
 

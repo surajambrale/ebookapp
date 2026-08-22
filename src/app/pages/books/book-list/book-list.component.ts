@@ -42,6 +42,8 @@ export class BookListComponent {
   libraryLoading = false;
   folders: any[] = [];
   contents: any[] = [];
+  banners: any[] = [];
+  closedBannerIds = new Set<string>();
   currentFolderId: string | null = null;
 
   loadFolders(parentId: string | null = null) {
@@ -332,7 +334,23 @@ export class BookListComponent {
     this.libraryContents = [];
 
     this.loadLibraryFolders(null);
+    this.loadBanners();
 
+  }
+
+  loadBanners() {
+    this.http.get<any[]>(`${this.api}/banners`).subscribe({
+      next: (res) => this.banners = Array.isArray(res) ? res : [],
+      error: () => this.banners = []
+    });
+  }
+
+  closeBanner(id: string) {
+    this.closedBannerIds.add(id);
+  }
+
+  isBannerClosed(id: string) {
+    return this.closedBannerIds.has(id);
   }
 
   loadLibraryContents(folderId: string) {

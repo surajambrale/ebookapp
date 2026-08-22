@@ -63,6 +63,11 @@ selectedFolderPurchase: any = null;
   //testimonial code start
   testimonials: any[] = [];
   dynamicBooks: any[] = [];
+  banners: any[] = [];
+  bannerTitle = '';
+  bannerMessage = '';
+  bannerLink = '';
+  bannerImage: File | null = null;
 
   selectedPreviewImages: File[] = [];
   selectedLogo: File | null = null;
@@ -1857,6 +1862,52 @@ selectedFolderPurchase: any = null;
 
   constructor(private http: HttpClient) { }
 
+  onBannerImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.bannerImage = input.files?.[0] || null;
+  }
+
+  loadBanners() {
+    this.http.get<any[]>(`${this.api}/admin/banners`, {
+      headers: new HttpHeaders({ Authorization: this.token })
+    }).subscribe({ next: (res) => this.banners = Array.isArray(res) ? res : [] });
+  }
+
+  createBanner() {
+    if (!this.bannerTitle.trim()) return alert('Banner title is required');
+    const form = new FormData();
+    form.append('title', this.bannerTitle.trim());
+    form.append('message', this.bannerMessage.trim());
+    form.append('link', this.bannerLink.trim());
+    if (this.bannerImage) form.append('image', this.bannerImage);
+    this.http.post<any>(`${this.api}/admin/banners`, form, {
+      headers: new HttpHeaders({ Authorization: this.token })
+    }).subscribe({
+      next: () => {
+        this.bannerTitle = '';
+        this.bannerMessage = '';
+        this.bannerLink = '';
+        this.bannerImage = null;
+        this.loadBanners();
+        alert('Banner created');
+      },
+      error: () => alert('Unable to create banner')
+    });
+  }
+
+  toggleBanner(id: string) {
+    this.http.patch(`${this.api}/admin/banners/${id}/toggle`, {}, {
+      headers: new HttpHeaders({ Authorization: this.token })
+    }).subscribe(() => this.loadBanners());
+  }
+
+  deleteBanner(id: string) {
+    if (!confirm('Delete this banner?')) return;
+    this.http.delete(`${this.api}/admin/banners/${id}`, {
+      headers: new HttpHeaders({ Authorization: this.token })
+    }).subscribe(() => this.loadBanners());
+  }
+
   // 🔐 LOGIN
   login() {
 
@@ -1878,6 +1929,7 @@ selectedFolderPurchase: any = null;
           this.loadData();
           this.loadGrantData();
           this.loadFolderPurchases();
+          this.loadBanners();
 
 
         },

@@ -263,7 +263,8 @@ export class BookDetailComponent {
 
     // 🧾 CREATE ORDER
     this.http.post(`${this.apiUrl}/create-order`, {
-      amount: this.finalPrice
+      amount: this.finalPrice,
+      bookId: (this.book._id || this.book.id).toString()
     }).subscribe({
 
       next: (order: any) => {
@@ -284,7 +285,6 @@ export class BookDetailComponent {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              userId: user._id,
               bookId: (this.book._id || this.book.id).toString(),
               amount: this.finalPrice
             }).subscribe({

@@ -10,7 +10,31 @@ const PurchaseSchema = new mongoose.Schema({
 
     orderId: String,
 
-    amount: Number
+    amount: Number,
+
+    accessType: {
+        type: String,
+        default: 'purchase'
+    },
+
+    startDate: {
+        type: Date,
+        default: Date.now
+    },
+
+    expiryDate: {
+        type: Date,
+        default: () => {
+            const expiry = new Date();
+            expiry.setMonth(expiry.getMonth() + 1);
+            return expiry;
+        }
+    },
+
+    isActive: {
+        type: Boolean,
+        default: true
+    }
 
 }, {
 
