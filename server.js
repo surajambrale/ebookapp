@@ -431,7 +431,15 @@ app.get(
         }
       });
 
-      if (!access) {
+      const subscription = await Subscription.findOne({
+        userId: String(userId),
+        status: 'active',
+        expiryDate: {
+          $gt: new Date()
+        }
+      });
+
+      if (!access && !subscription) {
 
         console.log(
           '🚫 CONTENT ACCESS DENIED:',
