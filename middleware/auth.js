@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const SECRET = process.env.JWT_SECRET;
 
-const requireAuth = (req, res, next) => {
+const requireAuth = async (req, res, next) => {
 
   const authHeader = req.headers.authorization || '';
 
@@ -26,6 +27,14 @@ const requireAuth = (req, res, next) => {
       token,
       SECRET
     );
+
+    const user = await User.findById(decoded.id).select('_id');
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Account no longer exists. Please register again.'
+      });
+    }
 
     req.user = decoded;
 

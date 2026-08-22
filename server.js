@@ -1299,8 +1299,15 @@ app.get('/admin/purchases', verifyAdmin, async (req, res) => {
 // ❌ DELETE USER
 app.delete('/admin/user/:id', verifyAdmin, async (req, res) => {
   try {
+    await Promise.all([
+      Purchase.deleteMany({ userId: String(req.params.id) }),
+      Subscription.deleteMany({ userId: String(req.params.id) }),
+      FolderAccess.deleteMany({ user: req.params.id }),
+      ReadingProgress.deleteMany({ userId: String(req.params.id) }),
+      Testimonial.deleteMany({ userId: req.params.id })
+    ]);
     await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User deleted" });
+    res.json({ success: true, message: "User and all related data deleted" });
   } catch {
     res.status(500).json({ message: "Delete error" });
   }
@@ -1740,6 +1747,11 @@ app.get('/check/:userId/:bookId', requireAuth, async (req, res) => {
       return res.status(403).json({ access: false });
     }
 
+    const hasPurchasedBefore = await Purchase.exists({
+      userId: req.params.userId,
+      bookId: req.params.bookId
+    });
+
     const purchase = await Purchase.findOne({
 
       userId: req.params.userId,
@@ -1753,7 +1765,8 @@ app.get('/check/:userId/:bookId', requireAuth, async (req, res) => {
     if (purchase) {
 
       return res.json({
-        access: true
+        access: true,
+        hasPurchasedBefore: true
       });
 
     }
@@ -1773,13 +1786,15 @@ app.get('/check/:userId/:bookId', requireAuth, async (req, res) => {
     if (subscription) {
 
       return res.json({
-        access: true
+        access: true,
+        hasPurchasedBefore: !!hasPurchasedBefore
       });
 
     }
 
     res.json({
-      access: false
+      access: false,
+      hasPurchasedBefore: !!hasPurchasedBefore
     });
 
   }
@@ -2219,15 +2234,6 @@ app.post('/verify-free-book', requireAuth, async (req, res) => {
     const startDate = new Date();
     const expiryDate = new Date(startDate);
     expiryDate.setMonth(expiryDate.getMonth() + 1);
-
-    if (alreadyPurchased) {
-      alreadyPurchased.startDate = startDate;
-      alreadyPurchased.expiryDate = expiryDate;
-      alreadyPurchased.isActive = true;
-      alreadyPurchased.accessType = 'purchase';
-      await alreadyPurchased.save();
-      return res.json({ success: true });
-    }
 
     await Purchase.create({
 
@@ -2998,6 +3004,7 @@ app.post('/testimonial', requireAuth, upload.single('image'), async (req, res) =
       name,
       message,
       rating,
+      userId: req.user.id,
       imageUrl: req.file?.path || ''
     });
 

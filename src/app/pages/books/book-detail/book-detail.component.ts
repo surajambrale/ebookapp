@@ -18,7 +18,7 @@ export class BookDetailComponent {
 
   book: any;
   hasAccess: boolean = false;
-  accessExpired = false;
+  hasPurchasedBefore = false;
 
   isLoading: boolean = false; // 🔥 single loader use
   apiUrl = environment.apiUrl;
@@ -94,7 +94,7 @@ export class BookDetailComponent {
             next: (res) => {
 
               this.hasAccess = res.access;
-              this.accessExpired = !res.access;
+              this.hasPurchasedBefore = !!res.hasPurchasedBefore;
 
             },
 
