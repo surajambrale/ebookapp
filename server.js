@@ -280,6 +280,86 @@ app.get('/admin-verify', verifyAdmin, (req, res) => {
 
 });
 
+// =========================================================
+// APP SETTING
+// =========================================================
+
+// GET APP SETTING
+app.get('/app-setting', async (req, res) => {
+  try {
+
+    let setting = await AppSetting.findOne();
+
+    // Agar setting database me nahi hai
+    if (!setting) {
+
+      setting = await AppSetting.create({
+        appName: 'SS Builds',
+        password: process.env.ADMIN_PASSWORD || 'admin123'
+      });
+
+    }
+
+    res.json({
+      success: true,
+      setting
+    });
+
+  } catch (error) {
+
+    console.error('❌ APP SETTING ERROR:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Unable to load app setting'
+    });
+
+  }
+});
+
+
+// =========================================================
+// SUBSCRIPTION SETTING
+// =========================================================
+
+// GET SUBSCRIPTION SETTING
+app.get('/subscription-setting', async (req, res) => {
+  try {
+
+    let setting = await SubscriptionSetting.findOne();
+
+    // Agar setting database me nahi hai
+    if (!setting) {
+
+      setting = await SubscriptionSetting.create({
+        planName: 'Monthly Premium',
+        amount: 99,
+        durationDays: 30,
+        active: true
+      });
+
+    }
+
+    res.json({
+      success: true,
+      setting
+    });
+
+  } catch (error) {
+
+    console.error(
+      '❌ SUBSCRIPTION SETTING ERROR:',
+      error
+    );
+
+    res.status(500).json({
+      success: false,
+      message: 'Unable to load subscription setting'
+    });
+
+  }
+});
+
 // ===============================
 // 🔐 CHANGE ADMIN PASSWORD
 // ===============================
