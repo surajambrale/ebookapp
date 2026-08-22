@@ -7,8 +7,10 @@
   <ng-container *ngFor="let banner of banners">
     <div class="floating-banner" *ngIf="!isBannerClosed(banner._id)">
       <button type="button" class="banner-close" (click)="closeBanner(banner._id)" aria-label="Close banner">X</button>
-      <img *ngIf="banner.imageUrl" [src]="banner.imageUrl" alt="">
-      <div>
+      <div class="banner-image" *ngIf="banner.imageUrl">
+        <img [src]="banner.imageUrl" alt="">
+      </div>
+      <div class="banner-details">
         <strong>{{ banner.title }}</strong>
         <p *ngIf="banner.message">{{ banner.message }}</p>
         <a *ngIf="banner.link" [href]="banner.link" target="_blank" rel="noopener">View offer</a>
