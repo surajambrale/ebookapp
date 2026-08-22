@@ -1995,18 +1995,26 @@ app.post('/admin/grant-access', verifyAdmin, async (req, res) => {
       return res.status(400).json({ message: "Missing data" });
     }
 
-    const exists = await Purchase.findOne({ userId, bookId });
+    const startDate = new Date();
+    const expiryDate = new Date(startDate);
+    expiryDate.setMonth(expiryDate.getMonth() + 1);
 
-    if (exists) {
-      return res.status(400).json({ message: "Already has access" });
-    }
-
-    await Purchase.create({
+    const accessData = {
       userId,
       bookId,
       paymentId: "admin_manual",
-      orderId: "admin_manual"
-    });
+      orderId: "admin_manual",
+      amount: 0,
+      accessType: 'admin',
+      startDate,
+      expiryDate,
+      isActive: true
+    };
+    await Purchase.findOneAndUpdate(
+      { userId, bookId },
+      { $set: accessData },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     res.json({ message: "Access granted ✅" });
 

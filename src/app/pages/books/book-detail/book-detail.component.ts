@@ -215,7 +215,7 @@ export class BookDetailComponent {
 
     this.isLoading = true;
 
-    this.http.post(`${this.apiUrl}/free-book`, {
+    this.http.post(`${this.apiUrl}/verify-free-book`, {
 
       userId: user._id,
       bookId: this.book._id || this.book.id

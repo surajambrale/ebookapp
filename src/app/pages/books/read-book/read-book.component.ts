@@ -18,6 +18,7 @@ export class ReadBookComponent implements OnDestroy {
   bookId: any;
   allowed = false;
   pdfUrl: string = '';
+  private pdfObjectUrl = '';
   user: any;
 
   isLoading = true;
@@ -95,13 +96,22 @@ export class ReadBookComponent implements OnDestroy {
 
           this.allowed = true;
 
-          this.pdfUrl =
-            `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`;
-
-          this.isLoading = false;
-
-          // 🔥 START TRACKING
-          this.trackReadingProgress();
+          this.http.get(
+            `${environment.apiUrl}/book/${this.user._id}/${this.bookId}`,
+            { responseType: 'blob' }
+          ).subscribe({
+            next: (pdf: Blob) => {
+              this.pdfObjectUrl = URL.createObjectURL(pdf);
+              this.pdfUrl = this.pdfObjectUrl;
+              this.isLoading = false;
+              this.trackReadingProgress();
+            },
+            error: () => {
+              this.isLoading = false;
+              alert('Unable to open this book. Your access may have expired.');
+              this.router.navigate(['/my-books']);
+            }
+          });
 
         } else {
 
@@ -190,6 +200,10 @@ export class ReadBookComponent implements OnDestroy {
       this.handleScroll,
       true
     );
+
+    if (this.pdfObjectUrl) {
+      URL.revokeObjectURL(this.pdfObjectUrl);
+    }
 
   }
 

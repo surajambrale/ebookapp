@@ -473,6 +473,7 @@ export class BookListComponent {
     this.loadSubscriptionSetting();
 
     this.loadLibraryFolders(null);
+    this.loadBanners();
 
   }
 
