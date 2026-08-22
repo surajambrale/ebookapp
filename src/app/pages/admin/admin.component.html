@@ -667,6 +667,7 @@
         <button type="button" (click)="createBanner()">Create Banner</button>
       </div>
       <div class="banner-admin-row" *ngFor="let banner of banners">
+        <img *ngIf="banner.imageUrl" class="banner-admin-preview" [src]="banner.imageUrl" alt="">
         <span>{{ banner.title }} <small>{{ banner.active ? 'Active' : 'Stopped' }}</small></span>
         <button type="button" (click)="toggleBanner(banner._id)">{{ banner.active ? 'Stop' : 'Start' }}</button>
         <button type="button" (click)="deleteBanner(banner._id)">Remove</button>
