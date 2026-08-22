@@ -985,3 +985,80 @@ box-shadow:0 10px 20px rgba(255,215,0,.18);
 /* =========================================
 🔥 BOTTOM NAVBAR end
 ========================================= */
+
+/* =========================================================
+   ADMIN CONTENT LAYOUT / SCROLL FIXES
+========================================================= */
+
+.admin-section {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.section-header > div {
+  min-width: 0;
+}
+
+.folder-purchases-table {
+  width: 100%;
+  max-width: 100%;
+  height: min(60vh, 560px);
+  max-height: 560px;
+  overflow: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #2d2d2d;
+  border-radius: 14px;
+  background: #111;
+  box-sizing: border-box;
+}
+
+.folder-purchases-table table {
+  min-width: 980px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.folder-purchases-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #181818;
+  color: #f5c542;
+  white-space: nowrap;
+}
+
+.folder-purchases-table th,
+.folder-purchases-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #292929;
+  white-space: nowrap;
+}
+
+.folder-purchases-table tbody tr:hover {
+  background: #181818;
+}
+
+.folder-purchases-table .delete-btn {
+  width: auto;
+  min-width: 90px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .folder-purchases-table {
+    height: 55vh;
+  }
+}

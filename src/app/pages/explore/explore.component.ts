@@ -26,10 +26,13 @@ export class ExploreComponent implements OnInit {
   dynamicBooks: any[] = [];
 
   books: any[] = [];
+  folders: any[] = [];
+  folderLoading = false;
 
   ngOnInit() {
 
     this.loadDynamicBooks();
+    this.loadFolders();
 
   }
 
@@ -82,6 +85,28 @@ export class ExploreComponent implements OnInit {
 
   }
 
+
+
+
+  loadFolders() {
+    this.folderLoading = true;
+    this.http.get<any[]>(`${this.api}/folders`).subscribe({
+      next: (res) => {
+        this.folders = Array.isArray(res) ? res : [];
+        this.folderLoading = false;
+      },
+      error: (err) => {
+        console.log('Explore folders error:', err);
+        this.folders = [];
+        this.folderLoading = false;
+      }
+    });
+  }
+
+  openFolder(folder: any) {
+    const id = folder?._id;
+    if (id) this.router.navigate(['/library/folder', id]);
+  }
 
   filteredBooks: any[] = [];
 

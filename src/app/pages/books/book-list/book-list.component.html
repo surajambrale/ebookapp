@@ -5,6 +5,85 @@
 <div class="booklist-page">
 
   <!-- ======================================================= -->
+  <!-- 💎 PREMIUM SUBSCRIPTION -->
+  <!-- ======================================================= -->
+
+  <section class="subscription-card">
+
+    <div class="subscription-left">
+
+      <span class="premium-badge">
+        ✨ PREMIUM ACCESS
+      </span>
+
+      <h2>
+        {{ subscriptionSetting.planName }}
+      </h2>
+
+      <p>
+        Read unlimited books and access premium learning resources.
+      </p>
+
+
+      <div class="subscription-features">
+
+        <span>
+          ✓ Unlimited Books
+        </span>
+
+        <span>
+          ✓ Premium Content
+        </span>
+
+        <span>
+          ✓ Learn Anytime
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="subscription-right">
+
+      <div class="subscription-price">
+
+        <small>
+          Starting at
+        </small>
+
+        <h1>
+
+          ₹{{ subscriptionSetting.price }}
+
+          <span>
+            / {{ subscriptionSetting.duration }} Days
+          </span>
+
+        </h1>
+
+      </div>
+
+
+      <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="!subscriptionSetting.active">
+
+        {{
+        subscriptionSetting.active
+        ? 'Subscribe Now →'
+        : 'Subscription Closed'
+        }}
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+
+
+
+  <!-- ======================================================= -->
   <!-- 🔥 CATEGORY SECTION -->
   <!-- ======================================================= -->
 
@@ -493,83 +572,6 @@
         </p>
 
       </div>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- ======================================================= -->
-  <!-- 💎 PREMIUM SUBSCRIPTION -->
-  <!-- ======================================================= -->
-
-  <section class="subscription-card">
-
-    <div class="subscription-left">
-
-      <span class="premium-badge">
-        ✨ PREMIUM ACCESS
-      </span>
-
-      <h2>
-        {{ subscriptionSetting.planName }}
-      </h2>
-
-      <p>
-        Read unlimited books and access premium learning resources.
-      </p>
-
-
-      <div class="subscription-features">
-
-        <span>
-          ✓ Unlimited Books
-        </span>
-
-        <span>
-          ✓ Premium Content
-        </span>
-
-        <span>
-          ✓ Learn Anytime
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="subscription-right">
-
-      <div class="subscription-price">
-
-        <small>
-          Starting at
-        </small>
-
-        <h1>
-
-          ₹{{ subscriptionSetting.price }}
-
-          <span>
-            / {{ subscriptionSetting.duration }} Days
-          </span>
-
-        </h1>
-
-      </div>
-
-
-      <button class="subscribe-btn" (click)="subscribeNow()" [disabled]="!subscriptionSetting.active">
-
-        {{
-        subscriptionSetting.active
-        ? 'Subscribe Now →'
-        : 'Subscription Closed'
-        }}
-
-      </button>
 
     </div>
 

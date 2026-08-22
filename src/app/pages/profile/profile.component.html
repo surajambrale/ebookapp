@@ -195,6 +195,15 @@
 
         </div>
 
+        <div class="payment-card folder-payment-card" *ngFor="let payment of folderPayments">
+          <h4>📂 {{ payment.folder?.name || 'Folder Purchase' }}</h4>
+          <p>₹{{ payment.amount || 0 }}</p>
+          <small>
+            Purchased {{ payment.startDate | date:'dd MMM yyyy' }}
+            • Expires {{ payment.expiryDate | date:'dd MMM yyyy' }}
+          </small>
+        </div>
+
         <div class="empty-payment" *ngIf="payments.length === 0">
 
           No Payments Found

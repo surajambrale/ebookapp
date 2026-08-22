@@ -61,12 +61,18 @@
 
     <main *ngIf="!loading">
 
+        <div class="access-checking" *ngIf="accessChecking">
+            <div class="spinner"></div>
+            <strong>Checking your access...</strong>
+            <span>Please wait while we verify your purchase or subscription.</span>
+        </div>
+
 
         <!-- ========================================= -->
         <!-- LOCKED FOLDER -->
         <!-- ========================================= -->
 
-        <section class="folder-purchase-card" *ngIf="!hasAccess">
+        <section class="folder-purchase-card" *ngIf="!accessChecking && !hasAccess">
 
 
             <div class="purchase-info">
@@ -150,7 +156,7 @@
         <!-- SUB FOLDERS -->
         <!-- ========================================= -->
 
-        <section class="folder-section" *ngIf="subFolders.length > 0">
+        <section class="folder-section" *ngIf="!accessChecking && subFolders.length > 0">
 
 
             <div class="section-title">
@@ -203,7 +209,7 @@
         <!-- CONTENT -->
         <!-- ========================================= -->
 
-        <section class="folder-section" *ngIf="contents.length > 0">
+        <section class="folder-section" *ngIf="!accessChecking && contents.length > 0">
 
 
             <div class="section-title">

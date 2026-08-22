@@ -68,6 +68,9 @@ export class LibraryFolderComponent
 
   loading = true;
 
+  // Access permission is checked separately so the user can see progress.
+  accessChecking = true;
+
   buying = false;
 
   couponCode = '';
@@ -199,10 +202,8 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
         // USER ACCESS
         // =================================
 
-        this.checkFolderAccess();
-
-
         this.loading = false;
+        this.checkFolderAccess();
       },
 
 
@@ -301,51 +302,36 @@ console.log('💰 BACKEND PRICING:', res?.pricing);
   // =====================================
 
   checkFolderAccess(): void {
+    const user = this.auth.getUser();
+    this.accessChecking = true;
 
-    const user =
-      this.auth.getUser();
-
-
-    // User not logged in
-    if (
-      !user ||
-      !user._id
-    ) {
-
+    if (!user || !user._id) {
       this.hasAccess = false;
-
+      this.accessChecking = false;
       return;
     }
 
+    console.log('🔐 Checking folder access...', this.folderId);
 
     this.http.get<any>(
       `${this.api}/api/folder-access/check/${this.folderId}`
-    )
-    .subscribe({
-
+    ).subscribe({
       next: (res) => {
+        this.hasAccess = res?.hasAccess === true;
+        this.accessChecking = false;
 
-        this.hasAccess =
-          res?.hasAccess === true;
-
-
-        console.log(
-          '🔐 FOLDER ACCESS:',
-          res
-        );
+        console.log('✅ Folder access check completed:', {
+          folderId: this.folderId,
+          hasAccess: this.hasAccess,
+          subscriptionActive: res?.subscriptionActive,
+          access: res?.access
+        });
       },
-
-
       error: (error) => {
-
-        console.error(
-          '❌ FOLDER ACCESS CHECK ERROR:',
-          error
-        );
-
+        console.error('❌ FOLDER ACCESS CHECK ERROR:', error);
         this.hasAccess = false;
+        this.accessChecking = false;
       }
-
     });
   }
 

@@ -370,40 +370,18 @@ export class BookListComponent {
   }
 
   openLibraryContent(content: any) {
+    // The public book-list page must never open raw Cloudinary URLs.
+    // Send the user to the protected folder page where access is verified.
+    const folderId = this.currentLibraryFolder?._id;
 
-    if (content.type === 'pdf') {
-
-      window.open(
-        content.url,
-        '_blank'
-      );
-
+    if (!folderId) {
+      alert('Please open the folder first.');
       return;
-
     }
 
-
-    if (content.type === 'video') {
-
-      window.open(
-        content.url,
-        '_blank'
-      );
-
-      return;
-
-    }
-
-
-    if (content.type === 'note') {
-
-      alert(
-        content.noteContent || 'No note content'
-      );
-
-    }
-
+    this.router.navigate(['/library/folder', folderId]);
   }
+
 
   //folder code end
 

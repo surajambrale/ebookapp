@@ -20,6 +20,7 @@ export class MyBooksComponent implements OnInit {
   ) { }
 
   purchasedBooks: any[] = [];
+  purchasedFolders: any[] = [];
   api = environment.apiUrl;
 
   user: any;
@@ -36,6 +37,7 @@ export class MyBooksComponent implements OnInit {
       console.log("Logged User:", this.user);
 
       this.loadBooks();
+      this.loadFolders();
 
     } else {
 
@@ -83,6 +85,34 @@ export class MyBooksComponent implements OnInit {
 
       });
 
+  }
+
+
+
+  loadFolders() {
+    this.http.get<any>(
+      `${this.api}/api/folder-access/my`
+    ).subscribe({
+      next: (res) => {
+        this.purchasedFolders = Array.isArray(res?.accesses)
+          ? res.accesses.map((access: any) => ({
+              ...access,
+              folder: access.folder || null
+            })).filter((access: any) => !!access.folder)
+          : [];
+        console.log('Purchased Folders:', this.purchasedFolders);
+      },
+      error: (err) => {
+        console.log('Folders Error:', err);
+        this.purchasedFolders = [];
+      }
+    });
+  }
+
+  openFolder(access: any) {
+    const folderId = access?.folder?._id;
+    if (!folderId) return;
+    this.router.navigate(['/library/folder', folderId]);
   }
 
   // 🔥 READ BOOK

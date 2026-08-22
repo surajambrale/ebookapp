@@ -35,6 +35,7 @@ export class ProfileComponent implements OnInit {
   adminPassword = '';
 
   payments: any[] = [];
+  folderPayments: any[] = [];
 
   books: any[] = [];
 
@@ -112,6 +113,7 @@ export class ProfileComponent implements OnInit {
       this.isLoggedIn = true;
 
       this.loadPayments();
+      this.loadFolderPayments();
 
       this.loadSubscription();
 
@@ -130,7 +132,7 @@ export class ProfileComponent implements OnInit {
   if (!this.user?._id) return;
 
   this.http.get<any>(
-    `${environment.apiUrl}/subscription/status/${this.user._id}`
+    `${environment.apiUrl}/subscription/status`
   ).subscribe({
 
     next: (res) => {
@@ -138,10 +140,12 @@ export class ProfileComponent implements OnInit {
       if (res.subscribed) {
 
         this.subscription = res;
+        this.subscriptionActive = true;
 
       } else {
 
         this.subscription = null;
+        this.subscriptionActive = false;
 
       }
 
@@ -238,7 +242,9 @@ subscribeNow() {
         this.purchasedBooksCount =
           this.payments.length;
 
-        // 🔥 CONTINUE READING
+    
+
+  // 🔥 CONTINUE READING
         if (this.payments.length > 0) {
 
           this.continueReadingBook =
@@ -257,6 +263,28 @@ subscribeNow() {
     });
 
   }
+
+
+
+  loadFolderPayments() {
+    if (!this.user?._id) return;
+
+    this.http.get<any>(
+      `${environment.apiUrl}/api/folder-access/my`
+    ).subscribe({
+      next: (res) => {
+        this.folderPayments = Array.isArray(res?.accesses)
+          ? res.accesses.filter((x: any) => x?.accessType === 'purchase')
+          : [];
+      },
+      error: (err) => {
+        console.log('Folder payments:', err);
+        this.folderPayments = [];
+      }
+    });
+  }
+
+
 
   // 🔥 CONTINUE READING
 continueReading() {

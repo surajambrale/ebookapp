@@ -1030,16 +1030,16 @@
           <td>
 
             <span
-              *ngIf="purchase.expiresAt"
+              *ngIf="purchase.expiryDate"
             >
               {{
-                purchase.expiresAt
+                purchase.expiryDate
                   | date:'dd/MM/yyyy'
               }}
             </span>
 
             <span
-              *ngIf="!purchase.expiresAt"
+              *ngIf="!purchase.expiryDate"
             >
               Lifetime
             </span>
