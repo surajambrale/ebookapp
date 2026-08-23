@@ -95,6 +95,12 @@ h1 {
   white-space: nowrap;
 }
 
+.my-books-folder-list,
+.my-books-list {
+  display: grid;
+  gap: 12px;
+}
+
 .book-box {
 
   display: flex;
@@ -264,6 +270,13 @@ button {
   .bottom-navbar { height: 62px; }
   .bottom-navbar .nav-item span { font-size: 17px; }
   .bottom-navbar .nav-item p { font-size: 8px; }
+}
+
+@media (min-width: 769px) {
+  .my-books-folder-list,
+  .my-books-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 600px) {

@@ -15,13 +15,13 @@
 
   </div>
 
-  <section class="folder-section" *ngIf="folders.length > 0">
+  <section class="folder-section" *ngIf="filteredFolders.length > 0">
     <div class="explore-section-heading">
       <h2>📂 Learning Folders</h2>
-      <span>{{ folders.length }} folders</span>
+      <span>{{ filteredFolders.length }} folders</span>
     </div>
     <div class="explore-folder-list">
-      <article class="folder-box" *ngFor="let folder of folders" (click)="openFolder(folder)">
+      <article class="folder-box" *ngFor="let folder of filteredFolders" (click)="openFolder(folder)">
         <div class="folder-box-icon">📁</div>
         <div class="folder-info">
           <h3>{{ folder.name }}</h3>
@@ -40,11 +40,12 @@
       <span>{{ filteredBooks.length }} books</span>
     </div>
 
-    <div
-      class="book-box"
-      *ngFor="let book of filteredBooks"
-      (click)="openBook(book)"
-    >
+    <div class="explore-book-list">
+      <div
+        class="book-box"
+        *ngFor="let book of filteredBooks"
+        (click)="openBook(book)"
+      >
 
       <img [src]="book.coverImage || book.image" />
 
@@ -60,6 +61,7 @@
 
       </div>
 
+      </div>
     </div>
 
   </section>

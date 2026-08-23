@@ -9,6 +9,7 @@
 
   <section class="owned-section" *ngIf="purchasedFolders.length > 0">
     <h2>📂 Purchased Folders</h2>
+    <div class="my-books-folder-list">
     <div class="folder-box" *ngFor="let access of purchasedFolders" (click)="openFolder(access)">
       <div class="folder-box-icon">📁</div>
       <div class="folder-info">
@@ -18,12 +19,14 @@
       </div>
       <span class="folder-arrow">Open →</span>
     </div>
+    </div>
   </section>
 
   <section class="owned-section" *ngIf="purchasedBooks.length > 0">
     <h2>📚 Purchased Books</h2>
   </section>
 
+  <div class="my-books-list">
   <div
     class="book-box"
     *ngFor="let book of purchasedBooks"
@@ -77,6 +80,7 @@
 
     </div>
 
+  </div>
   </div>
 
   <div

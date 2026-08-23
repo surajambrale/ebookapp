@@ -27,6 +27,7 @@ export class ExploreComponent implements OnInit {
 
   books: any[] = [];
   folders: any[] = [];
+  filteredFolders: any[] = [];
   folderLoading = false;
 
   ngOnInit() {
@@ -93,6 +94,7 @@ export class ExploreComponent implements OnInit {
     this.http.get<any[]>(`${this.api}/folders`).subscribe({
       next: (res) => {
         this.folders = Array.isArray(res) ? res : [];
+        this.filteredFolders = [...this.folders];
         this.folderLoading = false;
       },
       error: (err) => {
@@ -111,18 +113,22 @@ export class ExploreComponent implements OnInit {
   filteredBooks: any[] = [];
 
   searchBooks() {
+    const query = this.searchText.trim().toLowerCase();
+
+    if (!query) {
+      this.filteredBooks = [...this.books];
+      this.filteredFolders = [...this.folders];
+      this.showNotFound = false;
+      return;
+    }
 
     this.filteredBooks = this.books.filter(book =>
-
-      book.title.toLowerCase().includes(
-
-        this.searchText.toLowerCase()
-
-      )
-
+      String(book.title || '').toLowerCase().includes(query)
     );
-
-    this.showNotFound = this.filteredBooks.length == 0;
+    this.filteredFolders = this.folders.filter(folder =>
+      `${folder.name || ''} ${folder.description || ''}`.toLowerCase().includes(query)
+    );
+    this.showNotFound = this.filteredBooks.length === 0 && this.filteredFolders.length === 0;
 
   }
 
