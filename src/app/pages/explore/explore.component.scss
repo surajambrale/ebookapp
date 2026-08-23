@@ -2,7 +2,7 @@
 
   min-height: 100vh;
 
-  width: min(100%, 430px);
+  width: min(100% - 40px, 900px);
 
   margin: 0 auto;
 
@@ -104,7 +104,7 @@
 
 .folder-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 14px;
 }
 

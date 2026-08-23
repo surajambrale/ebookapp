@@ -19,6 +19,7 @@ export class BookDetailComponent {
   book: any;
   hasAccess: boolean = false;
   hasPurchasedBefore = false;
+  accessCheckComplete = false;
 
   isLoading: boolean = false; // 🔥 single loader use
   apiUrl = environment.apiUrl;
@@ -95,17 +96,23 @@ export class BookDetailComponent {
 
               this.hasAccess = res.access;
               this.hasPurchasedBefore = !!res.hasPurchasedBefore;
+              this.accessCheckComplete = true;
 
             },
 
             error: (err) => {
 
               console.log(err);
+              this.hasAccess = false;
+              this.hasPurchasedBefore = false;
+              this.accessCheckComplete = true;
 
             }
 
           });
 
+        } else {
+          this.accessCheckComplete = true;
         }
 
       },
@@ -231,6 +238,7 @@ export class BookDetailComponent {
         alert("Book Added Successfully 🎉");
 
         this.hasAccess = true;
+        this.hasPurchasedBefore = true;
 
         this.router.navigate([
           '/read',
@@ -298,6 +306,7 @@ export class BookDetailComponent {
                 alert('Payment Successful 🎉');
 
                 this.hasAccess = true;
+                this.hasPurchasedBefore = true;
 
                 this.router.navigate([
                   '/read',

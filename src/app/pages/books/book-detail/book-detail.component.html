@@ -27,7 +27,7 @@
 COUPON SECTION
 ========================= -->
 
-        <div class="coupon-box" *ngIf="!hasAccess">
+        <div class="coupon-box" *ngIf="accessCheckComplete && !hasAccess">
 
           <h3>🎟 Apply Coupon</h3>
 
@@ -76,7 +76,8 @@ COUPON SECTION
         <button
   class="premium-buy-btn"
   (click)="buyBook()"
-  [disabled]="isLoading">
+        [disabled]="isLoading || !accessCheckComplete"
+        *ngIf="accessCheckComplete && !hasAccess">
 
   <span *ngIf="!isLoading">
     {{ hasPurchasedBefore ? 'Purchase Again' : '🛒 Buy Now' }}
