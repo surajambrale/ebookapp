@@ -17,16 +17,7 @@
 
 /* TITLE */
 
-.title {
-
-  text-align: center;
-
-  margin-bottom: 25px;
-
-  font-size: 2rem;
-
-  color: gold;
-}
+.explore-page h1 { margin: 0 0 25px; }
 
 /* SEARCH */
 
@@ -83,6 +74,37 @@
 .folder-section {
   margin: 28px 0;
 }
+
+.explore-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 24px 0 14px;
+}
+
+.explore-section-heading h2 { margin: 0; font-size: 1.2rem; }
+.explore-section-heading span { color: #aaa; font-size: .8rem; white-space: nowrap; }
+
+.explore-folder-list { display: grid; gap: 12px; }
+
+.folder-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #292929;
+  border-radius: 14px;
+  background: #111;
+  cursor: pointer;
+}
+
+.folder-box-icon { font-size: 2rem; }
+.folder-info { min-width: 0; flex: 1; }
+.folder-info h3, .folder-info p { margin: 0; overflow-wrap: anywhere; }
+.folder-info p { margin-top: 4px; color: #aaa; font-size: .8rem; }
+.folder-arrow { color: gold; white-space: nowrap; }
 
 .section-header {
   display: flex;
@@ -145,12 +167,8 @@
 /* GRID */
 
 .book-grid {
-
   display: grid;
-
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-
-  gap: 20px;
+  gap: 12px;
 }
 
 /* CARD */
@@ -169,6 +187,31 @@
 
   transition: 0.3s;
 }
+
+.book-box {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  padding: 15px;
+  margin-bottom: 12px;
+  border: 1px solid #222;
+  border-radius: 18px;
+  background: #111;
+  cursor: pointer;
+}
+
+.book-box > img {
+  width: 90px;
+  height: 130px;
+  flex: 0 0 90px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.book-box .book-info { flex: 1; min-width: 0; }
+.book-box .book-info h3 { margin: 0 0 10px; overflow-wrap: anywhere; }
+.book-box .book-info p { margin: 0 0 15px; color: #aaa; }
+.book-box button { padding: 11px 18px; border: 0; border-radius: 10px; background: gold; font-weight: 700; cursor: pointer; }
 
 .book-card:hover {
 
@@ -274,31 +317,17 @@
 
 @media(max-width:768px){
 
-  .book-grid {
-
-    grid-template-columns: repeat(2,1fr);
-
-    gap: 14px;
-  }
-
-  .book-card img {
-
-    height: 220px;
-  }
-
   .explore-page {
     padding: 14px;
     width: 100%;
     box-sizing: border-box;
   }
 
-  .folder-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .section-header {
-    align-items: flex-start;
-  }
+  .book-box { padding: 12px; border-radius: 14px; }
+  .book-box > img { width: 72px; height: 104px; flex-basis: 72px; }
+  .book-box button { width: 100%; padding: 11px 8px; }
+  .folder-box { padding: 12px; }
+  .folder-arrow { font-size: .8rem; }
 
 }
 

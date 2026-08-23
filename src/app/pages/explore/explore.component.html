@@ -1,8 +1,6 @@
 <div class="explore-page">
 
-  <h2 class="title">
-    Explore Books
-  </h2>
+  <h1>📚 Explore</h1>
 
   <!-- SEARCH BAR -->
 
@@ -18,53 +16,53 @@
   </div>
 
   <section class="folder-section" *ngIf="folders.length > 0">
-    <div class="section-header">
-      <div>
-        <span class="section-label">LEARNING LIBRARY</span>
-        <h2>Explore Folders</h2>
-      </div>
+    <div class="explore-section-heading">
+      <h2>📂 Learning Folders</h2>
       <span>{{ folders.length }} folders</span>
     </div>
-    <div class="folder-grid">
-      <article class="folder-card" *ngFor="let folder of folders" (click)="openFolder(folder)">
-        <div class="folder-icon">📁</div>
-        <div>
+    <div class="explore-folder-list">
+      <article class="folder-box" *ngFor="let folder of folders" (click)="openFolder(folder)">
+        <div class="folder-box-icon">📁</div>
+        <div class="folder-info">
           <h3>{{ folder.name }}</h3>
           <p>{{ folder.description || 'Books and premium learning resources' }}</p>
         </div>
-        <span class="folder-link">Open →</span>
+        <span class="folder-arrow">Open →</span>
       </article>
     </div>
   </section>
 
   <!-- BOOKS -->
 
-  <div
-    class="book-grid"
-    *ngIf="filteredBooks.length > 0"
-  >
+  <section class="owned-section" *ngIf="filteredBooks.length > 0">
+    <div class="explore-section-heading">
+      <h2>📚 Books</h2>
+      <span>{{ filteredBooks.length }} books</span>
+    </div>
 
     <div
-      class="book-card"
+      class="book-box"
       *ngFor="let book of filteredBooks"
       (click)="openBook(book)"
     >
 
-      <img [src]="book.image" />
+      <img [src]="book.coverImage || book.image" />
 
       <div class="book-info">
 
         <h3>{{ book.title }}</h3>
 
-        <p>
-          Premium Fitness Ebook
-        </p>
+        <p>{{ book.author || 'Premium Fitness Ebook' }}</p>
+
+        <button type="button" (click)="$event.stopPropagation(); openBook(book)">
+          Open Book
+        </button>
 
       </div>
 
     </div>
 
-  </div>
+  </section>
 
   <!-- NO BOOK -->
 
